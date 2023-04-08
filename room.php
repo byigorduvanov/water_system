@@ -111,10 +111,40 @@ function meters_price()
 		$id_meters = $result->fetch_assoc();
 		$value4 = $id_meters["id"];
 
-		$sql = "INSERT INTO months (price_for_month, id_meters, id_user) VALUES ($difference, $value4, $id)";
+		$sql = "INSERT INTO months (price_for_month, id_meters, id_user,payment_status) VALUES ($difference, $value4, $id, 'unpaid')";
 		$conn->query($sql);
 	}
 }
+function get_latest_charges_and_status()
+{
+	global $conn;
+	$id = $_SESSION["id"];
+	$sql = "SELECT m.price_for_month, m.payment_status, me.date FROM months m JOIN meters me ON m.id_meters = me.id WHERE m.id_user = $id ORDER BY m.id_meters DESC LIMIT 1";
+	$result = mysqli_query($conn, $sql);
+	$row = mysqli_fetch_assoc($result);
+	return $row;
+}
+$latest_charges_data = get_latest_charges_and_status();
+$latest_charges = isset($latest_charges_data['price_for_month']) ? $latest_charges_data['price_for_month'] : 0;
+$payment_status = isset($latest_charges_data['payment_status']) ? $latest_charges_data['payment_status'] : 'unpaid';
+$date_of_indicator = isset($latest_charges_data['date']) ? $latest_charges_data['date'] : '';
+function pay_latest_charge()
+{
+	global $conn;
+	$id = $_SESSION["id"];
+	$sql = "UPDATE months SET payment_status = 'paid' WHERE id_user = $id AND payment_status = 'unpaid' ORDER BY id_meters DESC LIMIT 1";
+	$result = mysqli_query($conn, $sql);
+}
+
+if (isset($_POST['pay_latest_charge'])) {
+	pay_latest_charge();
+	// Refresh the page to update the payment status
+	header("Location: " . $_SERVER['REQUEST_URI']);
+	exit();
+}
+
+
+
 
 
 ?>
@@ -175,7 +205,8 @@ function meters_price()
 		</div>
 		<section class="banner">
 			<div class="container">
-				<marquee direction="right" class="banner-item">Передача показників води повинна здійснюватися з 1 по 3 число
+				<marquee direction="right" class="banner-item">Передача показників води повинна здійснюватися з 1 по 3
+					число
 					кожного місяця</marquee>
 			</div>
 		</section>
@@ -192,7 +223,8 @@ function meters_price()
 								class="fas fa-tachometer-alt">
 								<p class="tablinks__text">Показники</p>
 							</i></button>
-						<button class="tablinks" data-tab="tab3" onclick="openTab(event, 'tab3')"><i class="fas fa-tasks">
+						<button class="tablinks" data-tab="tab3" onclick="openTab(event, 'tab3')"><i
+								class="fas fa-tasks">
 								<p class="tablinks__text">Нарахування</p>
 							</i></button>
 						<button class="tablinks" data-tab="tab4" onclick="openTab(event, 'tab4')"><i
@@ -231,17 +263,21 @@ function meters_price()
 											<div class="information-meters bg-style d-flex">
 												<div class="info__meter mb-4">
 													<h4 class="title__meter">Подати показник</h4>
-													<p class="caption__meter">Прийом показників здійснюється кожного місяця з 1 по 3
+													<p class="caption__meter">Прийом показників здійснюється кожного
+														місяця з 1 по 3
 														число
 														(включно)</p>
 
 												</div>
 												<div class="">
 													<form action="#" method="POST">
-														<input name="do_meters_save" type="number" placeholder="Введіть Ваш показник"
+														<input name="do_meters_save" type="number"
+															placeholder="Введіть Ваш показник"
 															class="form-control use-form room__form">
-														<button type="button" class="popup-link btn btn-primary my_btn btn_room"
-															data-target="#popup_meters" name="open_do_meters">Ввести</button>
+														<button type="button"
+															class="popup-link btn btn-primary my_btn btn_room"
+															data-target="#popup_meters"
+															name="open_do_meters">Ввести</button>
 													</form>
 												</div>
 											</div>
@@ -249,12 +285,16 @@ function meters_price()
 												<div class="about__info">
 													<p class="title__about">До сплати за воду</p>
 													<p class="caption__about">станом
-														<?= $value3 ?>
+														<?php if ($payment_status == 'unpaid') { ?>
+															<?= $date_of_indicator ?>
+														<?php } ?>
 													</p>
 												</div>
 												<div class="about__price ml-auto">
-													<p class="about__price__info">
-														<?= $difference ?> грн
+													<p class="about__price__info" id="charges-info">
+														<?php if ($payment_status == 'unpaid') { ?>
+															<?= $latest_charges ?> грн
+														<?php } ?>
 													</p>
 												</div>
 											</div>
@@ -293,8 +333,8 @@ function meters_price()
 										<div id="result_form" class="my__date bg-style ">
 											<div class="d-flex">
 												<p class="title__date">МОЇ ДАНІ</p>
-												<a class="ml-auto h-100 popup-link" href="#popup"><img src="img/date__checkbox.png"
-														class="ml-auto h-100"></a>
+												<a class="ml-auto h-100 popup-link" href="#popup"><img
+														src="img/date__checkbox.png" class="ml-auto h-100"></a>
 
 											</div>
 											<div class="row">
@@ -378,9 +418,12 @@ function meters_price()
 								</table>
 								<nav aria-label="..." class="">
 									<ul class="pagination pagination-sm justify-content-center" id="page-select">
-										<li class="page-item active " value="1"><a class="page-link" href="room.php?page=1">1</a>
+										<li class="page-item active " value="1">
+											<a class="page-link" href="room.php?page=1">1</a>
 										</li>
-										<li class="page-item" value="2"><a class="page-link" href="room.php?page=2">2</a></li>
+										<li class="page-item" value="2">
+											<a class="page-link" href="room.php?page=2">2</a>
+										</li>
 									</ul>
 								</nav>
 								<div class="chart-container" style="position: relative;">
@@ -420,7 +463,12 @@ function meters_price()
 							</div>
 							<!--                            <div class="tab-pane fade" id="pay" role="tabpanel" aria-labelledby="pay-tab">-->
 							<div id="tab4" class="tabcontent">
-								4 панель</div>
+								4 панель
+								<form action="#" method="POST">
+									<button class="btn btn-primary my_btn" type="submit"
+										name="pay_latest_charge">Оплатити останній рахунок</button>
+								</form>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -494,3 +542,5 @@ function meters_price()
 	<?php
 	include('footer.php')
 		?>
+	<script src="js/main.js"></script>
+	<script src="js/fetch_profit.js"></script>

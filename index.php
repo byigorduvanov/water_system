@@ -1,8 +1,8 @@
-<?php
-include('header.php');
-?>
 <section class="about__offer">
 	<!--    /*scroll to top*/-->
+	<?php
+	include('header.php');
+	?>
 	<a class="gotopbtn" href="#"> <i class="fas fa-arrow-up"></i> </a>
 
 	<div class="container" data-aos="fade-down">
@@ -15,9 +15,11 @@ include('header.php');
 				</div>
 				<div class="offer-title d-flex">
 					<div class="col-lg-8 col-md-7 col-sm-12 offer">
-						<h2 class="display-4 offer-head">здіснюй подачу показників води легко та швидко, без жодних зусиль
+						<h2 class="display-4 offer-head">здіснюй подачу показників води легко та швидко, без жодних
+							зусиль
 						</h2>
-						<p class="lead offer-desk">Система автоматизованої подачі показників, зекономить Ваш час та дозволить
+						<p class="lead offer-desk">Система автоматизованої подачі показників, зекономить Ваш час та
+							дозволить
 							легко та швидко здійснювати оплату за надані послуги</p>
 
 					</div>
@@ -57,7 +59,8 @@ include('header.php');
 					<img src="img/image 6.png" class="card-img-top permision-img rounded mx-auto d-block" alt="...">
 					<div class="card-body">
 						<h5 class="card-title permision-title">Історія платежів</h5>
-						<p class="card-text permision-text">Перегляд історії показників лічильників та перегляд звітів</p>
+						<p class="card-text permision-text">Перегляд історії показників лічильників та перегляд звітів
+						</p>
 					</div>
 				</div>
 			</div>
@@ -105,7 +108,8 @@ include('header.php');
 						<img src="img/image 8.png" class="card-img-top register-img rounded mx-auto d-block" alt="...">
 						<div class="card-body">
 							<h5 class="card-title register-title">Крок 2:<span> Підтвердіть свій email</span></h5>
-							<p class="card-text register-text">Підтвердіть свої дані у поштовій скринці та перейдіть у свій
+							<p class="card-text register-text">Підтвердіть свої дані у поштовій скринці та перейдіть у
+								свій
 								особистий кабінет</p>
 
 						</div>
@@ -114,7 +118,8 @@ include('header.php');
 						<img src="img/image 9.png" class="card-img-top register-img rounded mx-auto d-block" alt="...">
 						<div class="card-body">
 							<h5 class="card-title register-title">Крок 3:<span> Додайте особовий рахунок</span></h5>
-							<p class="card-text register-text">Введіть свій особовий рахунок, який знаходиться на квитанції</p>
+							<p class="card-text register-text">Введіть свій особовий рахунок, який знаходиться на
+								квитанції</p>
 
 						</div>
 					</div>
@@ -125,8 +130,8 @@ include('header.php');
 			<div class="col ">
 				<form class="form justify-content-center d-flex offer__form ">
 					<div class="form-group m-0 ">
-						<input type="email" class="form-control use-form tablet-form " id="inputPassword2"
-							placeholder="Введіть email ">
+						<input type="email" class="form-control use-form tablet-form" id="fast_email_input"
+							placeholder="Введіть email">
 					</div>
 					<a href="registr.php" class=" btn btn-primary my_btn form-btn">Зареєструватися</a>
 				</form>
@@ -137,3 +142,15 @@ include('header.php');
 <?php
 include('footer.php');
 ?>
+<script>
+	$(document).ready(function () {
+		$(".form-btn").on("click", function (e) {
+			e.preventDefault();
+			const email = $("#fast_email_input").val();
+			if (email) {
+				localStorage.setItem("user_email", email);
+			}
+			window.location.href = "registr.php";
+		});
+	});
+</script>
