@@ -29,19 +29,31 @@ const fetchProfitData = async (year = new Date().getFullYear()) => {
 function populateTable(data) {
 	const tableBody = document.querySelector("#tab3 table tbody");
 	tableBody.innerHTML = "";
+	let previousDebt = 0;
 	data.forEach((row) => {
 		const newRow = tableBody.insertRow();
 
 		const dateCell = newRow.insertCell();
 		dateCell.textContent = row.date;
-		const newCell1 = newRow.insertCell();
-		newCell1.textContent = '';
+		const debtCell = newRow.insertCell();
 		const priceCell = newRow.insertCell();
 		priceCell.textContent = row.price_for_month;
-		const newCell2 = newRow.insertCell();
-		newCell2.textContent = '';
+		const statusCell = newRow.insertCell();
+		statusCell.textContent = row.payment_status;
+
+		// Перевірити, чи є статус платежу "прострочений" і відобразити суму боргу
+		if (row.payment_status === 'overdue') {
+			previousDebt += parseFloat(row.price_for_month);
+		}
+
+		// If the payment status is 'paid', reset the previous debt
+		if (row.payment_status === 'paid') {
+			previousDebt = 0;
+		}
+		debtCell.textContent = previousDebt.toFixed(2);
 	});
 }
+
 
 
 // Add this line before the fetchProfitData function

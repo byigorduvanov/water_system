@@ -4,24 +4,25 @@ global $conn;
 
 function fetch_profit($conn, $user_id, $year)
 {
-	$sql = "SELECT months.price_for_month, meters.date
-    FROM meters
-    INNER JOIN months ON meters.id = months.id_meters
-    WHERE meters.id_user = ? AND YEAR(meters.date) = ?";
+    $sql = "SELECT months.price_for_month, months.payment_status, meters.date
+        FROM meters
+        INNER JOIN months ON meters.id = months.id_meters
+        WHERE meters.id_user = ? AND YEAR(meters.date) = ?";
 
-	$stmt = $conn->prepare($sql);
-	$stmt->bind_param("ii", $user_id, $year);
-	$stmt->execute();
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $user_id, $year);
+    $stmt->execute();
 
-	$result = $stmt->get_result();
-	$data = array();
+    $result = $stmt->get_result();
+    $data = array();
 
-	while ($row = $result->fetch_assoc()) {
-		$data[] = $row;
-	}
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
 
-	return $data;
+    return $data;
 }
+
 
 
 if (session_status() == PHP_SESSION_NONE) {

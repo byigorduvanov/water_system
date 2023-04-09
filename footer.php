@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="footer-login " data-aos="zoom-in-down">
+<footer class="footer-login ">
 	<!-- Grid container -->
 	<div class="container ">
 		<!--Grid row-->
@@ -62,6 +62,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 <script src="js/AOS_ANIMATED.js"></script>
+<script src="js/scroll_top.js"></script>
+
 
 
 </body>

@@ -29,11 +29,28 @@ body {
 	color: white;
 	font-size: 22px;
 	transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+	transition: all .4s;
+	opacity: 0;
+	/* Задає прозорість для кнопки */
+	visibility: hidden;
+	/* Задає видимість кнопки */
+}
+
+.gotopbtn.active {
+	opacity: 1;
+	/* Змінює прозорість кнопки при активації */
+	visibility: visible;
+	/* Змінює видимість кнопки при активації */
+	transition: all .4s;
 }
 
 .gotopbtn i {
 	line-height: 50px;
+	transition: all .4s;
 }
+
+
+/* =====================*/
 
 .container {
 	margin: 0 auto;
@@ -623,6 +640,16 @@ body.lock {
 /* таби */
 .tab {
 	overflow: hidden;
+}
+
+.tab :last-child {
+	padding-left: 16px;
+}
+
+@media (max-width: 768px) {
+	.tab :last-child {
+		padding-left: 0px;
+	}
 }
 
 .tablinks {

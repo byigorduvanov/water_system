@@ -111,10 +111,16 @@ function meters_price()
 		$id_meters = $result->fetch_assoc();
 		$value4 = $id_meters["id"];
 
+		// Встановлення статусу попередніх несплачених нарахувань як "overdue"
+		$sql_overdue = "UPDATE months SET payment_status='overdue' WHERE id_user = $id AND payment_status='unpaid'";
+		$conn->query($sql_overdue);
+
+		// Додавання нового запису з нарахуваннями
 		$sql = "INSERT INTO months (price_for_month, id_meters, id_user,payment_status) VALUES ($difference, $value4, $id, 'unpaid')";
 		$conn->query($sql);
 	}
 }
+
 function get_latest_charges_and_status()
 {
 	global $conn;
@@ -171,7 +177,8 @@ if (isset($_POST['pay_latest_charge'])) {
 		?>
 	</div>
 	<!--    /*scroll to top*/-->
-	<a class="gotopbtn" href="#"> <i class="fas fa-arrow-up"></i> </a>
+
+	<!-- контент -->
 	<div class="wrapper">
 		<header class="room-head">
 			<div class="container">
@@ -179,6 +186,7 @@ if (isset($_POST['pay_latest_charge'])) {
 					<div class="col-sm-2 col-5">
 						<a class="navbar-brand" href="index.php">
 							<img src="img/logo.png" alt="main logo" class="">
+							<div class=""></div>
 						</a>
 					</div>
 					<div class="col-lg-8 col-sm-6 col-6 hide__590">
@@ -205,30 +213,30 @@ if (isset($_POST['pay_latest_charge'])) {
 		</div>
 		<section class="banner">
 			<div class="container">
-				<marquee direction="right" class="banner-item">Передача показників води повинна здійснюватися з 1 по 3
-					число
-					кожного місяця</marquee>
+				<marquee direction="right" class="banner-item">
+					Передача показників води повинна здійснюватися з 1 по 3 число кожного місяця
+				</marquee>
 			</div>
 		</section>
 		<div class="container">
 			<div class="row">
 				<div class="col">
 					<div class="tab">
-						<button class="tablinks" data-tab="tab1" onclick="openTab(event, 'tab1')"><i
-								class="fas fa-info-circle">
+						<button class="tablinks" data-tab="tab1" onclick="openTab(event, 'tab1')">
+							<i class="fas fa-info-circle">
 								<p class="tablinks__text">Мої дані</p>
 							</i>
 						</button>
-						<button class="tablinks" data-tab="tab2" onclick="openTab(event, 'tab2')"><i
-								class="fas fa-tachometer-alt">
+						<button class="tablinks" data-tab="tab2" onclick="openTab(event, 'tab2')">
+							<i class="fas fa-tachometer-alt">
 								<p class="tablinks__text">Показники</p>
 							</i></button>
-						<button class="tablinks" data-tab="tab3" onclick="openTab(event, 'tab3')"><i
-								class="fas fa-tasks">
+						<button class="tablinks" data-tab="tab3" onclick="openTab(event, 'tab3')">
+							<i class="fas fa-tasks">
 								<p class="tablinks__text">Нарахування</p>
 							</i></button>
-						<button class="tablinks" data-tab="tab4" onclick="openTab(event, 'tab4')"><i
-								class="fas fa-money-bill-wave-alt">
+						<button class="tablinks" data-tab="tab4" onclick="openTab(event, 'tab4')">
+							<i class="fas fa-money-bill-wave-alt">
 								<p class="tablinks__text">Оплата</p>
 							</i></button>
 					</div>
@@ -236,7 +244,6 @@ if (isset($_POST['pay_latest_charge'])) {
 			</div>
 		</div>
 		<section class="room-date">
-
 			<div class="container">
 				<div class="row">
 					<div class="col">
@@ -539,6 +546,7 @@ if (isset($_POST['pay_latest_charge'])) {
 			</div>
 		</div>
 	</div>
+	<a class="gotopbtn" href="#"> <i class="fas fa-arrow-up"></i> </a>
 	<?php
 	include('footer.php')
 		?>
