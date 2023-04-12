@@ -1,8 +1,9 @@
+<?php
+$header_class = 'about__offer';
+include('header.php');
+?>
 <section class="about__offer">
 	<!--    /*scroll to top*/-->
-	<?php
-	include('header.php');
-	?>
 	<a class="gotopbtn" href="#"> <i class="fas fa-arrow-up"></i> </a>
 
 	<div class="container" data-aos="fade-down">
@@ -15,7 +16,7 @@
 				</div>
 				<div class="offer-title d-flex">
 					<div class="col-lg-8 col-md-7 col-sm-12 offer">
-						<h2 class="display-4 offer-head">здіснюй подачу показників води легко та швидко, без жодних
+						<h2 class="display-4 offer-head">Здійснюй подачу показників води легко та швидко, без жодних
 							зусиль
 						</h2>
 						<p class="lead offer-desk">Система автоматизованої подачі показників, зекономить Ваш час та
@@ -139,6 +140,7 @@
 		</div>
 	</div>
 </section>
+<script src="js/scroll_top.js"></script>
 <?php
 include('footer.php');
 ?>

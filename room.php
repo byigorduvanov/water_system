@@ -61,20 +61,6 @@ function meters_table()
 	return $meters_table;
 }
 
-// function profit_table()
-// {
-// 	global $conn;
-// 	global $id;
-// 	$sql = "SELECT months.price_for_month, meters.date
-// FROM meters
-// INNER JOIN months ON meters.id = months.id_meters
-// WHERE meters.id_user = $id";
-// 	$result = mysqli_query($conn, $sql);
-
-// 	$profit_table = mysqli_fetch_all($result, MYSQLI_ASSOC);
-// 	return $profit_table;
-// }
-
 //обрахунок останніх показників
 global $difference;
 global $value3;
@@ -177,138 +163,139 @@ if (isset($_POST['pay_latest_charge'])) {
 		?>
 	</div>
 	<!--    /*scroll to top*/-->
+	<div class="wrapper_main">
 
-	<!-- контент -->
-	<div class="wrapper">
-		<header class="room-head">
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-2 col-5">
-						<a class="navbar-brand" href="index.php">
-							<img src="img/logo.png" alt="main logo" class="">
-							<div class=""></div>
-						</a>
-					</div>
-					<div class="col-lg-8 col-sm-6 col-6 hide__590">
-						<div class="info">
-							<p><span>32,5 грн</span><br>ціна на січень 2023 за 1 м3</p>
+		<!-- контент -->
+		<div class="wrapper">
+			<header class="room-head">
+				<div class="container">
+					<div class="row">
+						<div class="col-sm-2 col-5 col-lg-2">
+							<a class="navbar-brand" href="index.php">
+								<img src="img/logo.png" alt="main logo" class="">
+								<div class=""></div>
+							</a>
 						</div>
-					</div>
-					<form action="#" method="post" class="col-sm-2 col-6 ">
-						<a href="vendor/logout.php" class="btn btn-primary my_btn btn_room">Вихід </a>
-					</form>
-				</div>
-			</div>
-		</header>
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="col-12">
-						<div class="info-hidde">
-							<p><span>32.5 грн</span><br>ціна на січень 2023 за 1 м3</p>
+						<div class="col-lg-8 col-sm-6 col-6 hide__590">
+							<div class="info">
+								<p><span>32,5 грн</span><br>ціна на січень 2023 за 1 м3</p>
+							</div>
 						</div>
+						<form action="#" method="post" class="col-sm-2 col-6 col-lg-2">
+							<a href="vendor/logout.php" class="btn btn-primary my_btn btn_room">Вихід </a>
+						</form>
 					</div>
 				</div>
-			</div>
-		</div>
-		<section class="banner">
-			<div class="container">
-				<marquee direction="right" class="banner-item">
-					Передача показників води повинна здійснюватися з 1 по 3 число кожного місяця
-				</marquee>
-			</div>
-		</section>
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="tab">
-						<button class="tablinks" data-tab="tab1" onclick="openTab(event, 'tab1')">
-							<i class="fas fa-info-circle">
-								<p class="tablinks__text">Мої дані</p>
-							</i>
-						</button>
-						<button class="tablinks" data-tab="tab2" onclick="openTab(event, 'tab2')">
-							<i class="fas fa-tachometer-alt">
-								<p class="tablinks__text">Показники</p>
-							</i></button>
-						<button class="tablinks" data-tab="tab3" onclick="openTab(event, 'tab3')">
-							<i class="fas fa-tasks">
-								<p class="tablinks__text">Нарахування</p>
-							</i></button>
-						<button class="tablinks" data-tab="tab4" onclick="openTab(event, 'tab4')">
-							<i class="fas fa-money-bill-wave-alt">
-								<p class="tablinks__text">Оплата</p>
-							</i></button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<section class="room-date">
+			</header>
 			<div class="container">
 				<div class="row">
 					<div class="col">
-						<div class="tab-content" id="product-content">
-							<!--                            <div class="tab-pane fade " id="description" role="tabpanel" aria-labelledby="description-tab">-->
-							<div id="tab1" class="tabcontent">
-								<div class="row">
-									<div class="col-lg-6 col-md-11 col-sm-12">
-										<div class="information">
-											<div class="information-user bg-style d-flex">
-												<div class="user-icon">
-													<i class="fas fa-user-circle"></i>
+						<div class="col-12">
+							<div class="info-hidde">
+								<p><span>32.5 грн</span><br>ціна на січень 2023 за 1 м3</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<section class="banner">
+				<div class="container">
+					<marquee direction="right" class="banner-item">
+						Передача показників води повинна здійснюватися з 1 по 3 число кожного місяця
+					</marquee>
+				</div>
+			</section>
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="tab">
+							<button class="tablinks" data-tab="tab1" onclick="openTab(event, 'tab1')">
+								<i class="fas fa-info-circle">
+									<p class="tablinks__text">Мої дані</p>
+								</i>
+							</button>
+							<button class="tablinks" data-tab="tab2" onclick="openTab(event, 'tab2')">
+								<i class="fas fa-tachometer-alt">
+									<p class="tablinks__text">Показники</p>
+								</i></button>
+							<button class="tablinks" data-tab="tab3" onclick="openTab(event, 'tab3')">
+								<i class="fas fa-tasks">
+									<p class="tablinks__text">Нарахування</p>
+								</i></button>
+							<button class="tablinks" data-tab="tab4" onclick="openTab(event, 'tab4')">
+								<i class="fas fa-money-bill-wave-alt">
+									<p class="tablinks__text">Оплата</p>
+								</i></button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<section class="room-date">
+				<div class="container">
+					<div class="row">
+						<div class="col">
+							<div class="tab-content" id="product-content">
+								<!--                            <div class="tab-pane fade " id="description" role="tabpanel" aria-labelledby="description-tab">-->
+								<div id="tab1" class="tabcontent">
+									<div class="row">
+										<div class="col-lg-6 col-md-11 col-sm-12">
+											<div class="information">
+												<div class="information-user bg-style d-flex">
+													<div class="user-icon">
+														<i class="fas fa-user-circle"></i>
+													</div>
+													<div class="user-name">
+														<h3>
+															<?= $row['last_name']; ?>
+															<?= $row['first_name']; ?>
+														</h3>
+														<p>
+															<?= $row['address']; ?>
+														</p>
+													</div>
 												</div>
-												<div class="user-name">
-													<h3>
-														<?= $row['last_name']; ?>
-														<?= $row['first_name']; ?>
-													</h3>
-													<p>
-														<?= $row['address']; ?>
-													</p>
-												</div>
-											</div>
-											<div class="information-meters bg-style d-flex">
-												<div class="info__meter mb-4">
-													<h4 class="title__meter">Подати показник</h4>
-													<p class="caption__meter">Прийом показників здійснюється кожного
-														місяця з 1 по 3
-														число
-														(включно)</p>
+												<div class="information-meters bg-style d-flex">
+													<div class="info__meter mb-4">
+														<h4 class="title__meter">Подати показник</h4>
+														<p class="caption__meter">Прийом показників здійснюється кожного
+															місяця з 1 по 3
+															число
+															(включно)</p>
 
+													</div>
+													<div class="">
+														<form action="#" method="POST">
+															<input name="do_meters_save" type="number"
+																placeholder="Введіть Ваш показник"
+																class="form-control use-form room__form">
+															<button type="button"
+																class="popup-link btn btn-primary my_btn btn_room"
+																data-target="#popup_meters"
+																name="open_do_meters">Ввести</button>
+														</form>
+													</div>
 												</div>
-												<div class="">
-													<form action="#" method="POST">
-														<input name="do_meters_save" type="number"
-															placeholder="Введіть Ваш показник"
-															class="form-control use-form room__form">
-														<button type="button"
-															class="popup-link btn btn-primary my_btn btn_room"
-															data-target="#popup_meters"
-															name="open_do_meters">Ввести</button>
-													</form>
+												<div class="about__pay bg-style d-flex">
+													<div class="about__info">
+														<p class="title__about">До сплати за воду</p>
+														<p class="caption__about">станом
+															<?php if ($payment_status == 'unpaid') { ?>
+																<?= $date_of_indicator ?>
+															<?php } ?>
+														</p>
+													</div>
+													<div class="about__price ml-auto">
+														<p class="about__price__info" id="charges-info">
+															<?php if ($payment_status == 'unpaid') { ?>
+																<?= $latest_charges ?> грн
+															<?php } ?>
+														</p>
+													</div>
 												</div>
-											</div>
-											<div class="about__pay bg-style d-flex">
-												<div class="about__info">
-													<p class="title__about">До сплати за воду</p>
-													<p class="caption__about">станом
-														<?php if ($payment_status == 'unpaid') { ?>
-															<?= $date_of_indicator ?>
-														<?php } ?>
-													</p>
-												</div>
-												<div class="about__price ml-auto">
-													<p class="about__price__info" id="charges-info">
-														<?php if ($payment_status == 'unpaid') { ?>
-															<?= $latest_charges ?> грн
-														<?php } ?>
-													</p>
-												</div>
-											</div>
-											<?php
-											if (isset($_POST['do_meters'])) {
-												if (empty($errors)) {
-													echo '<div class="alert alert-arrow d-flex rounded p-0 col-lg-12" role="alert">
+												<?php
+												if (isset($_POST['do_meters'])) {
+													if (empty($errors)) {
+														echo '<div class="alert alert-arrow d-flex rounded p-0 col-lg-12" role="alert">
                     <div class="alert-icon d-flex justify-content-center align-items-center text-white flex-grow-0 flex-shrink-0">
                         <i class="fa fa-check"></i>
                     </div>
@@ -319,8 +306,8 @@ if (isset($_POST['pay_latest_charge'])) {
                         <i class="fas fa-times"></i>
                     </a>
                 </div>';
-												} else {
-													echo '<div class="alert alert-arrow alert-arrow-danger d-flex rounded p-0 col-lg-12" role="alert">
+													} else {
+														echo '<div class="alert alert-arrow alert-arrow-danger d-flex rounded p-0 col-lg-12" role="alert">
         <div class="alert-icon d-flex justify-content-center align-items-center text-white flex-grow-0 flex-shrink-0">
             <i class="fas fa-times-circle"></i>
         </div>
@@ -331,77 +318,118 @@ if (isset($_POST['pay_latest_charge'])) {
             <i class="fas fa-times"></i>
         </a>
     </div>';
-												}
-											} ?>
-											<div class="information-pays bg-style"></div>
+													}
+												} ?>
+												<div class="information-pays bg-style"></div>
+											</div>
 										</div>
-									</div>
-									<div class="col-lg-6 col-md-11">
-										<div id="result_form" class="my__date bg-style ">
-											<div class="d-flex">
-												<p class="title__date">МОЇ ДАНІ</p>
-												<a class="ml-auto h-100 popup-link" href="#popup"><img
-														src="img/date__checkbox.png" class="ml-auto h-100"></a>
-
-											</div>
-											<div class="row">
-												<div class="col-6 date__user">
-													<p class="date__user__text">Прізвище</p>
-													<p>Ім’я</p>
-													<p class="date__user__text">Адреса</p>
-												</div>
-												<div class="col-6 info__user">
-													<p class="date__user__text">
-														<?= $row['last_name']; ?>
-													</p>
-													<p>
-														<?= $row['first_name']; ?>
-													</p>
-													<p class="date__user__text">
-														<?= $row['address']; ?>
-													</p>
-												</div>
-												<div class="col-12">
-													<hr class="date__hr">
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-6 date__user">
-													<p>Номер лічильника</p>
-													<p class="date__user__text ">E-mail</p>
-													<p>Мобільний телефон</p>
-													<p class="date__user__text">Домашній телефон</p>
+										<div class="col-lg-6 col-md-11">
+											<div id="result_form" class="my__date bg-style ">
+												<div class="d-flex">
+													<p class="title__date">МОЇ ДАНІ</p>
+													<a class="ml-auto h-100 popup-link" href="#popup"><img
+															src="img/date__checkbox.png" class="ml-auto h-100"></a>
 
 												</div>
-												<div class="col-6 info__user__date">
-													<p>
-														<?= $row['counter']; ?>
-													</p>
-													<p class="date__user__text">
-														<?= $row['email']; ?>
-													</p>
-													<p>
-														<?= $row['mobile_phone']; ?>
-													</p>
-													<p class="date__user__text">
-														<?= $row['home_phone']; ?>
-													</p>
+												<div class="row">
+													<div class="col-6 date__user">
+														<p class="date__user__text">Прізвище</p>
+														<p>Ім’я</p>
+														<p class="date__user__text">Адреса</p>
+													</div>
+													<div class="col-6 info__user">
+														<p class="date__user__text">
+															<?= $row['last_name']; ?>
+														</p>
+														<p>
+															<?= $row['first_name']; ?>
+														</p>
+														<p class="date__user__text">
+															<?= $row['address']; ?>
+														</p>
+													</div>
+													<div class="col-12">
+														<hr class="date__hr">
+													</div>
 												</div>
-												<div class="col-12">
-													<hr class="date__hr">
+												<div class="row">
+													<div class="col-6 date__user">
+														<p>Номер лічильника</p>
+														<p class="date__user__text ">E-mail</p>
+														<p>Мобільний телефон</p>
+														<p class="date__user__text">Домашній телефон</p>
+
+													</div>
+													<div class="col-6 info__user__date">
+														<p>
+															<?= $row['counter']; ?>
+														</p>
+														<p class="date__user__text">
+															<?= $row['email']; ?>
+														</p>
+														<p>
+															<?= $row['mobile_phone']; ?>
+														</p>
+														<p class="date__user__text">
+															<?= $row['home_phone']; ?>
+														</p>
+													</div>
+													<div class="col-12">
+														<hr class="date__hr">
+													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<!--                            <div class="tab-pane fade" id="characteristics" role="tabpanel" aria-labelledby="characteristics-tab">-->
-							<div id="tab2" class="tabcontent">
-								<div class="room-meters room-meters__top">
-									<p class="table__top">Показники</p>
+								<!--                            <div class="tab-pane fade" id="characteristics" role="tabpanel" aria-labelledby="characteristics-tab">-->
+								<div id="tab2" class="tabcontent">
+									<div class="room-meters room-meters__top">
+										<p class="table__top">Показники</p>
+									</div>
+									<form>
+										<select id="year-select" name="year" class="select__meters">
+											<?php
+											$years = mysqli_query($conn, "SELECT DISTINCT YEAR(date) as year FROM meters WHERE id_user=$id ORDER BY year DESC");
+											while ($year_select = mysqli_fetch_assoc($years)) {
+												echo '<option value="' . $year_select['year'] . '">' . $year_select['year'] . '</option>';
+											}
+											?>
+										</select>
+									</form>
+									<table class="table table-bordered table-room">
+										<thead class="table-room__top">
+											<tr>
+												<th scope="col">№ лічильника</th>
+												<th scope="col">Дата</th>
+												<th scope="col">Показник</th>
+												<th scope="col">Джерело</th>
+											</tr>
+										</thead>
+										<!-- Create an empty tbody that will be filled by the fetchTableData function -->
+										<tbody class="table-row" id="table-row">
+										</tbody>
+									</table>
+									<nav aria-label="..." class="">
+										<ul class="pagination pagination-sm justify-content-center" id="page-select">
+											<li class="page-item active " value="1">
+												<a class="page-link" href="room.php?page=1">1</a>
+											</li>
+											<li class="page-item" value="2">
+												<a class="page-link" href="room.php?page=2">2</a>
+											</li>
+										</ul>
+									</nav>
+									<div class="chart-container" style="position: relative;">
+										<canvas id="histogram" class="diagram"></canvas>
+									</div>
 								</div>
-								<form>
-									<select id="year-select" name="year" class="select__meters">
+								<!--                            <div class="tab-pane fade" id="opinion" role="tabpanel" aria-labelledby="opinion-tab">-->
+								<div id="tab3" class="tabcontent">
+									<div class="room-meters room-meters__top">
+										<p class="table__top">Нарахування</p>
+									</div>
+									<select id="year-select_profit" name="year_profit" class="select__meters profit">
 										<?php
 										$years = mysqli_query($conn, "SELECT DISTINCT YEAR(date) as year FROM meters WHERE id_user=$id ORDER BY year DESC");
 										while ($year_select = mysqli_fetch_assoc($years)) {
@@ -409,146 +437,107 @@ if (isset($_POST['pay_latest_charge'])) {
 										}
 										?>
 									</select>
-								</form>
-								<table class="table table-bordered table-room">
-									<thead class="table-room__top">
-										<tr>
-											<th scope="col">№ лічильника</th>
-											<th scope="col">Дата</th>
-											<th scope="col">Показник</th>
-											<th scope="col">Джерело</th>
-										</tr>
-									</thead>
-									<!-- Create an empty tbody that will be filled by the fetchTableData function -->
-									<tbody class="table-row" id="table-row">
-									</tbody>
-								</table>
-								<nav aria-label="..." class="">
-									<ul class="pagination pagination-sm justify-content-center" id="page-select">
-										<li class="page-item active " value="1">
-											<a class="page-link" href="room.php?page=1">1</a>
-										</li>
-										<li class="page-item" value="2">
-											<a class="page-link" href="room.php?page=2">2</a>
-										</li>
-									</ul>
-								</nav>
-								<div class="chart-container" style="position: relative;">
-									<canvas id="histogram" class="diagram"></canvas>
-								</div>
-							</div>
-							<!--                            <div class="tab-pane fade" id="opinion" role="tabpanel" aria-labelledby="opinion-tab">-->
-							<div id="tab3" class="tabcontent">
-								<div class="room-meters room-meters__top">
-									<p class="table__top">Нарахування</p>
-								</div>
-								<select id="year-select_profit" name="year_profit" class="select__meters profit">
-									<?php
-									$years = mysqli_query($conn, "SELECT DISTINCT YEAR(date) as year FROM meters WHERE id_user=$id ORDER BY year DESC");
-									while ($year_select = mysqli_fetch_assoc($years)) {
-										echo '<option value="' . $year_select['year'] . '">' . $year_select['year'] . '</option>';
-									}
-									?>
-								</select>
 
-								<table class="table table-bordered table-room">
-									<thead class="table-room__top">
-										<tr>
-											<th scope="col">Період</th>
-											<th scope="col">Борг на поч. міс.</th>
-											<th scope="col">Нараховано</th>
-											<th scope="col">Сплачено</th>
-										</tr>
-									</thead>
-									<tbody class="table-row">
+									<table class="table table-bordered table-room">
+										<thead class="table-room__top">
+											<tr>
+												<th scope="col">Період</th>
+												<th scope="col">Борг на поч. міс.</th>
+												<th scope="col">Нараховано</th>
+												<th scope="col">Сплачено</th>
+											</tr>
+										</thead>
+										<tbody class="table-row">
 
-									</tbody>
-								</table>
-								<div class="chart-container" style="position: relative;">
-									<canvas id="profitChart" class="diagram"></canvas>
+										</tbody>
+									</table>
+									<div class="chart-container" style="position: relative;">
+										<canvas id="profitChart" class="diagram"></canvas>
+									</div>
 								</div>
-							</div>
-							<!--                            <div class="tab-pane fade" id="pay" role="tabpanel" aria-labelledby="pay-tab">-->
-							<div id="tab4" class="tabcontent">
-								4 панель
-								<form action="#" method="POST">
-									<button class="btn btn-primary my_btn" type="submit"
-										name="pay_latest_charge">Оплатити останній рахунок</button>
-								</form>
+								<!--                            <div class="tab-pane fade" id="pay" role="tabpanel" aria-labelledby="pay-tab">-->
+								<div id="tab4" class="tabcontent">
+									4 панель
+									<form action="#" method="POST">
+										<button class="btn btn-primary my_btn" type="submit"
+											name="pay_latest_charge">Оплатити останній рахунок</button>
+									</form>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+			</section>
+			<div id="popup" class="popup">
+				<div class="po popup__body">
+					<div class="popup__content">
+						<a href="#" class="popup__close close-popup">X</a>
+						<div class="popup__title">Редагуйте свої дані</div>
+						<form id="ajax_form" action="" method="POST" class="register-form popup__text">
+							<div class="row">
+								<div class="col">
+
+									<!-- E-mail -->
+									<label for="">Ваша адрес</label>
+									<input type="text" name="address" value="<?= $row['address']; ?> "
+										class="form-control form__registr" placeholder="Адрес">
+									<label for="">Номер лічильника</label>
+									<input type="text" name="counter" value="<?= $row['counter']; ?> "
+										class="form-control form__registr" placeholder="Лічильник">
+									<label for="">Ваш номер</label>
+									<input type="text" name="mobile_phone" value="<?= $row['mobile_phone']; ?> "
+										class="form-control form__registr " placeholder="Номер">
+									<label for="">Ваш домашній номер</label>
+									<input type="text" name="home_phone" value="<?= $row['home_phone']; ?> "
+										class="form-control form__registr " placeholder="Номер домашній">
+									<!-- Sign up button -->
+									<button class="btn btn-primary my_btn btn_register mt-5" id="btn" type="submit"
+										name="do_save">Зберегти</button>
+
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
 			</div>
-		</section>
-		<div id="popup" class="popup">
+
+		</div>
+		<div id="popup_meters" class="popup">
 			<div class="po popup__body">
 				<div class="popup__content">
 					<a href="#" class="popup__close close-popup">X</a>
-					<div class="popup__title">Редагуйте свої дані</div>
-					<form id="ajax_form" action="" method="POST" class="register-form popup__text">
+					<div class="popup__title">Подача показника</div>
+					<form action="#" method="POST" class="register-form popup__text">
 						<div class="row">
 							<div class="col">
-
-								<!-- E-mail -->
-								<label for="">Ваша адрес</label>
-								<input type="text" name="address" value="<?= $row['address']; ?> "
-									class="form-control form__registr" placeholder="Адрес">
-								<label for="">Номер лічильника</label>
+								<label for="">№ Лічильника</label>
+								<?php $meters_table = meters_table(); ?>
 								<input type="text" name="counter" value="<?= $row['counter']; ?> "
-									class="form-control form__registr" placeholder="Лічильник">
-								<label for="">Ваш номер</label>
-								<input type="text" name="mobile_phone" value="<?= $row['mobile_phone']; ?> "
-									class="form-control form__registr " placeholder="Номер">
-								<label for="">Ваш домашній номер</label>
-								<input type="text" name="home_phone" value="<?= $row['home_phone']; ?> "
-									class="form-control form__registr " placeholder="Номер домашній">
-								<!-- Sign up button -->
-								<button class="btn btn-primary my_btn btn_register mt-5" id="btn" type="submit"
-									name="do_save">Зберегти</button>
+									class="form-control form__registr" placeholder="Лічильник" readonly>
+								<label for="">Попередній показник</label>
+								<input type="number" name="old_user_meter" value="<?= end($meters_table)['meters']; ?>"
+									class="form-control form__registr" placeholder="Показник" readonly>
+								<label for="">Ввести показник</label>
+								<input type="number" name="new_meter" value="" class="form-control form__registr"
+									placeholder="Новий показник" required value="">
+								<label for="data_maters">Дата</label>
+								<input type="date" class="form-control form__registr" name="data_maters"
+									id="data_maters" value="<?php echo date('Y-m-d'); ?>" readonly />
 
+								<button class="btn btn-primary my_btn btn_register mt-5" type="submit"
+									name="do_meters">Ввести</button>
 							</div>
 						</div>
 					</form>
 				</div>
 			</div>
-
 		</div>
 
-	</div>
-	<div id="popup_meters" class="popup">
-		<div class="po popup__body">
-			<div class="popup__content">
-				<a href="#" class="popup__close close-popup">X</a>
-				<div class="popup__title">Подача показника</div>
-				<form action="#" method="POST" class="register-form popup__text">
-					<div class="row">
-						<div class="col">
-							<label for="">№ Лічильника</label>
-							<?php $meters_table = meters_table(); ?>
-							<input type="text" name="counter" value="<?= $row['counter']; ?> "
-								class="form-control form__registr" placeholder="Лічильник" readonly>
-							<label for="">Попередній показник</label>
-							<input type="number" name="old_user_meter" value="<?= end($meters_table)['meters']; ?>"
-								class="form-control form__registr" placeholder="Показник" readonly>
-							<label for="">Ввести показник</label>
-							<input type="number" name="new_meter" value="" class="form-control form__registr"
-								placeholder="Новий показник" required value="">
-							<label for="data_maters">Дата</label>
-							<input type="date" class="form-control form__registr" name="data_maters" id="data_maters"
-								value="<?php echo date('Y-m-d'); ?>" readonly />
-
-							<button class="btn btn-primary my_btn btn_register mt-5" type="submit"
-								name="do_meters">Ввести</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<a class="gotopbtn" href="#"> <i class="fas fa-arrow-up"></i> </a>
-	<?php
-	include('footer.php')
-		?>
-	<script src="js/main.js"></script>
-	<script src="js/fetch_profit.js"></script>
+		<a class="gotopbtn" href="#"> <i class="fas fa-arrow-up"></i> </a>
+		<script src="js/scroll_top.js"></script>
+		<?php
+		include('footer.php')
+			?>
+		<script src="js/main.js"></script>
+		<script src="js/fetch_profit.js"></script>

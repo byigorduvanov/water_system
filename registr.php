@@ -1,4 +1,6 @@
 <?php
+$footer_class = 'hide-footer';
+$burger_black = 'burger_black';
 include('header.php');
 
 require 'vendor/connect.php';
@@ -18,7 +20,6 @@ if (isset($_POST["submit"])) {
 		$errors['email'] = "Пошта вже зайнята";
 	} else {
 		if ($password == $password_confirm) {
-			//   $query = "INSERT INTO users VALUES('','$first_name','$last_name','','','','$email','$password','','')";
 			$query = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `token`, `address`, `counter`) 
 VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$password', NULL, NULL, NULL, NULL);";
 			mysqli_query($conn, $query);
@@ -31,16 +32,17 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 }
 
 ?>
-<div class="container">
-	<div class="logo-mobile">
+
+<div class="container flex-grow-1">
+	<div class="logo-mobile mt-0">
 		<a href="index.php">
 			<img src="img/logo.png" alt="main logo" class="">
 		</a>
 	</div>
 	<form action="registr.php" method="post" oninput="validatePassword()" class="register-form">
 		<div class="row">
-			<div class="col">
-				<p class="h4 pt-5 pb-4">Реєстрація</p>
+			<div class="col-lg-11 offset-lg-1">
+				<p class="h4 pt-5 ">Реєстрація</p>
 				<?php
 				if (count($errors) > 0) {
 					?>
@@ -56,13 +58,17 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 				?>
 
 				<!-- E-mail -->
-				<label for="">E-mail</label>
+				<div class="form-row ">
+					<div class="col-lg-5">
+						<label for="">E-mail</label>
 
-				<input type="email" name="email" id="email" value="<?php if (isset($_POST['email']))
-					echo $_POST['email']; ?>" class="form-control form__registr mb-4 col-lg-4" placeholder="E-mail" required>
+						<input type="email" name="email" id="email" value="<?php if (isset($_POST['email']))
+							echo $_POST['email']; ?>" class="form-control form__registr" placeholder="E-mail" required>
+					</div>
+				</div>
 
-				<div class="form-row mb-4">
-					<div class="col-lg-4">
+				<div class="form-row ">
+					<div class="col-lg-5">
 						<!-- First name -->
 						<label for="">Введіть ім’я</label>
 
@@ -71,7 +77,7 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 							placeholder="Введіть ім’я" required value="">
 
 					</div>
-					<div class="col-lg-4">
+					<div class="col-lg-5 offset-lg-1">
 						<!-- Last name -->
 						<label for="">Введіть прізвище</label>
 
@@ -82,31 +88,36 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 					</div>
 				</div>
 				<!-- Password -->
-				<div class="form-row mb-4">
-					<div class="col-lg-4 ">
+				<div class="form-row ">
+					<div class="col-lg-5 ">
 						<label for="exampleInputPassword1">Пароль</label>
 						<input type="password" name="password" id="newPass" class="form-control form__registr "
 							id="exampleInputPassword1" placeholder="Введіть пароль" required value="">
 					</div>
-					<div class="col-lg-4">
+					<div class="col-lg-5 offset-lg-1">
 						<label for="exampleInputPassword1">Підтвердження паролю</label>
 
 						<input type="password" name="password_confirm" id="conformPass"
-							class="form-control form__registr" placeholder="Підтвердження паролю" required value="">
+							class="form-control form__registr form__registr__last__child "
+							placeholder="Підтвердження паролю" required value="">
 					</div>
 				</div>
 
 				<!-- Newsletter -->
-				<div class="custom-control custom-checkbox newsletter">
+				<div class="custom-control custom-checkbox newsletter text-center">
 					<input type="checkbox" class="custom-control-input" id="defaultRegisterFormNewsletter" required
 						value="">
-					<label class="custom-control-label p-1" for="defaultRegisterFormNewsletter">Я приймаю умови
-						Договору</label>
+					<label class="custom-control-label p-1" for="defaultRegisterFormNewsletter">
+						Я приймаю умови Договору
+					</label>
 				</div>
 
 				<!-- Sign up button -->
 
-				<button name="submit" class="btn btn-primary my_btn btn_register mt-5" type="submit">Увійти</button>
+				<button name="submit" class="btn btn-primary my_btn btn_register mt-5 mb-4 d-block m_0_auto"
+					type="submit">
+					Зареєструватися
+				</button>
 
 
 			</div>

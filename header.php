@@ -18,47 +18,51 @@
 </head>
 
 <body>
-	<header>
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<nav class="navbar navbar-expand-lg navbar-light mt-4">
-						<a class="navbar-brand" href="index.php">
-							<img src="img/logo.png" alt="main logo" class="logo ">
-						</a>
-						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-							aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-							<span class="navbar-toggler-icon"></span>
-						</button>
-						<div class="collapse navbar-collapse" id="navbarNav">
-							<ul class="navbar-nav col-12 col-md-12 col-lg-7">
-								<li class="nav-item ">
-									<a class="nav-link" href="index.php#permision">Переваги </a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="#">Запитання</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="#">Документи</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link " href="#">Допомога</a>
-								</li>
-								<li class="nav-item own-btn">
-									<a class="nav-link " href="autorization.php">Мій кабінет</a>
-								</li>
-								<li class="nav-item own-btn">
-									<a class="nav-link " href="registr.php">Зареєструватися</a>
-								</li>
-							</ul>
-							<a href="autorization.php" class="btn btn-primary my_btn btn_room hidde" role="button">Мій
-								кабінет</a>
-							<a href="registr.php" class=" btn btn-primary my_btn btn_register hidde">Зареєструватися</a>
-						</div>
-					</nav>
+	<div class="wrapper_main">
+		<header class="<?php echo isset($header_class) ? $header_class : ''; ?>">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<nav class="navbar navbar-expand-lg navbar-light mt-3">
+							<a class="navbar-brand" href="index.php">
+								<img src="img/logo.png" alt="main logo" class="logo ">
+							</a>
+							<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+								aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+								<span class="navbar-toggler-icon <?php echo isset($burger_black) ? $burger_black : ''; ?> ">
+							</span>
+							</button>
+							<div class="collapse navbar-collapse" id="navbarNav">
+								<ul class="navbar-nav col-12 col-md-12 col-lg-7">
+									<li class="nav-item ">
+										<a class="nav-link" href="index.php#permision">Переваги </a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#">Запитання</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#">Документи</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link " href="#">Допомога</a>
+									</li>
+									<li class="nav-item own-btn">
+										<a class="nav-link " href="autorization.php">Мій кабінет</a>
+									</li>
+									<li class="nav-item own-btn">
+										<a class="nav-link " href="registr.php">Зареєструватися</a>
+									</li>
+								</ul>
+								<a href="autorization.php" class="btn btn-primary my_btn btn_room hidde"
+									role="button">Мій
+									кабінет</a>
+								<a href="registr.php"
+									class=" btn btn-primary my_btn btn_register hidde">Зареєструватися</a>
+							</div>
+						</nav>
 
+					</div>
 				</div>
 			</div>
-		</div>
 
-	</header>
+		</header>

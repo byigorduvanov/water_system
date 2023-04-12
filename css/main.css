@@ -14,6 +14,13 @@ body {
 	display: none;
 }
 
+.wrapper_main {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100vh;
+}
+
 /*стилізаці scroll to top*/
 .gotopbtn {
 	position: fixed;
@@ -79,6 +86,31 @@ span {
 	color: #000 !important;
 }
 
+/* Стилізація бургер-меню */
+.navbar-toggler {
+	border: none;
+	background-color: transparent;
+	padding: 0;
+}
+
+.navbar-toggler:focus {
+	outline: none;
+}
+
+@media (max-width:576px) {
+	.navbar-toggler-icon {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255, 255, 255, 1)' stroke-width='3' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
+		width: 30px;
+		height: 30px;
+	}
+}
+
+.burger_black {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(0, 0, 0, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
+}
+
+
+/* =========================== */
 .logo-mobile {
 	display: none;
 }
@@ -97,7 +129,6 @@ span {
 .btn_register {
 	width: 183px;
 	padding: 11px 0;
-
 }
 
 .btn_room {
@@ -176,6 +207,8 @@ span {
 	transition: all 1s ease 0s;
 }
 
+/* ======Реєстрація================= */
+
 .register-img {
 	width: 114px;
 }
@@ -204,6 +237,7 @@ span {
 	padding: 26px 0px 26px 26px;
 	border: 2px solid #378FD4;
 	border-radius: 10px;
+	margin-bottom: 1.5rem;
 }
 
 .use-form {
@@ -221,7 +255,6 @@ span {
 footer {
 	padding-top: 51px;
 	background: #378FD4;
-	margin-top: 80px;
 }
 
 .fut-icon {
@@ -247,6 +280,10 @@ footer {
 	font-weight: bold;
 }
 
+.m_0_auto {
+	margin: 0 auto;
+}
+
 /*авторизація*/
 .error {
 	background: #F2DEDE;
@@ -269,10 +306,11 @@ footer {
 .login-title {
 	font-size: 28px;
 	padding: 55px 0px;
+	padding-left: 92px;
 }
 
 .autorization-form {
-	padding-bottom: 190px;
+	/* padding-bottom: 190px; */
 }
 
 .forgot-pasword {
@@ -281,8 +319,8 @@ footer {
 	font-size: 14px;
 }
 
-.register-form {
-	padding-bottom: 100px;
+.register-form .row .col .h4 {
+	padding-bottom: 1.25rem;
 }
 
 .register-form label {
@@ -642,13 +680,13 @@ body.lock {
 	overflow: hidden;
 }
 
-.tab :last-child {
-	padding-left: 16px;
+.tab .tablinks:last-child {
+	margin-left: 16px;
 }
 
 @media (max-width: 768px) {
-	.tab :last-child {
-		padding-left: 0px;
+	.tab .tablinks:last-child {
+		margin-left: 0px;
 	}
 }
 
@@ -731,7 +769,7 @@ body.lock {
 	}
 
 	.about__offer {
-		background: #62AFCD;
+		background: #378FD4;
 	}
 
 	.permision {
@@ -821,6 +859,18 @@ body.lock {
 }
 
 /*адаптація register.php*/
+@media (max-width:415px) and (max-height:915px) {
+	.hide-footer {
+		display: none;
+	}
+}
+
+@media (max-height:873px) {
+	.hide-footer {
+		display: none;
+	}
+}
+
 @media screen and (max-width: 576px) {
 	.register-form p {
 		text-align: center;
@@ -833,16 +883,28 @@ body.lock {
 	.btn_register {
 		margin: 0 auto;
 	}
+
+	.form__registr {
+		margin-bottom: 0;
+	}
+
+	.form__registr__last__child {
+		margin-bottom: 25px;
+	}
 }
 
 /*адаптація autorization.php*/
 @media screen and (max-width: 576px) {}
 
 
-@media screen and (max-width: 990px) {
+@media screen and (max-width: 991px) {
 	.btn_register {
 		display: block;
 		margin-top: 10px;
+	}
+
+	.login-title {
+		padding-left: 0;
 	}
 }
 
@@ -853,7 +915,8 @@ body.lock {
 
 	.forgot-pasword {
 		justify-content: center;
-		margin-top: 80px;
+		margin-bottom: 2.5rem;
+		margin-top: 2rem;
 	}
 }
 
@@ -910,10 +973,8 @@ body.lock {
 	}
 
 	.diagram {
-		width: 700px;
-		!important;
-		height: 500px;
-		!important;
+		width: 700px !important;
+		height: 500px !important;
 	}
 
 	.popup__body {
@@ -924,10 +985,8 @@ body.lock {
 
 @media screen and (max-width:625px) {
 	.diagram {
-		width: 400px;
-		!important;
-		height: 400px;
-		!important;
+		width: 400px !important;
+		height: 400px !important;
 	}
 
 }
@@ -973,13 +1032,9 @@ body.lock {
 }
 
 @media screen and (max-width:450px) {
-	.popup__body {
-		justify-content: start;
-		margin-left: 20px;
-	}
+
 
 	.popup__content {
-		max-width: 300px;
 		padding: 11px;
 	}
 }

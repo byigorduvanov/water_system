@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="footer-login ">
+<footer class="footer-login <?php echo isset($footer_class) ? $footer_class : ''; ?> ">
 	<!-- Grid container -->
 	<div class="container ">
 		<!--Grid row-->
@@ -55,6 +55,7 @@
 	</div>
 
 </footer>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
@@ -62,7 +63,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 <script src="js/AOS_ANIMATED.js"></script>
-<script src="js/scroll_top.js"></script>
 
 
 
