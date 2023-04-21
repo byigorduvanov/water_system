@@ -198,34 +198,41 @@ if (isset($_POST['pay_latest_charge'])) {
 					</div>
 				</div>
 			</div>
-			<section class="banner">
-				<div class="container">
-					<marquee direction="right" class="banner-item">
+			<div class="banner">
+				<div class="container" id="scroll-container">
+					<div class="banner-item" id="scroll-text">
 						Передача показників води повинна здійснюватися з 1 по 3 число кожного місяця
-					</marquee>
+					</div>
 				</div>
-			</section>
+			</div>
 			<div class="container">
 				<div class="row">
 					<div class="col">
 						<div class="tab">
 							<button class="tablinks" data-tab="tab1" onclick="openTab(event, 'tab1')">
-								<i class="fas fa-info-circle">
-									<p class="tablinks__text">Мої дані</p>
-								</i>
+								<span class="icon-text d-flex">
+									<i class="fas fa-info-circle"></i>
+									<span class="tablinks__text">Мої дані</span>
+								</span>
 							</button>
 							<button class="tablinks" data-tab="tab2" onclick="openTab(event, 'tab2')">
-								<i class="fas fa-tachometer-alt">
-									<p class="tablinks__text">Показники</p>
-								</i></button>
+								<span class="icon-text d-flex">
+									<i class="fas fa-tachometer-alt"></i>
+									<span class="tablinks__text">Показники</span>
+								</span>
+							</button>
 							<button class="tablinks" data-tab="tab3" onclick="openTab(event, 'tab3')">
-								<i class="fas fa-tasks">
-									<p class="tablinks__text">Нарахування</p>
-								</i></button>
+								<span class="icon-text d-flex">
+									<i class="fas fa-tasks"></i>
+									<span class="tablinks__text">Нарахування</span>
+								</span>
+							</button>
 							<button class="tablinks" data-tab="tab4" onclick="openTab(event, 'tab4')">
-								<i class="fas fa-money-bill-wave-alt">
-									<p class="tablinks__text">Оплата</p>
-								</i></button>
+								<span class="icon-text d-flex">
+									<i class="fas fa-money-bill-wave-alt"></i>
+									<span class="tablinks__text">Оплата</span>
+								</span>
+							</button>
 						</div>
 					</div>
 				</div>
@@ -257,7 +264,8 @@ if (isset($_POST['pay_latest_charge'])) {
 												<div class="information-meters bg-style d-flex">
 													<div class="info__meter mb-4">
 														<h4 class="title__meter">Подати показник</h4>
-														<p class="caption__meter">Прийом показників здійснюється кожного
+														<p class="caption__meter">Прийом показників здійснюється
+															кожного
 															місяця з 1 по 3
 															число
 															(включно)</p>
@@ -327,9 +335,10 @@ if (isset($_POST['pay_latest_charge'])) {
 											<div id="result_form" class="my__date bg-style ">
 												<div class="d-flex">
 													<p class="title__date">МОЇ ДАНІ</p>
-													<a class="ml-auto h-100 popup-link" href="#popup"><img
-															src="img/date__checkbox.png" class="ml-auto h-100"></a>
-
+													<a class="ml-auto h-100 popup-link" href="#popup">
+														<img src="img/date__checkbox.png" class="ml-auto h-100"
+															alt="edit_my_data">
+													</a>
 												</div>
 												<div class="row">
 													<div class="col-6 date__user">
@@ -523,7 +532,7 @@ if (isset($_POST['pay_latest_charge'])) {
 									placeholder="Новий показник" required value="">
 								<label for="data_maters">Дата</label>
 								<input type="date" class="form-control form__registr" name="data_maters"
-									id="data_maters" value="<?php echo date('Y-m-d'); ?>" readonly />
+									id="data_maters" value="<?php echo date('Y-m-d'); ?>" readonly>
 
 								<button class="btn btn-primary my_btn btn_register mt-5" type="submit"
 									name="do_meters">Ввести</button>
@@ -536,8 +545,8 @@ if (isset($_POST['pay_latest_charge'])) {
 
 		<a class="gotopbtn" href="#"> <i class="fas fa-arrow-up"></i> </a>
 		<script src="js/scroll_top.js"></script>
+		<script src="js/main.js"></script>
+		<script src="js/fetch_profit.js"></script>
 		<?php
 		include('footer.php')
 			?>
-		<script src="js/main.js"></script>
-		<script src="js/fetch_profit.js"></script>

@@ -129,30 +129,26 @@ include('header.php');
 		</div>
 		<div class="row">
 			<div class="col ">
-				<form class="form justify-content-center d-flex offer__form ">
-					<div class="form-group m-0 ">
-						<input type="email" class="form-control use-form tablet-form" id="fast_email_input"
+				<form class="form justify-content-center d-flex offer__form">
+					<div class="form-group m-0">
+						<input type="email" class="form-control use-form tablet-form" id="quickEmail"
 							placeholder="Введіть email">
 					</div>
-					<a href="registr.php" class=" btn btn-primary my_btn form-btn">Зареєструватися</a>
+					<a href="registr.php" class="btn btn-primary my_btn form-btn"
+						onclick="saveEmailToStorage()">Зареєструватися</a>
 				</form>
+
 			</div>
 		</div>
 	</div>
 </section>
 <script src="js/scroll_top.js"></script>
+<script>
+	function saveEmailToStorage() {
+		const quickEmail = document.getElementById("quickEmail");
+		localStorage.setItem("user_email", quickEmail.value);
+	}
+</script>
 <?php
 include('footer.php');
 ?>
-<script>
-	$(document).ready(function () {
-		$(".form-btn").on("click", function (e) {
-			e.preventDefault();
-			const email = $("#fast_email_input").val();
-			if (email) {
-				localStorage.setItem("user_email", email);
-			}
-			window.location.href = "registr.php";
-		});
-	});
-</script>

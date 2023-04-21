@@ -60,43 +60,35 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 				<!-- E-mail -->
 				<div class="form-row ">
 					<div class="col-lg-5">
-						<label for="">E-mail</label>
-
+						<label for="email">E-mail</label>
 						<input type="email" name="email" id="email" value="<?php if (isset($_POST['email']))
 							echo $_POST['email']; ?>" class="form-control form__registr" placeholder="E-mail" required>
 					</div>
 				</div>
-
+				<!-- name -->
 				<div class="form-row ">
 					<div class="col-lg-5">
-						<!-- First name -->
-						<label for="">Введіть ім’я</label>
-
+						<label for="defaultRegisterFormLastName">Введіть ім’я</label>
 						<input type="text" name="first_name" value="<?php if (isset($_POST['first_name']))
-							echo $_POST['first_name']; ?>" id="defaultRegisterFormLastName" class="form-control form__registr "
+							echo $_POST['first_name']; ?>" id="defaultRegisterFormLastName" class="form-control form__registr"
 							placeholder="Введіть ім’я" required value="">
-
 					</div>
 					<div class="col-lg-5 offset-lg-1">
-						<!-- Last name -->
-						<label for="">Введіть прізвище</label>
-
+						<label for="defaultRegisterFormFirstName">Введіть прізвище</label>
 						<input type="text" name="last_name" value="<?php if (isset($_POST['last_name']))
-							echo $_POST['last_name']; ?>" id="defaultRegisterFormFirstName" class="form-control form__registr "
+							echo $_POST['last_name']; ?>" id="defaultRegisterFormFirstName" class="form-control form__registr"
 							placeholder="Введіть прізвище " required value="">
-
 					</div>
 				</div>
-				<!-- Password -->
+				<!-- password -->
 				<div class="form-row ">
 					<div class="col-lg-5 ">
 						<label for="exampleInputPassword1">Пароль</label>
-						<input type="password" name="password" id="newPass" class="form-control form__registr "
-							id="exampleInputPassword1" placeholder="Введіть пароль" required value="">
+						<input type="password" name="password" id="newPass" class="form-control form__registr"
+							placeholder="Введіть пароль" required value="">
 					</div>
 					<div class="col-lg-5 offset-lg-1">
-						<label for="exampleInputPassword1">Підтвердження паролю</label>
-
+						<label for="conformPass">Підтвердження паролю</label>
 						<input type="password" name="password_confirm" id="conformPass"
 							class="form-control form__registr form__registr__last__child "
 							placeholder="Підтвердження паролю" required value="">
@@ -127,15 +119,13 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 	</form>
 
 </div>
-
-<?php
-include('footer.php')
-	?>
 <script>
-	$(document).ready(function () {
-		const email = localStorage.getItem("user_email");
-		if (email) {
-			$("#email").val(email);
+	document.addEventListener("DOMContentLoaded", function () {
+		const emailField = document.getElementById("email");
+		const storedEmail = localStorage.getItem("user_email");
+
+		if (storedEmail) {
+			emailField.value = storedEmail;
 			localStorage.removeItem("user_email");
 		}
 	});
@@ -147,3 +137,6 @@ include('footer.php')
 		}
 	}
 </script>
+<?php
+include('footer.php')
+	?>

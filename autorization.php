@@ -60,8 +60,9 @@ if (isset($_POST["submit"])) {
 						?>
 
 						<div class="form-group ">
-							<label for="exampleInputEmail1">Логін (Електронна пошта з якої було
-								здійснено реєстрацію)</label>
+							<label for="defaultRegisterFormEmail">
+								Логін (Електронна пошта з якої було здійснено реєстрацію)
+							</label>
 							<input type="email" name="email" value="" id="defaultRegisterFormEmail"
 								class="form-control form__registr" placeholder="E-mail">
 						</div>

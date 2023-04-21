@@ -241,7 +241,7 @@ function openTab(evt, tabName) {
 
 
 let histogramChart = null;
-// Pagination ajax
+//таблиця показників
 const fetchMetersTableData = async (page, year = new Date().getFullYear()) => {
 	const yearParam = year ? `&year=${year}` : '';
 	const response = await fetch(`fetch_data.php?page=${page}${yearParam}`);
