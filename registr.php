@@ -71,19 +71,19 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 						<label for="defaultRegisterFormLastName">Введіть ім’я</label>
 						<input type="text" name="first_name" value="<?php if (isset($_POST['first_name']))
 							echo $_POST['first_name']; ?>" id="defaultRegisterFormLastName" class="form-control form__registr"
-							placeholder="Введіть ім’я" required value="">
+							placeholder="Введіть ім’я">
 					</div>
 					<div class="col-lg-5 offset-lg-1">
 						<label for="defaultRegisterFormFirstName">Введіть прізвище</label>
 						<input type="text" name="last_name" value="<?php if (isset($_POST['last_name']))
 							echo $_POST['last_name']; ?>" id="defaultRegisterFormFirstName" class="form-control form__registr"
-							placeholder="Введіть прізвище " required value="">
+							placeholder="Введіть прізвище ">
 					</div>
 				</div>
 				<!-- password -->
 				<div class="form-row ">
 					<div class="col-lg-5 ">
-						<label for="exampleInputPassword1">Пароль</label>
+						<label for="newPass">Пароль</label>
 						<input type="password" name="password" id="newPass" class="form-control form__registr"
 							placeholder="Введіть пароль" required value="">
 					</div>

@@ -180,7 +180,7 @@ var currentPage = searchParams.has('page') ? parseInt(searchParams.get('page')) 
 // Set the active class based on the current page
 var pageItems = document.querySelectorAll('#page-select .page-item');
 pageItems.forEach(function (pageItem) {
-	var pageValue = parseInt(pageItem.getAttribute('value'));
+	var pageValue = parseInt(pageItem.dataset.value); // Access the data-value attribute
 	if (pageValue === currentPage) {
 		pageItem.classList.add('active');
 	} else {
@@ -306,7 +306,7 @@ document.getElementById("page-select").addEventListener("click", async function 
 	var target = event.target;
 
 	if (target.tagName === "A" && target.classList.contains("page-link")) {
-		var page = target.parentNode.getAttribute("value");
+		var page = target.parentNode.dataset.value; // Access the data-value attribute
 		var year = document.getElementById("year-select").value;
 		pageItems.forEach(function (pageItem) {
 			pageItem.classList.remove("active");
@@ -319,6 +319,7 @@ document.getElementById("page-select").addEventListener("click", async function 
 		await fetchMetersTableData(page, year);
 	}
 });
+
 //діаграма
 const renderHistogram = (data) => {
 	data.sort((a, b) => parseInt(a.meters) - parseInt(b.meters));

@@ -737,7 +737,7 @@ body.lock {
 	margin-left: 16px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 991px) {
 	.tab .tablinks:last-child {
 		margin-left: 0px;
 	}

@@ -421,10 +421,10 @@ if (isset($_POST['pay_latest_charge'])) {
 									</table>
 									<nav aria-label="..." class="">
 										<ul class="pagination pagination-sm justify-content-center" id="page-select">
-											<li class="page-item active " value="1">
+											<li class="page-item active " data-value="1">
 												<a class="page-link" href="room.php?page=1">1</a>
 											</li>
-											<li class="page-item" value="2">
+											<li class="page-item" data-value="2">
 												<a class="page-link" href="room.php?page=2">2</a>
 											</li>
 										</ul>
@@ -482,23 +482,25 @@ if (isset($_POST['pay_latest_charge'])) {
 					<div class="popup__content">
 						<a href="#" class="popup__close close-popup">X</a>
 						<div class="popup__title">Редагуйте свої дані</div>
-						<form id="ajax_form" action="" method="POST" class="register-form popup__text">
+						<form id="ajax_form" method="POST" class="register-form popup__text">
 							<div class="row">
 								<div class="col">
 
 									<!-- E-mail -->
-									<label for="">Ваша адрес</label>
-									<input type="text" name="address" value="<?= $row['address']; ?> "
+									<label for="address">Ваша адрес</label>
+									<input id="address" type="text" name="address" value="<?= $row['address']; ?> "
 										class="form-control form__registr" placeholder="Адрес">
-									<label for="">Номер лічильника</label>
-									<input type="text" name="counter" value="<?= $row['counter']; ?> "
+									<label for="counter">Номер лічильника</label>
+									<input id="counter" type="text" name="counter" value="<?= $row['counter']; ?> "
 										class="form-control form__registr" placeholder="Лічильник">
-									<label for="">Ваш номер</label>
-									<input type="text" name="mobile_phone" value="<?= $row['mobile_phone']; ?> "
-										class="form-control form__registr " placeholder="Номер">
-									<label for="">Ваш домашній номер</label>
-									<input type="text" name="home_phone" value="<?= $row['home_phone']; ?> "
-										class="form-control form__registr " placeholder="Номер домашній">
+									<label for="mobile_phone">Ваш номер</label>
+									<input id="mobile_phone" type="text" name="mobile_phone"
+										value="<?= $row['mobile_phone']; ?> " class="form-control form__registr "
+										placeholder="Номер">
+									<label for="home_phone">Ваш домашній номер</label>
+									<input id="home_phone" type="text" name="home_phone"
+										value="<?= $row['home_phone']; ?> " class="form-control form__registr "
+										placeholder="Номер домашній">
 									<!-- Sign up button -->
 									<button class="btn btn-primary my_btn btn_register mt-5" id="btn" type="submit"
 										name="do_save">Зберегти</button>
@@ -508,42 +510,42 @@ if (isset($_POST['pay_latest_charge'])) {
 						</form>
 					</div>
 				</div>
-
 			</div>
+			<div id="popup_meters" class="popup">
+				<div class="po popup__body">
+					<div class="popup__content">
+						<a href="#" class="popup__close close-popup">X</a>
+						<div class="popup__title">Подача показника</div>
+						<form method="POST" class="register-form popup__text">
+							<div class="row">
+								<div class="col">
+									<label for="counter_form_meters">№ Лічильника</label>
+									<?php $meters_table = meters_table(); ?>
+									<input id="counter_form_meters" type="text" name="counter"
+										value="<?= $row['counter']; ?> " class="form-control form__registr"
+										placeholder="Лічильник" readonly>
+									<label for="old_user_meter">Попередній показник</label>
+									<input id="old_user_meter" type="number" name="old_user_meter"
+										value="<?= end($meters_table)['meters']; ?>" class="form-control form__registr"
+										placeholder="Показник" readonly>
+									<label for="new_meter">Ввести показник</label>
+									<input id="new_meter" type="number" name="new_meter" value=""
+										class="form-control form__registr" placeholder="Новий показник">
+									<label for="data_maters">Дата</label>
+									<input type="date" class="form-control form__registr" name="data_maters"
+										id="data_maters" value="<?php echo date('Y-m-d'); ?>" readonly>
 
-		</div>
-		<div id="popup_meters" class="popup">
-			<div class="po popup__body">
-				<div class="popup__content">
-					<a href="#" class="popup__close close-popup">X</a>
-					<div class="popup__title">Подача показника</div>
-					<form action="#" method="POST" class="register-form popup__text">
-						<div class="row">
-							<div class="col">
-								<label for="">№ Лічильника</label>
-								<?php $meters_table = meters_table(); ?>
-								<input type="text" name="counter" value="<?= $row['counter']; ?> "
-									class="form-control form__registr" placeholder="Лічильник" readonly>
-								<label for="">Попередній показник</label>
-								<input type="number" name="old_user_meter" value="<?= end($meters_table)['meters']; ?>"
-									class="form-control form__registr" placeholder="Показник" readonly>
-								<label for="">Ввести показник</label>
-								<input type="number" name="new_meter" value="" class="form-control form__registr"
-									placeholder="Новий показник" required value="">
-								<label for="data_maters">Дата</label>
-								<input type="date" class="form-control form__registr" name="data_maters"
-									id="data_maters" value="<?php echo date('Y-m-d'); ?>" readonly>
-
-								<button class="btn btn-primary my_btn btn_register mt-5" type="submit"
-									name="do_meters">Ввести</button>
+									<button class="btn btn-primary my_btn btn_register mt-5" type="submit"
+										name="do_meters">Ввести</button>
+								</div>
 							</div>
-						</div>
-					</form>
+						</form>
+					</div>
 				</div>
 			</div>
-		</div>
 
-		<a class="gotopbtn" href="#"> <i class="fas fa-arrow-up"></i> </a>
+			<a class="gotopbtn" href="#"> <i class="fas fa-arrow-up"></i> </a>
+		</div>
 		<script src="js/scroll_top.js"></script>
 		<script src="js/main.js"></script>
 		<script src="js/fetch_profit.js"></script>
