@@ -4,34 +4,51 @@ $burger_black = 'burger_black';
 include('header.php');
 
 require 'vendor/connect.php';
+require 'vendor/csrf_token.php'; // Include the CSRF token functions
 $errors = array();
 if (!empty($_SESSION["id"])) {
 	header("Location: room.php");
 }
-if (isset($_POST["submit"])) {
-	global $conn;
-	$first_name = $_POST["first_name"];
-	$last_name = $_POST["last_name"];
-	$email = $_POST["email"];
-	$password = md5($_POST["password"]);
-	$password_confirm = md5($_POST["password_confirm"]);
-	$duplicate = mysqli_query($conn, "SELECT * FROM users WHERE email = '$email'");
-	if (mysqli_num_rows($duplicate) > 0) {
-		$errors['email'] = "Пошта вже зайнята";
-	} else {
-		if ($password == $password_confirm) {
-			$query = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `token`, `address`, `counter`) 
-VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$password', NULL, NULL, NULL, NULL);";
-			mysqli_query($conn, $query);
-			//            echo "<script> alert('Registration Successful'); </script>";
-			header("Location: autorization.php");
-		} else {
-			$errors['password'] = "Паролі не співпадають";
-		}
-	}
+
+if (!isset($_SESSION["reg_attempts"])) {
+	$_SESSION["reg_attempts"] = 0;
 }
 
+if (isset($_POST["submit"])) {
+	// Check if the registration attempts limit is exceeded
+	if ($_SESSION["reg_attempts"] >= 5) {
+		$errors['reg_attempts'] = "You have exceeded the maximum number of registration attempts.";
+	} else {
+		// Check CSRF token
+		if (isset($_POST["csrf_token"]) && verify_csrf_token($_POST["csrf_token"])) {
+			global $conn;
+			$first_name = mysqli_real_escape_string($conn, $_POST["first_name"]);
+			$last_name = mysqli_real_escape_string($conn, $_POST["last_name"]);
+			$email = mysqli_real_escape_string($conn, $_POST["email"]);
+			$password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+			$password_confirm = $_POST["password_confirm"];
+			$duplicate = mysqli_query($conn, "SELECT * FROM users WHERE email = '$email'");
+			if (mysqli_num_rows($duplicate) > 0) {
+				$errors['email'] = "Email is already taken";
+			} else {
+				if (password_verify($password_confirm, $password)) {
+					$query = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `token`, `address`, `counter`) 
+					VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$password', NULL, NULL, NULL, NULL);";
+					mysqli_query($conn, $query);
+					header("Location: autorization.php");
+				} else {
+					$errors['password'] = "Passwords do not match";
+				}
+			}
+		} else {
+			$errors['csrf'] = "Invalid CSRF token.";
+		}
+		$_SESSION["reg_attempts"]++;
+	}
+}
 ?>
+<!-- Include the reCAPTCHA script -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <div class="container flex-grow-1">
 	<div class="logo-mobile mt-0">
@@ -39,10 +56,11 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 			<img src="img/logo.png" alt="main logo" class="">
 		</a>
 	</div>
-	<form action="registr.php" method="post" oninput="validatePassword()" class="register-form">
+	<form action="registr.php" method="post" onsubmit="return validateForm()" class="register-form">
+		<input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
 		<div class="row">
 			<div class="col-lg-11 offset-lg-1">
-				<p class="h4 pt-5 ">Реєстрація</p>
+				<p class="h4 pt-5">Registration</p>
 				<?php
 				if (count($errors) > 0) {
 					?>
@@ -68,30 +86,30 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 				<!-- name -->
 				<div class="form-row ">
 					<div class="col-lg-5">
-						<label for="defaultRegisterFormLastName">Введіть ім’я</label>
+						<label for="defaultRegisterFormLastName">Enter your first name</label>
 						<input type="text" name="first_name" value="<?php if (isset($_POST['first_name']))
 							echo $_POST['first_name']; ?>" id="defaultRegisterFormLastName" class="form-control form__registr"
-							placeholder="Введіть ім’я">
+							placeholder="Enter your first name">
 					</div>
 					<div class="col-lg-5 offset-lg-1">
-						<label for="defaultRegisterFormFirstName">Введіть прізвище</label>
+						<label for="defaultRegisterFormFirstName">Enter your last name</label>
 						<input type="text" name="last_name" value="<?php if (isset($_POST['last_name']))
 							echo $_POST['last_name']; ?>" id="defaultRegisterFormFirstName" class="form-control form__registr"
-							placeholder="Введіть прізвище ">
+							placeholder="Enter your last name">
 					</div>
 				</div>
 				<!-- password -->
 				<div class="form-row ">
 					<div class="col-lg-5 ">
-						<label for="newPass">Пароль</label>
+						<label for="newPass">Password</label>
 						<input type="password" name="password" id="newPass" class="form-control form__registr"
-							placeholder="Введіть пароль" required value="">
+							placeholder="Enter your password" required value="">
 					</div>
 					<div class="col-lg-5 offset-lg-1">
-						<label for="conformPass">Підтвердження паролю</label>
+						<label for="conformPass">Password confirmation</label>
 						<input type="password" name="password_confirm" id="conformPass"
 							class="form-control form__registr form__registr__last__child "
-							placeholder="Підтвердження паролю" required value="">
+							placeholder="Password confirmation" required value="">
 					</div>
 				</div>
 
@@ -100,7 +118,7 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 					<input type="checkbox" class="custom-control-input" id="defaultRegisterFormNewsletter" required
 						value="">
 					<label class="custom-control-label p-1" for="defaultRegisterFormNewsletter">
-						Я приймаю умови Договору
+						I accept the terms of the Agreement
 					</label>
 				</div>
 
@@ -108,16 +126,14 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 
 				<button name="submit" class="btn btn-primary my_btn btn_register mt-5 mb-4 d-block m_0_auto"
 					type="submit">
-					Зареєструватися
+					Register
 				</button>
-
-
 			</div>
-
-
 		</div>
-	</form>
+		<div class="g-recaptcha" data-sitekey="6Ldbgq8lAAAAAH3aHy3rxI9ckqNBx02PJX0GaIsN"></div>
 
+
+	</form>
 </div>
 <script>
 	document.addEventListener("DOMContentLoaded", function () {
@@ -129,12 +145,43 @@ VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$passwor
 			localStorage.removeItem("user_email");
 		}
 	});
+
 	function validatePassword() {
+		const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
 		if (newPass.value != conformPass.value) {
-			conformPass.setCustomValidity('Паролі не співпадають.');
+			conformPass.setCustomValidity('Passwords do not match.');
+		} else if (!passwordRegex.test(newPass.value)) {
+			newPass.setCustomValidity('Password must contain at least 8 characters, including uppercase and lowercase letters, numbers, and special characters.');
+		} else {
+			conformPass.setCustomValidity('');
+			newPass.setCustomValidity('');
+		}
+	}
+
+	function validateForm() {
+		// Check password requirements
+		const password = document.getElementById("newPass");
+		const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+		if (!passwordRegex.test(password.value)) {
+			alert("Password must contain at least 8 characters, one uppercase letter, one lowercase letter, and one number.");
+			return false;
+		}
+
+		// Check reCAPTCHA
+		if (grecaptcha.getResponse() === "") {
+			alert("Please complete the reCAPTCHA.");
+			return false;
+		}
+
+		// Check password confirmation
+		if (newPass.value != conformPass.value) {
+			conformPass.setCustomValidity('Passwords do not match.');
+			return false;
 		} else {
 			conformPass.setCustomValidity('');
 		}
+		return true;
 	}
 </script>
 <?php

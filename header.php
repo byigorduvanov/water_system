@@ -6,6 +6,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>Система автоматизованої подачі показників води</title>
+	<script src="https://www.google.com/recaptcha/api.js"></script>
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png">
 	<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 	<!-- Bootstrap CSS -->
@@ -29,8 +30,9 @@
 							</a>
 							<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
 								aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-								<span class="navbar-toggler-icon <?php echo isset($burger_black) ? $burger_black : ''; ?> ">
-							</span>
+								<span
+									class="navbar-toggler-icon <?php echo isset($burger_black) ? $burger_black : ''; ?> ">
+								</span>
 							</button>
 							<div class="collapse navbar-collapse" id="navbarNav">
 								<ul class="navbar-nav col-12 col-md-12 col-lg-7">
