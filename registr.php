@@ -103,31 +103,31 @@ if (isset($_POST["submit"])) {
 				</div>
 				<!-- password -->
 				<div class="form-row ">
-					<div class="col-lg-5">
+					<div class="col-lg-5 pass-field">
 						<label for="newPass">Пароль</label>
 						<input type="password" name="password" id="newPass" class="form-control form__registr"
 							placeholder="Введіть пароль" required value="">
-						<div class="input-group-append">
-							<span class="input-group-text" id="togglePassword" style="cursor: pointer;">👁️</span>
-						</div>
+						<i class="fas fa-eye"></i>
+
 						<div class="password-strength mt-2">
 							<ul id="password-requirements" class="list-unstyled">
-								<li id="length" class="text-danger">Мінімум 8 символів</li>
-								<li id="lowercase" class="text-danger">Хоча б одна маленька літера</li>
-								<li id="uppercase" class="text-danger">Хоча б одна велика літера</li>
-								<li id="number" class="text-danger">Хоча б одна цифра</li>
+								<li id="length" class="text-danger"> <i class="fas fa-circle"></i>
+									Мінімум 8 символів </li>
+								<li id="lowercase" class="text-danger"> <i class="fas fa-circle"></i>
+									Хоча б одна маленька літера</li>
+								<li id="uppercase" class="text-danger"> <i class="fas fa-circle"></i>
+									Хоча б одна велика літера</li>
+								<li id="number" class="text-danger"> <i class="fas fa-circle"></i>
+									Хоча б одна цифра</li>
 							</ul>
 						</div>
 					</div>
-					<div class="col-lg-5 offset-lg-1">
+					<div class="col-lg-5 offset-lg-1 pass-field__confirm">
 						<label for="conformPass">Підтвердження паролю</label>
 						<input type="password" name="password_confirm" id="conformPass"
 							class="form-control form__registr form__registr__last__child "
 							placeholder="Підтвердіть пароль" required value="">
-						<div class="input-group-append">
-							<span class="input-group-text" id="toggleConfirmPassword"
-								style="cursor: pointer;">👁️</span>
-						</div>
+						<i class="fas fa-eye"></i>
 					</div>
 				</div>
 
@@ -166,36 +166,50 @@ if (isset($_POST["submit"])) {
 
 		const password = document.getElementById("newPass");
 		const passwordConfirm = document.getElementById("conformPass");
-		const togglePassword = document.getElementById("togglePassword");
-		const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
 
 		password.addEventListener("input", updatePasswordStrength);
-		togglePassword.addEventListener("click", togglePasswordVisibility);
-		toggleConfirmPassword.addEventListener("click", toggleConfirmPasswordVisibility);
+
+		const passwordInput = document.querySelector(".pass-field input");
+		const eyeIcon = document.querySelector(".pass-field i");
+		const passwordInputConfirm = document.querySelector(".pass-field__confirm input");
+		const eyeIconConfirm = document.querySelector(".pass-field__confirm i");
+		eyeIcon.addEventListener("click", () => {
+			// Toggle the password input type between "password" and "text"
+			passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+
+			// Update the eye icon class based on the password input type
+			eyeIcon.className = `fas fa-eye${passwordInput.type === "password" ? "" : "-slash"}`;
+		});
+		eyeIconConfirm.addEventListener("click", () => {
+			// Toggle the password input type between "password" and "text"
+			passwordInputConfirm.type = passwordInputConfirm.type === "password" ? "text" : "password";
+
+			// Update the eye icon class based on the password input type
+			eyeIconConfirm.className = `fas fa-eye${passwordInputConfirm.type === "password" ? "" : "-slash"}`;
+		});
 	});
 
 	function updatePasswordStrength() {
 		const password = document.getElementById("newPass");
-		const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
-		const length = document.getElementById("length");
-		const lowercase = document.getElementById("lowercase");
-		const uppercase = document.getElementById("uppercase");
-		const number = document.getElementById("number");
+		const requirements = [
+			{ regex: /.{8,}/, index: "length" },
+			{ regex: /[a-z]/, index: "lowercase" },
+			{ regex: /[A-Z]/, index: "uppercase" },
+			{ regex: /\d/, index: "number" }
+		];
 
-		length.classList.toggle("text-danger", password.value.length < 8);
-		lowercase.classList.toggle("text-danger", !/[a-z]/.test(password.value));
-		uppercase.classList.toggle("text-danger", !/[A-Z]/.test(password.value));
-		number.classList.toggle("text-danger", !/\d/.test(password.value));
-	}
+		requirements.forEach(item => {
+			const isValid = item.regex.test(password.value);
+			const requirementItem = document.getElementById(item.index);
 
-	function togglePasswordVisibility() {
-		const password = document.getElementById("newPass");
-		password.type = password.type === "password" ? "text" : "password";
-	}
-
-	function toggleConfirmPasswordVisibility() {
-		const passwordConfirm = document.getElementById("conformPass");
-		passwordConfirm.type = passwordConfirm.type === "password" ? "text" : "password";
+			if (isValid) {
+				requirementItem.classList.add("valid");
+				requirementItem.firstElementChild.className = "fas fa-check";
+			} else {
+				requirementItem.classList.remove("valid");
+				requirementItem.firstElementChild.className = "fas fa-circle";
+			}
+		});
 	}
 
 	function validateForm() {
@@ -226,8 +240,6 @@ if (isset($_POST["submit"])) {
 
 		return true;
 	}
-
-
 </script>
 <?php
 include('footer.php')
