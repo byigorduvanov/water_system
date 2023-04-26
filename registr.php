@@ -4,7 +4,7 @@ $burger_black = 'burger_black';
 include('header.php');
 
 require 'vendor/connect.php';
-require 'vendor/csrf_token.php'; // Include the CSRF token functions
+require 'vendor/csrf_token.php';
 $errors = array();
 if (!empty($_SESSION["id"])) {
 	header("Location: room.php");
@@ -17,7 +17,13 @@ if (!isset($_SESSION["reg_attempts"])) {
 if (isset($_POST["submit"])) {
 	// Check if the registration attempts limit is exceeded
 	if ($_SESSION["reg_attempts"] >= 5) {
-		$errors['reg_attempts'] = "You have exceeded the maximum number of registration attempts.";
+		if (!isset($_SESSION["block_time"]) || time() - $_SESSION["block_time"] > 900) { // 900 seconds (15 minutes) cooldown
+			// Reset the attempts counter and block time
+			$_SESSION["reg_attempts"] = 0;
+			unset($_SESSION["block_time"]);
+		} else {
+			$errors['reg_attempts'] = "Ви перевищили максимальну кількість спроб реєстрації. Будь ласка, спробуйте знову через " . (900 - (time() - $_SESSION["block_time"])) . " секунд.";
+		}
 	} else {
 		// Check CSRF token
 		if (isset($_POST["csrf_token"]) && verify_csrf_token($_POST["csrf_token"])) {
@@ -37,19 +43,16 @@ if (isset($_POST["submit"])) {
 					mysqli_query($conn, $query);
 					header("Location: autorization.php");
 				} else {
-					$errors['password'] = "Passwords do not match";
+					$errors['password'] = "Паролі не збігаються sql";
 				}
 			}
 		} else {
-			$errors['csrf'] = "Invalid CSRF token.";
+			$errors['csrf'] = "Недійсний токен CSRF.";
 		}
 		$_SESSION["reg_attempts"]++;
 	}
 }
 ?>
-<!-- Include the reCAPTCHA script -->
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
 <div class="container flex-grow-1">
 	<div class="logo-mobile mt-0">
 		<a href="index.php">
@@ -60,7 +63,7 @@ if (isset($_POST["submit"])) {
 		<input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
 		<div class="row">
 			<div class="col-lg-11 offset-lg-1">
-				<p class="h4 pt-5">Registration</p>
+				<p class="h4 pt-5">Реєстрація</p>
 				<?php
 				if (count($errors) > 0) {
 					?>
@@ -80,36 +83,51 @@ if (isset($_POST["submit"])) {
 					<div class="col-lg-5">
 						<label for="email">E-mail</label>
 						<input type="email" name="email" id="email" value="<?php if (isset($_POST['email']))
-							echo $_POST['email']; ?>" class="form-control form__registr" placeholder="E-mail" required>
+							echo $_POST['email']; ?>" class="form-control form__registr" placeholder="Введіть email " required>
 					</div>
 				</div>
 				<!-- name -->
 				<div class="form-row ">
 					<div class="col-lg-5">
-						<label for="defaultRegisterFormLastName">Enter your first name</label>
+						<label for="defaultRegisterFormLastName"> Ваше прізвище</label>
 						<input type="text" name="first_name" value="<?php if (isset($_POST['first_name']))
 							echo $_POST['first_name']; ?>" id="defaultRegisterFormLastName" class="form-control form__registr"
-							placeholder="Enter your first name">
+							placeholder="Введіть прізвище ">
 					</div>
 					<div class="col-lg-5 offset-lg-1">
-						<label for="defaultRegisterFormFirstName">Enter your last name</label>
+						<label for="defaultRegisterFormFirstName">Ваше ім’я</label>
 						<input type="text" name="last_name" value="<?php if (isset($_POST['last_name']))
 							echo $_POST['last_name']; ?>" id="defaultRegisterFormFirstName" class="form-control form__registr"
-							placeholder="Enter your last name">
+							placeholder="Введіть ім’я">
 					</div>
 				</div>
 				<!-- password -->
 				<div class="form-row ">
-					<div class="col-lg-5 ">
-						<label for="newPass">Password</label>
+					<div class="col-lg-5">
+						<label for="newPass">Пароль</label>
 						<input type="password" name="password" id="newPass" class="form-control form__registr"
-							placeholder="Enter your password" required value="">
+							placeholder="Введіть пароль" required value="">
+						<div class="input-group-append">
+							<span class="input-group-text" id="togglePassword" style="cursor: pointer;">👁️</span>
+						</div>
+						<div class="password-strength mt-2">
+							<ul id="password-requirements" class="list-unstyled">
+								<li id="length" class="text-danger">Мінімум 8 символів</li>
+								<li id="lowercase" class="text-danger">Хоча б одна маленька літера</li>
+								<li id="uppercase" class="text-danger">Хоча б одна велика літера</li>
+								<li id="number" class="text-danger">Хоча б одна цифра</li>
+							</ul>
+						</div>
 					</div>
 					<div class="col-lg-5 offset-lg-1">
-						<label for="conformPass">Password confirmation</label>
+						<label for="conformPass">Підтвердження паролю</label>
 						<input type="password" name="password_confirm" id="conformPass"
 							class="form-control form__registr form__registr__last__child "
-							placeholder="Password confirmation" required value="">
+							placeholder="Підтвердіть пароль" required value="">
+						<div class="input-group-append">
+							<span class="input-group-text" id="toggleConfirmPassword"
+								style="cursor: pointer;">👁️</span>
+						</div>
 					</div>
 				</div>
 
@@ -118,19 +136,20 @@ if (isset($_POST["submit"])) {
 					<input type="checkbox" class="custom-control-input" id="defaultRegisterFormNewsletter" required
 						value="">
 					<label class="custom-control-label p-1" for="defaultRegisterFormNewsletter">
-						I accept the terms of the Agreement
+						Я приймаю умови Договору
 					</label>
 				</div>
 
 				<!-- Sign up button -->
+				<div class="g-recaptcha" data-sitekey="6Ldbgq8lAAAAAH3aHy3rxI9ckqNBx02PJX0GaIsN"></div>
 
 				<button name="submit" class="btn btn-primary my_btn btn_register mt-5 mb-4 d-block m_0_auto"
 					type="submit">
-					Register
+					Зареєструватися
 				</button>
 			</div>
 		</div>
-		<div class="g-recaptcha" data-sitekey="6Ldbgq8lAAAAAH3aHy3rxI9ckqNBx02PJX0GaIsN"></div>
+
 
 
 	</form>
@@ -144,45 +163,71 @@ if (isset($_POST["submit"])) {
 			emailField.value = storedEmail;
 			localStorage.removeItem("user_email");
 		}
+
+		const password = document.getElementById("newPass");
+		const passwordConfirm = document.getElementById("conformPass");
+		const togglePassword = document.getElementById("togglePassword");
+		const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+
+		password.addEventListener("input", updatePasswordStrength);
+		togglePassword.addEventListener("click", togglePasswordVisibility);
+		toggleConfirmPassword.addEventListener("click", toggleConfirmPasswordVisibility);
 	});
 
-	function validatePassword() {
-		const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+	function updatePasswordStrength() {
+		const password = document.getElementById("newPass");
+		const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+		const length = document.getElementById("length");
+		const lowercase = document.getElementById("lowercase");
+		const uppercase = document.getElementById("uppercase");
+		const number = document.getElementById("number");
 
-		if (newPass.value != conformPass.value) {
-			conformPass.setCustomValidity('Passwords do not match.');
-		} else if (!passwordRegex.test(newPass.value)) {
-			newPass.setCustomValidity('Password must contain at least 8 characters, including uppercase and lowercase letters, numbers, and special characters.');
-		} else {
-			conformPass.setCustomValidity('');
-			newPass.setCustomValidity('');
-		}
+		length.classList.toggle("text-danger", password.value.length < 8);
+		lowercase.classList.toggle("text-danger", !/[a-z]/.test(password.value));
+		uppercase.classList.toggle("text-danger", !/[A-Z]/.test(password.value));
+		number.classList.toggle("text-danger", !/\d/.test(password.value));
+	}
+
+	function togglePasswordVisibility() {
+		const password = document.getElementById("newPass");
+		password.type = password.type === "password" ? "text" : "password";
+	}
+
+	function toggleConfirmPasswordVisibility() {
+		const passwordConfirm = document.getElementById("conformPass");
+		passwordConfirm.type = passwordConfirm.type === "password" ? "text" : "password";
 	}
 
 	function validateForm() {
 		// Check password requirements
 		const password = document.getElementById("newPass");
+		const passwordConfirm = document.getElementById("conformPass");
 		const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+		let errorMessages = [];
+
 		if (!passwordRegex.test(password.value)) {
-			alert("Password must contain at least 8 characters, one uppercase letter, one lowercase letter, and one number.");
-			return false;
+			errorMessages.push("Пароль повинен містити щонайменше 8 символів, одну велику літеру, одну малу літеру та одну цифру.");
 		}
 
 		// Check reCAPTCHA
 		if (grecaptcha.getResponse() === "") {
-			alert("Please complete the reCAPTCHA.");
-			return false;
+			errorMessages.push("Будь ласка, заповніть reCAPTCHA.");
 		}
 
 		// Check password confirmation
-		if (newPass.value != conformPass.value) {
-			conformPass.setCustomValidity('Passwords do not match.');
-			return false;
-		} else {
-			conformPass.setCustomValidity('');
+		if (password.value !== passwordConfirm.value) {
+			errorMessages.push("Паролі не збігаються.");
 		}
+
+		if (errorMessages.length > 0) {
+			alert(errorMessages.join("\n"));
+			return false;
+		}
+
 		return true;
 	}
+
+
 </script>
 <?php
 include('footer.php')
