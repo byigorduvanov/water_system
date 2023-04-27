@@ -146,6 +146,10 @@ if (isset($_POST['pay_latest_charge'])) {
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description"
+		content="Особистий кабінет користувача для автоматизованої системи подачі показників води в Гусятині. Ведіть облік та сплачуйте за послуги з особистого кабінету.">
+	<meta name="keywords"
+		content="Гусятин, водоканал, подача показників води, облік показників, особистий кабінет, автоматизована система">
 	<title>Особистий кабінет користувача</title>
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png">
 	<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&display=swap" rel="stylesheet">

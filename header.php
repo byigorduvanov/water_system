@@ -5,7 +5,12 @@
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>Система автоматизованої подачі показників води</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description"
+		content="Система автоматизованої подачі показників води в Гусятині. Здійснюйте легку подачу показників, ведіть облік та сплачуйте за послуги з особистого кабінету.">
+	<meta name="keywords"
+		content="Гусятин, водоканал, подача показників води, облік показників, автоматизована система">
+	<title>Система обліку та подачі показників води</title>
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png">
 	<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 	<!-- Bootstrap CSS -->

@@ -25,8 +25,8 @@ include('header.php');
 
 					</div>
 					<div class="col-lg-4 col-md-5 col-sm-12 offer-img offer">
-						<img src="img/main-image.png" alt="main-image" class="desktop-img">
-						<img src="img/tablet.png" alt="tablet-img" class="tablet-img">
+						<img src="img/main-image.png" alt="Подача показників води" class="desktop-img">
+						<img src="img/tablet.png" alt="Подача показників води" class="tablet-img">
 					</div>
 				</div>
 				<div class="col-12 offer__btn__block">

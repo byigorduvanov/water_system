@@ -36,6 +36,7 @@ if (isset($_POST["submit"])) {
 			$duplicate = mysqli_query($conn, "SELECT * FROM users WHERE email = '$email'");
 			if (mysqli_num_rows($duplicate) > 0) {
 				$errors['email'] = "Електронна пошта вже зайнята";
+				$_SESSION["reg_attempts"]++;
 			} else {
 				if (password_verify($password_confirm, $password)) {
 					$query = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `token`, `address`, `counter`) 
@@ -48,6 +49,7 @@ if (isset($_POST["submit"])) {
 			}
 		} else {
 			$errors['csrf'] = "Недійсний токен CSRF.";
+			$_SESSION["reg_attempts"]++;
 		}
 		$_SESSION["reg_attempts"]++;
 	}
@@ -134,7 +136,7 @@ if (isset($_POST["submit"])) {
 				<!-- Newsletter -->
 				<div class="custom-control custom-checkbox newsletter text-center  terms__agreement__block m-auto">
 					<input type="checkbox" class="custom-control-input terms__agreement"
-						id="defaultRegisterFormNewsletter " required value="">
+						id="defaultRegisterFormNewsletter" required value="">
 					<label class="custom-control-label p-1" for="defaultRegisterFormNewsletter">
 						Я приймаю умови Договору
 					</label>
