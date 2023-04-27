@@ -35,7 +35,7 @@ if (isset($_POST["submit"])) {
 			$password_confirm = $_POST["password_confirm"];
 			$duplicate = mysqli_query($conn, "SELECT * FROM users WHERE email = '$email'");
 			if (mysqli_num_rows($duplicate) > 0) {
-				$errors['email'] = "Email is already taken";
+				$errors['email'] = "Електронна пошта вже зайнята";
 			} else {
 				if (password_verify($password_confirm, $password)) {
 					$query = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `token`, `address`, `counter`) 
@@ -67,7 +67,7 @@ if (isset($_POST["submit"])) {
 				<?php
 				if (count($errors) > 0) {
 					?>
-					<div class="alert alert-danger text-center col-4">
+					<div class="alert alert-danger text-center col-lg-5">
 						<?php
 						foreach ($errors as $showerror) {
 							echo $showerror;
@@ -92,13 +92,13 @@ if (isset($_POST["submit"])) {
 						<label for="defaultRegisterFormLastName"> Ваше прізвище</label>
 						<input type="text" name="first_name" value="<?php if (isset($_POST['first_name']))
 							echo $_POST['first_name']; ?>" id="defaultRegisterFormLastName" class="form-control form__registr"
-							placeholder="Введіть прізвище ">
+							placeholder="Введіть прізвище " required>
 					</div>
 					<div class="col-lg-5 offset-lg-1">
 						<label for="defaultRegisterFormFirstName">Ваше ім’я</label>
 						<input type="text" name="last_name" value="<?php if (isset($_POST['last_name']))
 							echo $_POST['last_name']; ?>" id="defaultRegisterFormFirstName" class="form-control form__registr"
-							placeholder="Введіть ім’я">
+							placeholder="Введіть ім’я" required>
 					</div>
 				</div>
 				<!-- password -->
@@ -110,14 +110,14 @@ if (isset($_POST["submit"])) {
 						<i class="fas fa-eye"></i>
 
 						<div class="password-strength mt-2">
-							<ul id="password-requirements" class="list-unstyled">
-								<li id="length" class="text-danger"> <i class="fas fa-circle"></i>
+							<ul id="password-requirements" class="list-unstyled text-left">
+								<li id="length" class=""> <i class="fas fa-circle"></i>
 									Мінімум 8 символів </li>
-								<li id="lowercase" class="text-danger"> <i class="fas fa-circle"></i>
+								<li id="lowercase" class=""> <i class="fas fa-circle"></i>
 									Хоча б одна маленька літера</li>
-								<li id="uppercase" class="text-danger"> <i class="fas fa-circle"></i>
+								<li id="uppercase" class=""> <i class="fas fa-circle"></i>
 									Хоча б одна велика літера</li>
-								<li id="number" class="text-danger"> <i class="fas fa-circle"></i>
+								<li id="number" class=""> <i class="fas fa-circle"></i>
 									Хоча б одна цифра</li>
 							</ul>
 						</div>
@@ -132,9 +132,9 @@ if (isset($_POST["submit"])) {
 				</div>
 
 				<!-- Newsletter -->
-				<div class="custom-control custom-checkbox newsletter text-center">
-					<input type="checkbox" class="custom-control-input" id="defaultRegisterFormNewsletter" required
-						value="">
+				<div class="custom-control custom-checkbox newsletter text-center  terms__agreement__block m-auto">
+					<input type="checkbox" class="custom-control-input terms__agreement"
+						id="defaultRegisterFormNewsletter " required value="">
 					<label class="custom-control-label p-1" for="defaultRegisterFormNewsletter">
 						Я приймаю умови Договору
 					</label>
@@ -142,7 +142,6 @@ if (isset($_POST["submit"])) {
 
 				<!-- Sign up button -->
 				<div class="g-recaptcha" data-sitekey="6Ldbgq8lAAAAAH3aHy3rxI9ckqNBx02PJX0GaIsN"></div>
-
 				<button name="submit" class="btn btn-primary my_btn btn_register mt-5 mb-4 d-block m_0_auto"
 					type="submit">
 					Зареєструватися
@@ -193,8 +192,8 @@ if (isset($_POST["submit"])) {
 		const password = document.getElementById("newPass");
 		const requirements = [
 			{ regex: /.{8,}/, index: "length" },
-			{ regex: /[a-z]/, index: "lowercase" },
-			{ regex: /[A-Z]/, index: "uppercase" },
+			{ regex: /[a-zа-я]/, index: "lowercase" },
+			{ regex: /[A-ZА-Я]/, index: "uppercase" },
 			{ regex: /\d/, index: "number" }
 		];
 
@@ -211,12 +210,11 @@ if (isset($_POST["submit"])) {
 			}
 		});
 	}
-
 	function validateForm() {
 		// Check password requirements
 		const password = document.getElementById("newPass");
 		const passwordConfirm = document.getElementById("conformPass");
-		const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+		const passwordRegex = /^(?=.*\d)(?=.*[a-zа-я])(?=.*[A-ZА-Я])(?=.*[a-zA-Zа-яА-Я]).{8,}$/;
 		let errorMessages = [];
 
 		if (!passwordRegex.test(password.value)) {

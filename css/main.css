@@ -252,6 +252,50 @@ span {
 	margin-left: 31px;
 }
 
+.pass-field,
+.pass-field__confirm {
+	position: relative;
+}
+
+.pass-field>i,
+.pass-field__confirm>i {
+	position: absolute;
+	right: 20px;
+	top: 55px;
+}
+
+.list-unstyled li {
+	display: flex;
+	align-items: center;
+}
+
+[class*="fa-circle"] {
+	font-size: 10px;
+	padding-right: 15px;
+	color: #FDD952;
+}
+
+[class*="fa-check"] {
+	padding-right: 15px;
+	color: #378FD4;
+}
+
+.terms__agreement__block {
+	width: 244px;
+}
+
+.terms__agreement {
+	z-index: 1;
+}
+
+.g-recaptcha {
+	margin-top: 20px;
+}
+
+.g-recaptcha div {
+	margin: 0 auto;
+}
+
 footer {
 	padding-top: 51px;
 	background: #378FD4;
