@@ -31,14 +31,14 @@ if (isset($_POST["submit"])) {
 			$first_name = mysqli_real_escape_string($conn, $_POST["first_name"]);
 			$last_name = mysqli_real_escape_string($conn, $_POST["last_name"]);
 			$email = mysqli_real_escape_string($conn, $_POST["email"]);
-			$password = password_hash($_POST["password"], PASSWORD_DEFAULT);
-			$password_confirm = $_POST["password_confirm"];
+			$password = md5($_POST["password"]);
+			$password_confirm = md5($_POST["password_confirm"]);
 			$duplicate = mysqli_query($conn, "SELECT * FROM users WHERE email = '$email'");
 			if (mysqli_num_rows($duplicate) > 0) {
 				$errors['email'] = "Електронна пошта вже зайнята";
 				$_SESSION["reg_attempts"]++;
 			} else {
-				if (password_verify($password_confirm, $password)) {
+				if ($password == $password_confirm) {
 					$query = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `token`, `address`, `counter`) 
 					VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$password', NULL, NULL, NULL, NULL);";
 					mysqli_query($conn, $query);
