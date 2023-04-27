@@ -64,40 +64,40 @@ if (isset($_POST["submit"])) {
 		<div class="row">
 			<div class="col-lg-11 offset-lg-1">
 				<p class="h4 pt-5">Реєстрація</p>
-				<?php
-				if (count($errors) > 0) {
-					?>
+				<?php if (count($errors) > 0): ?>
 					<div class="alert alert-danger text-center col-lg-5">
-						<?php
-						foreach ($errors as $showerror) {
-							echo $showerror;
-						}
-						?>
+						<ul>
+							<?php foreach ($errors as $error): ?>
+								<li>
+									<?php echo htmlspecialchars($error); ?>
+								</li>
+							<?php endforeach; ?>
+						</ul>
 					</div>
-					<?php
-				}
-				?>
-
+				<?php endif; ?>
 				<!-- E-mail -->
 				<div class="form-row ">
 					<div class="col-lg-5">
 						<label for="email">E-mail</label>
-						<input type="email" name="email" id="email" value="<?php if (isset($_POST['email']))
-							echo $_POST['email']; ?>" class="form-control form__registr" placeholder="Введіть email " required>
+						<input type="email" name="email" id="email"
+							value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
+							class="form-control form__registr" placeholder="Введіть email " required>
 					</div>
 				</div>
 				<!-- name -->
 				<div class="form-row ">
 					<div class="col-lg-5">
 						<label for="defaultRegisterFormLastName"> Ваше прізвище</label>
-						<input type="text" name="first_name" value="<?php if (isset($_POST['first_name']))
-							echo $_POST['first_name']; ?>" id="defaultRegisterFormLastName" class="form-control form__registr"
+						<input type="text" name="last_name"
+							value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>"
+							id="defaultRegisterFormLastName" class="form-control form__registr"
 							placeholder="Введіть прізвище " required>
 					</div>
 					<div class="col-lg-5 offset-lg-1">
 						<label for="defaultRegisterFormFirstName">Ваше ім’я</label>
-						<input type="text" name="last_name" value="<?php if (isset($_POST['last_name']))
-							echo $_POST['last_name']; ?>" id="defaultRegisterFormFirstName" class="form-control form__registr"
+						<input type="text" name="first_name"
+							value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>"
+							id="defaultRegisterFormFirstName" class="form-control form__registr"
 							placeholder="Введіть ім’я" required>
 					</div>
 				</div>
