@@ -143,7 +143,7 @@ if (isset($_POST["submit"])) {
 				</div>
 
 				<!-- Sign up button -->
-				<div class="g-recaptcha" data-sitekey="6Ldbgq8lAAAAAH3aHy3rxI9ckqNBx02PJX0GaIsN"></div>
+				<div class="g-recaptcha" data-sitekey="6LeN6NglAAAAANtb-RwaEFhG4fgXZaFmbmg9xg1L"></div>
 				<button name="submit" class="btn btn-primary my_btn btn_register mt-5 mb-4 d-block m_0_auto"
 					type="submit">
 					Зареєструватися
