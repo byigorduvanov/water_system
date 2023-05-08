@@ -39,7 +39,7 @@ if (isset($_POST["submit"])) {
 				$_SESSION["reg_attempts"]++;
 			} else {
 				if ($password == $password_confirm) {
-					$query = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `token`, `address`, `counter`) 
+					$query = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `personal_account`, `address`, `counter`) 
 					VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$password', NULL, NULL, NULL, NULL);";
 					mysqli_query($conn, $query);
 					header("Location: autorization.php");
