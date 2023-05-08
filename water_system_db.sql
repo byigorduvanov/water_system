@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1
--- Время создания: Апр 27 2023 г., 19:43
--- Версия сервера: 10.4.27-MariaDB
--- Версия PHP: 8.2.0
+-- Час створення: Трв 08 2023 р., 16:20
+-- Версія сервера: 10.4.27-MariaDB
+-- Версія PHP: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- База данных: `water_system_db`
+-- База даних: `water_system_db`
 --
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `meters`
+-- Структура таблиці `meters`
 --
 
 CREATE TABLE `meters` (
@@ -37,7 +37,7 @@ CREATE TABLE `meters` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Дамп данных таблицы `meters`
+-- Дамп даних таблиці `meters`
 --
 
 INSERT INTO `meters` (`id`, `id_user`, `meters`, `date`, `price`, `source`) VALUES
@@ -52,25 +52,15 @@ INSERT INTO `meters` (`id`, `id_user`, `meters`, `date`, `price`, `source`) VALU
 (107, 27, 7, '2023-04-03', NULL, NULL),
 (108, 27, 9, '2024-01-03', NULL, NULL),
 (109, 27, 10, '2023-04-03', NULL, NULL),
+(148, 28, 5412, '2023-04-08', NULL, NULL),
+(149, 28, 5420, '2023-04-08', NULL, NULL),
 (150, 25, 35, '2023-04-08', NULL, NULL),
-(151, 27, 20, '2023-04-08', NULL, NULL),
-(156, 28, 10, '2023-04-08', NULL, NULL),
-(157, 28, 15, '2023-04-08', NULL, NULL),
-(160, 28, 20, '2023-04-08', NULL, NULL),
-(161, 28, 30, '2023-04-08', NULL, NULL),
-(162, 28, 32, '2023-04-08', NULL, NULL),
-(163, 28, 40, '2023-04-08', NULL, NULL),
-(164, 28, 55, '2023-04-08', NULL, NULL),
-(165, 28, 56, '2023-04-08', NULL, NULL),
-(166, 27, 30, '2023-04-19', NULL, NULL),
-(167, 27, 50, '2023-04-20', NULL, NULL),
-(168, 27, 52, '2023-04-21', NULL, NULL),
-(169, 27, 75, '2023-04-22', NULL, NULL);
+(151, 27, 20, '2023-04-08', NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `months`
+-- Структура таблиці `months`
 --
 
 CREATE TABLE `months` (
@@ -82,7 +72,7 @@ CREATE TABLE `months` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Дамп данных таблицы `months`
+-- Дамп даних таблиці `months`
 --
 
 INSERT INTO `months` (`id`, `price_for_month`, `id_meters`, `id_user`, `payment_status`) VALUES
@@ -93,24 +83,14 @@ INSERT INTO `months` (`id`, `price_for_month`, `id_meters`, `id_user`, `payment_
 (49, 65, 107, 27, NULL),
 (50, 292.5, 108, 27, NULL),
 (51, 32.5, 109, 27, NULL),
+(95, 260, 149, 28, 'unpaid'),
 (96, 325, 150, 25, 'unpaid'),
-(97, 325, 151, 27, 'overdue'),
-(102, 162.5, 157, 28, 'paid'),
-(105, 162.5, 160, 28, 'overdue'),
-(106, 325, 161, 28, 'overdue'),
-(107, 65, 162, 28, 'paid'),
-(108, 260, 163, 28, 'paid'),
-(109, 487.5, 164, 28, 'overdue'),
-(110, 32.5, 165, 28, 'paid'),
-(111, 325, 166, 27, 'paid'),
-(112, 650, 167, 27, 'paid'),
-(113, 65, 168, 27, 'overdue'),
-(114, 747.5, 169, 27, 'unpaid');
+(97, 325, 151, 27, 'unpaid');
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `users`
+-- Структура таблиці `users`
 --
 
 CREATE TABLE `users` (
@@ -123,35 +103,33 @@ CREATE TABLE `users` (
   `email` varchar(50) DEFAULT NULL,
   `password` varchar(55) DEFAULT NULL,
   `role` varchar(20) DEFAULT NULL,
-  `token` varchar(255) DEFAULT NULL,
+  `personal_account` varchar(255) DEFAULT NULL,
   `address` varchar(191) DEFAULT NULL,
   `counter` varchar(191) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Дамп данных таблицы `users`
+-- Дамп даних таблиці `users`
 --
 
-INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `token`, `address`, `counter`) VALUES
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `personal_account`, `address`, `counter`) VALUES
 (25, 'Ігор', 'Дуванов', NULL, '+380997471990', '214521', 'duvanovigor79@gmail.com', '698d51a19d8a121ce581499d7b701668', NULL, NULL, 'Пулюя 10', '№ 214478569  '),
-(27, 'Igor', 'Duvanov', NULL, ' +3807856999   ', ' 1231777', 'rchaplinskyi@ukr.net', '698d51a19d8a121ce581499d7b701668', NULL, NULL, ' Наливайка 12    ', ' № 23456789876777 '),
-(28, 'Павло', 'Муратов', NULL, ' +3807856986', ' 7856', 'user_test@gmai.com', '698d51a19d8a121ce581499d7b701668', NULL, NULL, ' Наливайка 12', ' № 986562412'),
-(40, 'ігор', 'дуванов', NULL, NULL, NULL, 'tesr@gmail.com', '$2y$10$0yahiYkfjNdt9wcV6LJnSOdlyYxId.dJmRm6HA4viJrou1Uz', NULL, NULL, NULL, NULL),
-(41, 'ігор', 'Google_pro2004', NULL, NULL, NULL, 'user_test@gmail.com', '$2y$10$w5KeQ88kYH8xfH.sjc27AuB97JP1PXRpfsugwcJYucNjG.Li', NULL, NULL, NULL, NULL);
+(27, 'Igor', 'Duvanov', NULL, ' +3807856986', ' 1231412', 'rchaplinskyi@ukr.net', '698d51a19d8a121ce581499d7b701668', NULL, NULL, ' Наливайка 12', ' № 23456789876543'),
+(28, 'Павло', 'Муратов', NULL, ' +3807856986', ' 7856', 'user_test@gmai.com', '698d51a19d8a121ce581499d7b701668', NULL, NULL, ' Наливайка 12', ' № 986562412');
 
 --
--- Индексы сохранённых таблиц
+-- Індекси збережених таблиць
 --
 
 --
--- Индексы таблицы `meters`
+-- Індекси таблиці `meters`
 --
 ALTER TABLE `meters`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_user` (`id_user`);
 
 --
--- Индексы таблицы `months`
+-- Індекси таблиці `months`
 --
 ALTER TABLE `months`
   ADD PRIMARY KEY (`id`),
@@ -159,46 +137,46 @@ ALTER TABLE `months`
   ADD KEY `id_user` (`id_user`);
 
 --
--- Индексы таблицы `users`
+-- Індекси таблиці `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD KEY `email` (`email`);
 
 --
--- AUTO_INCREMENT для сохранённых таблиц
+-- AUTO_INCREMENT для збережених таблиць
 --
 
 --
--- AUTO_INCREMENT для таблицы `meters`
+-- AUTO_INCREMENT для таблиці `meters`
 --
 ALTER TABLE `meters`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=170;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=154;
 
 --
--- AUTO_INCREMENT для таблицы `months`
+-- AUTO_INCREMENT для таблиці `months`
 --
 ALTER TABLE `months`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
 
 --
--- AUTO_INCREMENT для таблицы `users`
+-- AUTO_INCREMENT для таблиці `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
--- Ограничения внешнего ключа сохраненных таблиц
+-- Обмеження зовнішнього ключа збережених таблиць
 --
 
 --
--- Ограничения внешнего ключа таблицы `meters`
+-- Обмеження зовнішнього ключа таблиці `meters`
 --
 ALTER TABLE `meters`
   ADD CONSTRAINT `meters_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Ограничения внешнего ключа таблицы `months`
+-- Обмеження зовнішнього ключа таблиці `months`
 --
 ALTER TABLE `months`
   ADD CONSTRAINT `months_ibfk_1` FOREIGN KEY (`id_meters`) REFERENCES `meters` (`id`) ON DELETE CASCADE,
