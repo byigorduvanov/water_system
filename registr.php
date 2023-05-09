@@ -30,6 +30,7 @@ if (isset($_POST["submit"])) {
 			global $conn;
 			$first_name = mysqli_real_escape_string($conn, $_POST["first_name"]);
 			$last_name = mysqli_real_escape_string($conn, $_POST["last_name"]);
+			$personal_account = mysqli_real_escape_string($conn, $_POST["personal_account"]);
 			$email = mysqli_real_escape_string($conn, $_POST["email"]);
 			$password = md5($_POST["password"]);
 			$password_confirm = md5($_POST["password_confirm"]);
@@ -40,7 +41,7 @@ if (isset($_POST["submit"])) {
 			} else {
 				if ($password == $password_confirm) {
 					$query = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `personal_account`, `address`, `counter`) 
-					VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$password', NULL, NULL, NULL, NULL);";
+					VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$password', NULL, '$personal_account', NULL, NULL);";
 					mysqli_query($conn, $query);
 					header("Location: autorization.php");
 				} else {
@@ -80,6 +81,13 @@ if (isset($_POST["submit"])) {
 				<!-- E-mail -->
 				<div class="form-row ">
 					<div class="col-lg-5">
+						<label for="personal_account">Особистий рахунок</label>
+						<input type="text" name="personal_account"
+							value="<?php echo isset($_POST['personal_account']) ? htmlspecialchars($_POST['personal_account']) : ''; ?>"
+							id="personal_account" class="form-control form__registr"
+							placeholder="Введіть особовийстий рахунок" required>
+					</div>
+					<div class="col-lg-5 offset-lg-1">
 						<label for="email">E-mail</label>
 						<input type="email" name="email" id="email"
 							value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"

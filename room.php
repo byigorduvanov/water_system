@@ -1,5 +1,6 @@
 <?php
 include 'vendor/connect.php';
+require_once('vendor/autoload.php');
 
 $id = $_SESSION["id"];
 global $id;
@@ -13,32 +14,42 @@ if (!empty($_SESSION["id"])) {
 }
 
 $errors = array();
+$errors_html = [];
 if (isset($_POST["do_save"])) {
-	$address = $_POST["address"];
-	$counter = $_POST["counter"];
-	$mobile_phone = $_POST["mobile_phone"];
-	$home_phone = $_POST["home_phone"];
-	$query = "UPDATE users SET address='$address', counter='$counter', mobile_phone='$mobile_phone', home_phone='$home_phone' WHERE id=$id";
+	$address = mysqli_real_escape_string($conn, $_POST["address"]);
+	$counter = mysqli_real_escape_string($conn, $_POST["counter"]);
+	$mobile_phone = mysqli_real_escape_string($conn, $_POST["mobile_phone"]);
+	$first_name = mysqli_real_escape_string($conn, $_POST["first_name"]);
+	$last_name = mysqli_real_escape_string($conn, $_POST["last_name"]);
+	$middle_name = mysqli_real_escape_string($conn, $_POST["middle_name"]);
+
+	$query = "UPDATE users SET address='$address', counter='$counter', mobile_phone='$mobile_phone', first_name='$first_name', last_name='$last_name', middle_name='$middle_name' WHERE id=$id";
 	mysqli_query($conn, $query);
 	header("Location: room.php");
 }
+
 if (isset($_POST["do_meters"])) {
 	if (trim($_POST['new_meter']) == '') {
 		$errors[] = 'Введіть показник';
 	}
 
+	// Check if the counter is not empty
+	if (trim($_POST['counter']) == '') {
+		$errors_html[] = 'Потрібен лічильник, ви можете додати його, натиснувши на <a class="ml-auto h-100 popup-link" href="#popup"><img src="img/date__checkbox.png" class="ml-auto h-100" alt="edit_my_data"></a>';
+	}
 	// Get the previous meter value
 	$meters_table = meters_table();
 	$old_user_meter = !empty($meters_table) ? end($meters_table)['meters'] : 0;
-	$new_meter = $_POST["new_meter"];
+	$new_meter = mysqli_real_escape_string($conn, $_POST["new_meter"]);
 
 	// Check if the new meter value is greater than the previous one
 	if ($new_meter <= $old_user_meter) {
-		$errors[] = 'The new meter value must be greater than the previous one';
+		$errors[] = 'Нове значення лічильника має бути більшим за попереднє';
 	}
-
+	// Merge both error arrays
+	$all_errors = array_merge($errors, $errors_html);
 	if (empty($errors)) {
-		$data_maters = $_POST["data_maters"];
+		$data_maters = mysqli_real_escape_string($conn, $_POST["data_maters"]);
 		$query = "INSERT INTO `meters` (`id`, `id_user`, `meters`, `date`, `price`, `source`) VALUES (NULL, '$id', '$new_meter', '$data_maters', NULL, NULL);";
 		mysqli_query($conn, $query);
 
@@ -46,6 +57,7 @@ if (isset($_POST["do_meters"])) {
 		$meters_price = meters_price();
 	}
 }
+
 
 
 function meters_table()
@@ -133,6 +145,55 @@ if (isset($_POST['pay_latest_charge'])) {
 	// Refresh the page to update the payment status
 	header("Location: " . $_SERVER['REQUEST_URI']);
 	exit();
+}
+/*формування квитанції*/
+if (isset($_GET['generate_receipt'])) {
+	generate_receipt($latest_charges, $payment_status, $date_of_indicator);
+	exit();
+}
+
+function generate_receipt($charges, $payment_status, $date_of_indicator)
+{
+	$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+	// Set document information
+	$pdf->SetCreator(PDF_CREATOR);
+	$pdf->SetAuthor('Your Company');
+	$pdf->SetTitle('Receipt');
+	$pdf->SetSubject('Payment Receipt');
+
+	// Set default header data
+	$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
+
+	// Set header and footer fonts
+	$pdf->setHeaderFont(array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+	$pdf->setFooterFont(array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+	// Set default monospaced font
+	$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+	// Set margins
+	$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+	$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+	// Set auto page breaks
+	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+	// Add a page
+	$pdf->AddPage();
+
+	// Set the content for the receipt
+	$html = '<h1>Payment Receipt</h1>';
+	$html .= '<p>Date: ' . $date_of_indicator . '</p>';
+	$html .= '<p>Charges: ' . $charges . ' грн</p>';
+	$html .= '<p>Payment Status: ' . $payment_status . '</p>';
+
+	// Write the HTML content to the PDF
+	$pdf->writeHTML($html, true, false, true, false, '');
+
+	// Output the PDF to the browser
+	$pdf->Output('receipt.pdf', 'I');
 }
 
 
@@ -250,6 +311,17 @@ if (isset($_POST['pay_latest_charge'])) {
 								<div id="tab1" class="tabcontent">
 									<div class="row">
 										<div class="col-lg-6 col-md-11 col-sm-12">
+											<div id="error-messages" class="mt-3">
+												<?php
+												if (!empty($all_errors)) {
+													echo '<div class="alert alert-danger mt-2" role="alert">';
+													foreach ($all_errors as $error) {
+														echo '<p>' . $error . '</p>';
+													}
+													echo '</div>';
+												}
+												?>
+											</div>
 											<div class="information">
 												<div class="information-user bg-style d-flex">
 													<div class="user-icon">
@@ -297,41 +369,16 @@ if (isset($_POST['pay_latest_charge'])) {
 														</p>
 													</div>
 													<div class="about__price ml-auto">
-														<p class="about__price__info" id="charges-info">
+														<p class="about__price__info pb-1" id="charges-info">
 															<?php if ($payment_status == 'unpaid') { ?>
 																<?= $latest_charges ?> грн
 															<?php } ?>
 														</p>
+														<a class="caption__about" href="?generate_receipt=1">
+															Сформувати квитанцію
+														</a>
 													</div>
 												</div>
-												<?php
-												if (isset($_POST['do_meters'])) {
-													if (empty($errors)) {
-														echo '<div class="alert alert-arrow d-flex rounded p-0 col-lg-12" role="alert">
-                    <div class="alert-icon d-flex justify-content-center align-items-center text-white flex-grow-0 flex-shrink-0">
-                        <i class="fa fa-check"></i>
-                    </div>
-                    <div class="alert-message d-flex align-items-center py-2 pl-4 pr-3">
-                        Ваш показник прийнятий в обробку.
-                    </div>
-                    <a href="#" class="close d-flex ml-auto justify-content-center align-items-center px-3" data-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </a>
-                </div>';
-													} else {
-														echo '<div class="alert alert-arrow alert-arrow-danger d-flex rounded p-0 col-lg-12" role="alert">
-        <div class="alert-icon d-flex justify-content-center align-items-center text-white flex-grow-0 flex-shrink-0">
-            <i class="fas fa-times-circle"></i>
-        </div>
-        <div class="alert-message d-flex align-items-center py-2 pl-4 pr-3">
-            Введіть показник.
-        </div>
-        <a href="#" class="close d-flex ml-auto justify-content-center align-items-center px-3" data-dismiss="alert">
-            <i class="fas fa-times"></i>
-        </a>
-    </div>';
-													}
-												} ?>
 												<div class="information-pays bg-style"></div>
 											</div>
 										</div>
@@ -348,7 +395,8 @@ if (isset($_POST['pay_latest_charge'])) {
 													<div class="col-6 date__user">
 														<p class="date__user__text">Прізвище</p>
 														<p>Ім’я</p>
-														<p class="date__user__text">Адреса</p>
+														<p class="date__user__text">По батькові</p>
+														<p>Адреса</p>
 													</div>
 													<div class="col-6 info__user">
 														<p class="date__user__text">
@@ -358,6 +406,9 @@ if (isset($_POST['pay_latest_charge'])) {
 															<?= $row['first_name']; ?>
 														</p>
 														<p class="date__user__text">
+															<?= $row['middle_name']; ?>
+														</p>
+														<p>
 															<?= $row['address']; ?>
 														</p>
 													</div>
@@ -367,25 +418,26 @@ if (isset($_POST['pay_latest_charge'])) {
 												</div>
 												<div class="row">
 													<div class="col-6 date__user">
-														<p>Номер лічильника</p>
-														<p class="date__user__text ">E-mail</p>
-														<p>Мобільний телефон</p>
-														<p class="date__user__text">Домашній телефон</p>
+														<p>Особовий рахунок</p>
+														<p class="date__user__text ">Номер лічильника</p>
+														<p>E-mail</p>
+														<p class="date__user__text ">Мобільний телефон</p>
 
 													</div>
 													<div class="col-6 info__user__date">
 														<p>
+															<?= $row['personal_account']; ?>
+														</p>
+														<p class="date__user__text">
 															<?= $row['counter']; ?>
 														</p>
-														<p class="date__user__text">
+														<p>
 															<?= $row['email']; ?>
 														</p>
-														<p>
+														<p class="date__user__text">
 															<?= $row['mobile_phone']; ?>
 														</p>
-														<p class="date__user__text">
-															<?= $row['home_phone']; ?>
-														</p>
+
 													</div>
 													<div class="col-12">
 														<hr class="date__hr">
@@ -490,28 +542,50 @@ if (isset($_POST['pay_latest_charge'])) {
 							<div class="row">
 								<div class="col">
 
-									<!-- E-mail -->
+									<!-- Address -->
 									<label for="address">Ваша адрес</label>
-									<input id="address" type="text" name="address" value="<?= $row['address']; ?> "
+									<input id="address" type="text" name="address"
+										value="<?= htmlspecialchars($row['address']); ?>"
 										class="form-control form__registr" placeholder="Адрес">
+
+									<!-- Counter -->
 									<label for="counter">Номер лічильника</label>
-									<input id="counter" type="text" name="counter" value="<?= $row['counter']; ?> "
+									<input id="counter" type="text" name="counter"
+										value="<?= htmlspecialchars($row['counter']); ?>"
 										class="form-control form__registr" placeholder="Лічильник">
+
+									<!-- Mobile Phone -->
 									<label for="mobile_phone">Ваш номер</label>
 									<input id="mobile_phone" type="text" name="mobile_phone"
-										value="<?= $row['mobile_phone']; ?> " class="form-control form__registr "
-										placeholder="Номер">
-									<label for="home_phone">Ваш домашній номер</label>
-									<input id="home_phone" type="text" name="home_phone"
-										value="<?= $row['home_phone']; ?> " class="form-control form__registr "
-										placeholder="Номер домашній">
-									<!-- Sign up button -->
+										value="<?= htmlspecialchars($row['mobile_phone']); ?>"
+										class="form-control form__registr" placeholder="Номер">
+
+									<!-- First Name -->
+									<label for="first_name">Ваше ім’я</label>
+									<input id="first_name" type="text" name="first_name"
+										value="<?= htmlspecialchars($row['first_name']); ?>"
+										class="form-control form__registr" placeholder="Введіть ім’я">
+
+									<!-- Last Name -->
+									<label for="last_name">Ваше прізвище</label>
+									<input id="last_name" type="text" name="last_name"
+										value="<?= htmlspecialchars($row['last_name']); ?>"
+										class="form-control form__registr" placeholder="Введіть прізвище">
+
+									<!-- Middle Name -->
+									<label for="middle_name">Ваше по батькові</label>
+									<input id="middle_name" type="text" name="middle_name"
+										value="<?= htmlspecialchars($row['middle_name']); ?>"
+										class="form-control form__registr" placeholder="Введіть по батькові">
+
+									<!-- Save button -->
 									<button class="btn btn-primary my_btn btn_register mt-5" id="btn" type="submit"
 										name="do_save">Зберегти</button>
 
 								</div>
 							</div>
 						</form>
+
 					</div>
 				</div>
 			</div>
@@ -526,12 +600,12 @@ if (isset($_POST['pay_latest_charge'])) {
 									<label for="counter_form_meters">№ Лічильника</label>
 									<?php $meters_table = meters_table(); ?>
 									<input id="counter_form_meters" type="text" name="counter"
-										value="<?= $row['counter']; ?> " class="form-control form__registr"
-										placeholder="Лічильник" readonly>
+										value="<?= htmlspecialchars($row['counter']); ?>"
+										class="form-control form__registr" placeholder="Лічильник" readonly>
 									<label for="old_user_meter">Попередній показник</label>
 									<input id="old_user_meter" type="number" name="old_user_meter"
-										value="<?= end($meters_table)['meters']; ?>" class="form-control form__registr"
-										placeholder="Показник" readonly>
+										value="<?= htmlspecialchars(end($meters_table)['meters']); ?>"
+										class="form-control form__registr" placeholder="Показник" readonly>
 									<label for="new_meter">Ввести показник</label>
 									<input id="new_meter" type="number" name="new_meter" value=""
 										class="form-control form__registr" placeholder="Новий показник">
@@ -544,6 +618,7 @@ if (isset($_POST['pay_latest_charge'])) {
 								</div>
 							</div>
 						</form>
+
 					</div>
 				</div>
 			</div>
