@@ -1,6 +1,7 @@
 <?php
 include 'vendor/connect.php';
 require_once('vendor/autoload.php');
+require_once('vendor/generate_receipt.php');
 
 $id = $_SESSION["id"];
 global $id;
@@ -146,54 +147,17 @@ if (isset($_POST['pay_latest_charge'])) {
 	header("Location: " . $_SERVER['REQUEST_URI']);
 	exit();
 }
+
 /*формування квитанції*/
 if (isset($_GET['generate_receipt'])) {
-	generate_receipt($latest_charges, $payment_status, $date_of_indicator);
+	$_SESSION['latest_charges'] = $latest_charges;
+	$_SESSION['payment_status'] = $payment_status;
+	$_SESSION['date_of_indicator'] = $date_of_indicator;
+	$_SESSION['personal_account'] = $row['id'];
+	$_SESSION['number_of_meters'] = $row['counter'];
+	$_SESSION['name'] = $row['first_name'] . ' ' . $row['last_name'];
+	header("Location: vendor/generate_receipt.php");
 	exit();
-}
-
-function generate_receipt($charges, $payment_status, $date_of_indicator)
-{
-	$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-
-	// Set document information
-	$pdf->SetCreator(PDF_CREATOR);
-	$pdf->SetAuthor('Your Company');
-	$pdf->SetTitle('Receipt');
-	$pdf->SetSubject('Payment Receipt');
-
-	// Set default header data
-	$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
-
-	// Set header and footer fonts
-	$pdf->setHeaderFont(array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-	$pdf->setFooterFont(array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
-
-	// Set default monospaced font
-	$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
-	// Set margins
-	$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-	$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-
-	// Set auto page breaks
-	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-
-	// Add a page
-	$pdf->AddPage();
-
-	// Set the content for the receipt
-	$html = '<h1>Payment Receipt</h1>';
-	$html .= '<p>Date: ' . $date_of_indicator . '</p>';
-	$html .= '<p>Charges: ' . $charges . ' грн</p>';
-	$html .= '<p>Payment Status: ' . $payment_status . '</p>';
-
-	// Write the HTML content to the PDF
-	$pdf->writeHTML($html, true, false, true, false, '');
-
-	// Output the PDF to the browser
-	$pdf->Output('receipt.pdf', 'I');
 }
 
 
