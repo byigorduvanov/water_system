@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="c5e0a0b8-9642-46fa-9177-bea2a6595bd6" name="xammp" url="http://localhost//water_system">
+        <fileTransfer mountedRoot="C:\xampp\htdocs\water_system" accessType="MOUNT" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>
