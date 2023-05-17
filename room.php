@@ -1,7 +1,6 @@
 <?php
 include 'vendor/connect.php';
 require_once('vendor/autoload.php');
-require_once('vendor/generate_receipt.php');
 
 $id = $_SESSION["id"];
 global $id;
@@ -129,19 +128,29 @@ function get_latest_charges_and_status()
 	$id = $_SESSION["id"];
 	$sql = "SELECT m.price_for_month, m.payment_status, me.date FROM months m JOIN meters me ON m.id_meters = me.id WHERE m.id_user = $id ORDER BY m.id_meters DESC LIMIT 1";
 	$result = mysqli_query($conn, $sql);
+	if ($result === false) {
+		// Handle error - the query failed
+	}
 	$row = mysqli_fetch_assoc($result);
+	if ($row === null) {
+		// Handle error - no data was returned
+	}
 	return $row;
 }
 $latest_charges_data = get_latest_charges_and_status();
 $latest_charges = isset($latest_charges_data['price_for_month']) ? $latest_charges_data['price_for_month'] : 0;
 $payment_status = isset($latest_charges_data['payment_status']) ? $latest_charges_data['payment_status'] : 'unpaid';
 $date_of_indicator = isset($latest_charges_data['date']) ? $latest_charges_data['date'] : '';
+
 function pay_latest_charge()
 {
 	global $conn;
 	$id = $_SESSION["id"];
 	$sql = "UPDATE months SET payment_status = 'paid' WHERE id_user = $id AND payment_status = 'unpaid' ORDER BY id_meters DESC LIMIT 1";
 	$result = mysqli_query($conn, $sql);
+	if ($result === false) {
+		// Handle error - the query failed
+	}
 }
 
 if (isset($_POST['pay_latest_charge'])) {
@@ -151,17 +160,13 @@ if (isset($_POST['pay_latest_charge'])) {
 	exit();
 }
 
-/*формування квитанції*/
-if (isset($_GET['generate_receipt'])) {
-	$_SESSION['latest_charges'] = $latest_charges;
-	$_SESSION['payment_status'] = $payment_status;
-	$_SESSION['date_of_indicator'] = $date_of_indicator;
-	$_SESSION['personal_account'] = $row['id'];
-	$_SESSION['number_of_meters'] = $row['counter'];
-	$_SESSION['name'] = $row['first_name'] . ' ' . $row['last_name'];
-	header("Location: vendor/generate_receipt.php");
-	exit();
+// Include 'generate_receipt.php' only if payment_status is 'unpaid' and latest_charges is not null
+if ($payment_status === 'unpaid' && $latest_charges !== null && $latest_charges > 0) {
+	require_once('vendor/generate_receipt.php');
 }
+
+
+
 
 
 
@@ -336,16 +341,18 @@ if (isset($_GET['generate_receipt'])) {
 												</div>
 												<div class="about__pay bg-style d-flex">
 													<div class="about__info">
-														<p class="title__about">До сплати за воду</p>
 														<p class="caption__about">станом
 															<?php if ($payment_status == 'unpaid') { ?>
 																<?= $date_of_indicator ?>
 															<?php } ?>
 														</p>
-														<a class="caption__about btn btn-primary my_btn btn_room mt-4"
-															href="?generate_receipt=1" target="_blank">
-															Сформувати квитанцію
-														</a>
+														<!-- Only display the link to generate receipt if payment_status is 'unpaid' -->
+														<?php if ($payment_status === 'unpaid'): ?>
+															<a class="caption__about btn btn-primary my_btn btn_room mt-4"
+																href="?generate_receipt=1" target="_blank">
+																Сформувати квитанцію
+															</a>
+														<?php endif; ?>
 													</div>
 													<div class="about__price ml-auto">
 														<p class="about__price__info pb-1" id="charges-info">
@@ -353,8 +360,8 @@ if (isset($_GET['generate_receipt'])) {
 																<?= $latest_charges ?> грн
 															<?php } ?>
 														</p>
-
 													</div>
+
 												</div>
 												<div class="information-pays bg-style"></div>
 											</div>
