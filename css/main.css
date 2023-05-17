@@ -624,6 +624,7 @@ button[name="do_meters"],
 	font-size: 12px;
 	font-weight: 300;
 	color: #000000;
+	width: 150px;
 }
 
 .about__price__info {

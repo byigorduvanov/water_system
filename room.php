@@ -331,6 +331,10 @@ if (isset($_GET['generate_receipt'])) {
 																<?= $date_of_indicator ?>
 															<?php } ?>
 														</p>
+														<a class="caption__about btn btn-primary my_btn btn_room mt-4"
+															href="?generate_receipt=1">
+															Сформувати квитанцію
+														</a>
 													</div>
 													<div class="about__price ml-auto">
 														<p class="about__price__info pb-1" id="charges-info">
@@ -338,9 +342,7 @@ if (isset($_GET['generate_receipt'])) {
 																<?= $latest_charges ?> грн
 															<?php } ?>
 														</p>
-														<a class="caption__about" href="?generate_receipt=1">
-															Сформувати квитанцію
-														</a>
+
 													</div>
 												</div>
 												<div class="information-pays bg-style"></div>
@@ -491,6 +493,10 @@ if (isset($_GET['generate_receipt'])) {
 										<button class="btn btn-primary my_btn" type="submit"
 											name="pay_latest_charge">Оплатити останній рахунок</button>
 									</form>
+									<a class="caption__about btn btn-primary my_btn btn_room mt-4"
+										href="?generate_receipt=1">
+										Сформувати квитанцію
+									</a>
 								</div>
 							</div>
 						</div>

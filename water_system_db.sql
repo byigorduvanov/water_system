@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1
--- Час створення: Трв 08 2023 р., 16:20
+-- Час створення: Трв 17 2023 р., 12:33
 -- Версія сервера: 10.4.27-MariaDB
 -- Версія PHP: 8.2.0
 
@@ -55,7 +55,10 @@ INSERT INTO `meters` (`id`, `id_user`, `meters`, `date`, `price`, `source`) VALU
 (148, 28, 5412, '2023-04-08', NULL, NULL),
 (149, 28, 5420, '2023-04-08', NULL, NULL),
 (150, 25, 35, '2023-04-08', NULL, NULL),
-(151, 27, 20, '2023-04-08', NULL, NULL);
+(151, 27, 20, '2023-04-08', NULL, NULL),
+(154, 30, 50, '2023-05-17', NULL, NULL),
+(155, 30, 75, '2023-05-17', NULL, NULL),
+(156, 30, 80, '2023-05-17', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -85,7 +88,9 @@ INSERT INTO `months` (`id`, `price_for_month`, `id_meters`, `id_user`, `payment_
 (51, 32.5, 109, 27, NULL),
 (95, 260, 149, 28, 'unpaid'),
 (96, 325, 150, 25, 'unpaid'),
-(97, 325, 151, 27, 'unpaid');
+(97, 325, 151, 27, 'unpaid'),
+(99, 812.5, 155, 30, 'overdue'),
+(100, 162.5, 156, 30, 'unpaid');
 
 -- --------------------------------------------------------
 
@@ -115,7 +120,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `personal_account`, `address`, `counter`) VALUES
 (25, 'Ігор', 'Дуванов', NULL, '+380997471990', '214521', 'duvanovigor79@gmail.com', '698d51a19d8a121ce581499d7b701668', NULL, NULL, 'Пулюя 10', '№ 214478569  '),
 (27, 'Igor', 'Duvanov', NULL, ' +3807856986', ' 1231412', 'rchaplinskyi@ukr.net', '698d51a19d8a121ce581499d7b701668', NULL, NULL, ' Наливайка 12', ' № 23456789876543'),
-(28, 'Павло', 'Муратов', NULL, ' +3807856986', ' 7856', 'user_test@gmai.com', '698d51a19d8a121ce581499d7b701668', NULL, NULL, ' Наливайка 12', ' № 986562412');
+(28, 'Павло', 'Муратов', NULL, ' +3807856986', ' 7856', 'user_test@gmai.com', '698d51a19d8a121ce581499d7b701668', NULL, NULL, ' Наливайка 12', ' № 986562412'),
+(30, 'ігор', 'дуванов', 'Павлович', '0997471990', NULL, 'test_osob@gmail.com', 'bc47a7a828c79c91d9364ee72a8b09af', NULL, 'О/Р 31232184', 'Пулюя', ' № 23456789876543');
 
 --
 -- Індекси збережених таблиць
@@ -151,19 +157,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблиці `meters`
 --
 ALTER TABLE `meters`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=154;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
 
 --
 -- AUTO_INCREMENT для таблиці `months`
 --
 ALTER TABLE `months`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- AUTO_INCREMENT для таблиці `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- Обмеження зовнішнього ключа збережених таблиць
