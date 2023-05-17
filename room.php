@@ -14,6 +14,7 @@ if (!empty($_SESSION["id"])) {
 	header("Location: autorization.php");
 }
 
+$success_message = '';
 $errors = array();
 $errors_html = [];
 if (isset($_POST["do_save"])) {
@@ -27,6 +28,7 @@ if (isset($_POST["do_save"])) {
 	$query = "UPDATE users SET address='$address', counter='$counter', mobile_phone='$mobile_phone', first_name='$first_name', last_name='$last_name', middle_name='$middle_name' WHERE id=$id";
 	mysqli_query($conn, $query);
 	header("Location: room.php");
+	$success_message = 'Дані оновлено';
 }
 
 if (isset($_POST["do_meters"])) {
@@ -56,6 +58,7 @@ if (isset($_POST["do_meters"])) {
 
 		// header("Location: room.php");
 		$meters_price = meters_price();
+		$success_message = 'Показник подано';
 	}
 }
 
@@ -283,6 +286,14 @@ if (isset($_GET['generate_receipt'])) {
 														echo '<p>' . $error . '</p>';
 													}
 													echo '</div>';
+												}
+
+												if (isset($_POST["do_save"]) || isset($_POST["do_meters"])) {
+													if (empty($all_errors) && !empty($success_message)) {
+														echo '<div class="alert alert-success mt-2" role="alert">';
+														echo '<p>' . $success_message . '</p>';
+														echo '</div>';
+													}
 												}
 												?>
 											</div>

@@ -27,6 +27,8 @@ if ($meterResult !== false) {
 	$currentMeterRow = mysqli_fetch_assoc($meterResult);
 	$previousMeterRow = mysqli_fetch_assoc($meterResult);
 
+
+
 	if ($previousMeterRow !== null) {
 		$previousIndicator = $previousMeterRow['meters'];
 	} else {
