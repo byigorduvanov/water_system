@@ -332,7 +332,7 @@ if (isset($_GET['generate_receipt'])) {
 															<?php } ?>
 														</p>
 														<a class="caption__about btn btn-primary my_btn btn_room mt-4"
-															href="?generate_receipt=1">
+															href="?generate_receipt=1" target="_blank">
 															Сформувати квитанцію
 														</a>
 													</div>
