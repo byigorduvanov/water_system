@@ -1,6 +1,6 @@
 <?php
 include 'vendor/connect.php';
-require_once('vendor/autoload.php');
+
 
 $id = $_SESSION["id"];
 global $id;
@@ -50,7 +50,7 @@ if (isset($_POST["do_meters"])) {
 	}
 	// Merge both error arrays
 	$all_errors = array_merge($errors, $errors_html);
-	if (empty($errors)) {
+	if (empty($all_errors)) {
 		$data_maters = mysqli_real_escape_string($conn, $_POST["data_maters"]);
 		$query = "INSERT INTO `meters` (`id`, `id_user`, `meters`, `date`, `price`, `source`) VALUES (NULL, '$id', '$new_meter', '$data_maters', NULL, NULL);";
 		mysqli_query($conn, $query);

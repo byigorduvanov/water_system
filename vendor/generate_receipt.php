@@ -3,8 +3,8 @@ if (session_status() == PHP_SESSION_NONE) {
 	session_start();
 }
 
-include 'connect.php';
-require_once('tecnickcom\tcpdf\examples\tcpdf_include.php');
+include_once 'connect.php';
+require_once('tcpdf/tcpdf.php');
 
 $id = $_SESSION["id"]; // Retrieve the user's ID from session
 
