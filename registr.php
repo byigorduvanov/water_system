@@ -6,8 +6,9 @@ include('header.php');
 require 'vendor/connect.php';
 require 'vendor/csrf_token.php';
 $errors = array();
-if (!empty($_SESSION["id"])) {
+if (isset($_SESSION["user_name"])) {
 	header("Location: room.php");
+	exit();
 }
 
 if (!isset($_SESSION["reg_attempts"])) {
@@ -41,7 +42,7 @@ if (isset($_POST["submit"])) {
 			} else {
 				if ($password == $password_confirm) {
 					$query = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `mobile_phone`, `home_phone`, `email`, `password`, `role`, `personal_account`, `address`, `counter`) 
-					VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$password', NULL, '$personal_account', NULL, NULL);";
+					VALUES (NULL, '$first_name', '$last_name', NULL, NULL, NULL, '$email', '$password', 'user', '$personal_account', NULL, NULL);";
 					mysqli_query($conn, $query);
 					header("Location: autorization.php");
 				} else {
@@ -84,8 +85,8 @@ if (isset($_POST["submit"])) {
 						<label for="personal_account">Особистий рахунок</label>
 						<input type="text" name="personal_account"
 							value="<?php echo isset($_POST['personal_account']) ? htmlspecialchars($_POST['personal_account']) : ''; ?>"
-							id="personal_account" class="form-control form__registr"
-							placeholder="Введіть особовийстий рахунок" required>
+							id="personal_account" class="form-control form__registr" placeholder="Введіть особовийстий рахунок"
+							required>
 					</div>
 					<div class="col-lg-5 offset-lg-1">
 						<label for="email">E-mail</label>
@@ -100,15 +101,15 @@ if (isset($_POST["submit"])) {
 						<label for="defaultRegisterFormLastName"> Ваше прізвище</label>
 						<input type="text" name="last_name"
 							value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>"
-							id="defaultRegisterFormLastName" class="form-control form__registr"
-							placeholder="Введіть прізвище " required>
+							id="defaultRegisterFormLastName" class="form-control form__registr" placeholder="Введіть прізвище "
+							required>
 					</div>
 					<div class="col-lg-5 offset-lg-1">
 						<label for="defaultRegisterFormFirstName">Ваше ім’я</label>
 						<input type="text" name="first_name"
 							value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>"
-							id="defaultRegisterFormFirstName" class="form-control form__registr"
-							placeholder="Введіть ім’я" required>
+							id="defaultRegisterFormFirstName" class="form-control form__registr" placeholder="Введіть ім’я"
+							required>
 					</div>
 				</div>
 				<!-- password -->
@@ -135,16 +136,16 @@ if (isset($_POST["submit"])) {
 					<div class="col-lg-5 offset-lg-1 pass-field__confirm">
 						<label for="conformPass">Підтвердження паролю</label>
 						<input type="password" name="password_confirm" id="conformPass"
-							class="form-control form__registr form__registr__last__child "
-							placeholder="Підтвердіть пароль" required value="">
+							class="form-control form__registr form__registr__last__child " placeholder="Підтвердіть пароль"
+							required value="">
 						<i class="fas fa-eye"></i>
 					</div>
 				</div>
 
 				<!-- Newsletter -->
 				<div class="custom-control custom-checkbox newsletter text-center  terms__agreement__block m-auto">
-					<input type="checkbox" class="custom-control-input terms__agreement"
-						id="defaultRegisterFormNewsletter" required value="">
+					<input type="checkbox" class="custom-control-input terms__agreement" id="defaultRegisterFormNewsletter"
+						required value="">
 					<label class="custom-control-label p-1" for="defaultRegisterFormNewsletter">
 						Я приймаю умови Договору
 					</label>
@@ -152,8 +153,7 @@ if (isset($_POST["submit"])) {
 
 				<!-- Sign up button -->
 				<div class="g-recaptcha" data-sitekey="6LeN6NglAAAAANtb-RwaEFhG4fgXZaFmbmg9xg1L"></div>
-				<button name="submit" class="btn btn-primary my_btn btn_register mt-5 mb-4 d-block m_0_auto"
-					type="submit">
+				<button name="submit" class="btn btn-primary my_btn btn_register mt-5 mb-4 d-block m_0_auto" type="submit">
 					Зареєструватися
 				</button>
 			</div>

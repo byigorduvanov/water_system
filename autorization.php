@@ -5,10 +5,13 @@ $burger_black = 'burger_black';
 include('header.php');
 require 'vendor/connect.php';
 require 'vendor/csrf_token.php';
+
 $errors = array();
-if (!empty($_SESSION["id"])) {
+if (isset($_SESSION["user_name"])) {
 	header("Location: room.php");
+	exit();
 }
+
 
 if (!isset($_SESSION['login_attempts'])) {
 	$_SESSION['login_attempts'] = 0;
@@ -47,8 +50,19 @@ if (isset($_POST["submit"])) {
 				$_SESSION["login"] = true;
 				$_SESSION["id"] = $row["id"];
 				$_SESSION['login_attempts'] = 0;
+				//session_regenerate_id(true); // Regenerate the session ID to prevent session fixation
 				ob_start();
-				$redirect_url = "room.php";
+				if ($row['role'] == 'admin') {
+					$_SESSION['admin_name'] = $row['email'];
+					$redirect_url = "admin/admin.php";
+				} elseif ($row['role'] == 'user') {
+					$_SESSION['user_name'] = $row['email'];
+					$redirect_url = "room.php";
+					// header("Location: room.php");
+				} elseif ($row['role'] == 'operator') {
+					$_SESSION['operator_name'] = $row['email'];
+					$redirect_url = "operator/operator.php";
+				}
 			} else {
 				$errors['password'] = "Неправильна пошта або пароль";
 				$_SESSION['login_attempts']++;
@@ -103,8 +117,7 @@ $csrf_token = generate_csrf_token();
 							</label>
 							<input type="email" name="email"
 								value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
-								id="defaultRegisterFormEmail" class="form-control form__registr" placeholder="E-mail"
-								required>
+								id="defaultRegisterFormEmail" class="form-control form__registr" placeholder="E-mail" required>
 						</div>
 						<div class="form-group pass-field ">
 							<label for="exampleInputPassword1">Пароль</label>
@@ -117,8 +130,7 @@ $csrf_token = generate_csrf_token();
 							<label class="form-check-label p-1" for="exampleCheck1">Запам’ятати мене</label>
 						</div>
 
-						<button type="submit" name="submit"
-							class="btn btn-primary my_btn btn_register mt-5">Увійти</button>
+						<button type="submit" name="submit" class="btn btn-primary my_btn btn_register mt-5">Увійти</button>
 
 						<a href="registr.php" class=" col-lg-4 d-flex  forgot-pasword">Зареєструватися?</a>
 

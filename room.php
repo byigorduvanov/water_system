@@ -4,14 +4,16 @@ include 'vendor/connect.php';
 
 $id = $_SESSION["id"];
 global $id;
-if (!empty($_SESSION["id"])) {
+if (!isset($_SESSION["user_name"])) {
+	header("Location: autorization.php");
+	exit();
+} else {
 	global $conn;
 	$id = $_SESSION["id"];
 	$result = mysqli_query($conn, "SELECT * FROM users WHERE id = $id");
 	$row = mysqli_fetch_assoc($result);
-} else {
-	header("Location: autorization.php");
 }
+
 
 $success_message = '';
 $errors = array();
@@ -332,10 +334,8 @@ if ($payment_status === 'unpaid' && $latest_charges !== null && $latest_charges 
 															<input name="do_meters_save" type="number"
 																placeholder="Введіть Ваш показник"
 																class="form-control use-form room__form">
-															<button type="button"
-																class="popup-link btn btn-primary my_btn btn_room"
-																data-target="#popup_meters"
-																name="open_do_meters">Ввести</button>
+															<button type="button" class="popup-link btn btn-primary my_btn btn_room"
+																data-target="#popup_meters" name="open_do_meters">Ввести</button>
 														</form>
 													</div>
 												</div>
@@ -371,8 +371,7 @@ if ($payment_status === 'unpaid' && $latest_charges !== null && $latest_charges 
 												<div class="d-flex">
 													<p class="title__date">МОЇ ДАНІ</p>
 													<a class="ml-auto h-100 popup-link" href="#popup">
-														<img src="img/date__checkbox.png" class="ml-auto h-100"
-															alt="edit_my_data">
+														<img src="img/date__checkbox.png" class="ml-auto h-100" alt="edit_my_data">
 													</a>
 												</div>
 												<div class="row">
@@ -508,11 +507,10 @@ if ($payment_status === 'unpaid' && $latest_charges !== null && $latest_charges 
 								<div id="tab4" class="tabcontent">
 									4 панель
 									<form action="#" method="POST">
-										<button class="btn btn-primary my_btn" type="submit"
-											name="pay_latest_charge">Оплатити останній рахунок</button>
+										<button class="btn btn-primary my_btn" type="submit" name="pay_latest_charge">Оплатити
+											останній рахунок</button>
 									</form>
-									<a class="caption__about btn btn-primary my_btn btn_room mt-4"
-										href="?generate_receipt=1">
+									<a class="caption__about btn btn-primary my_btn btn_room mt-4" href="?generate_receipt=1">
 										Сформувати квитанцію
 									</a>
 								</div>
@@ -533,38 +531,38 @@ if ($payment_status === 'unpaid' && $latest_charges !== null && $latest_charges 
 									<!-- Address -->
 									<label for="address">Ваша адрес</label>
 									<input id="address" type="text" name="address"
-										value="<?= htmlspecialchars($row['address']); ?>"
-										class="form-control form__registr" placeholder="Адрес">
+										value="<?= htmlspecialchars($row['address']); ?>" class="form-control form__registr"
+										placeholder="Адрес">
 
 									<!-- Counter -->
 									<label for="counter">Номер лічильника</label>
 									<input id="counter" type="text" name="counter"
-										value="<?= htmlspecialchars($row['counter']); ?>"
-										class="form-control form__registr" placeholder="Лічильник">
+										value="<?= htmlspecialchars($row['counter']); ?>" class="form-control form__registr"
+										placeholder="Лічильник">
 
 									<!-- Mobile Phone -->
 									<label for="mobile_phone">Ваш номер</label>
 									<input id="mobile_phone" type="text" name="mobile_phone"
-										value="<?= htmlspecialchars($row['mobile_phone']); ?>"
-										class="form-control form__registr" placeholder="Номер">
+										value="<?= htmlspecialchars($row['mobile_phone']); ?>" class="form-control form__registr"
+										placeholder="Номер">
 
 									<!-- First Name -->
 									<label for="first_name">Ваше ім’я</label>
 									<input id="first_name" type="text" name="first_name"
-										value="<?= htmlspecialchars($row['first_name']); ?>"
-										class="form-control form__registr" placeholder="Введіть ім’я">
+										value="<?= htmlspecialchars($row['first_name']); ?>" class="form-control form__registr"
+										placeholder="Введіть ім’я">
 
 									<!-- Last Name -->
 									<label for="last_name">Ваше прізвище</label>
 									<input id="last_name" type="text" name="last_name"
-										value="<?= htmlspecialchars($row['last_name']); ?>"
-										class="form-control form__registr" placeholder="Введіть прізвище">
+										value="<?= htmlspecialchars($row['last_name']); ?>" class="form-control form__registr"
+										placeholder="Введіть прізвище">
 
 									<!-- Middle Name -->
 									<label for="middle_name">Ваше по батькові</label>
 									<input id="middle_name" type="text" name="middle_name"
-										value="<?= htmlspecialchars($row['middle_name']); ?>"
-										class="form-control form__registr" placeholder="Введіть по батькові">
+										value="<?= htmlspecialchars($row['middle_name']); ?>" class="form-control form__registr"
+										placeholder="Введіть по батькові">
 
 									<!-- Save button -->
 									<button class="btn btn-primary my_btn btn_register mt-5" id="btn" type="submit"
@@ -588,8 +586,8 @@ if ($payment_status === 'unpaid' && $latest_charges !== null && $latest_charges 
 									<label for="counter_form_meters">№ Лічильника</label>
 									<?php $meters_table = meters_table(); ?>
 									<input id="counter_form_meters" type="text" name="counter"
-										value="<?= htmlspecialchars($row['counter']); ?>"
-										class="form-control form__registr" placeholder="Лічильник" readonly>
+										value="<?= htmlspecialchars($row['counter']); ?>" class="form-control form__registr"
+										placeholder="Лічильник" readonly>
 									<label for="old_user_meter">Попередній показник</label>
 									<input id="old_user_meter" type="number" name="old_user_meter"
 										value="<?= htmlspecialchars(end($meters_table)['meters']); ?>"
@@ -598,8 +596,8 @@ if ($payment_status === 'unpaid' && $latest_charges !== null && $latest_charges 
 									<input id="new_meter" type="number" name="new_meter" value=""
 										class="form-control form__registr" placeholder="Новий показник">
 									<label for="data_maters">Дата</label>
-									<input type="date" class="form-control form__registr" name="data_maters"
-										id="data_maters" value="<?php echo date('Y-m-d'); ?>" readonly>
+									<input type="date" class="form-control form__registr" name="data_maters" id="data_maters"
+										value="<?php echo date('Y-m-d'); ?>" readonly>
 
 									<button class="btn btn-primary my_btn btn_register mt-5" type="submit"
 										name="do_meters">Ввести</button>
