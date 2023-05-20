@@ -54,7 +54,7 @@ if (isset($_POST["do_meters"])) {
 	$all_errors = array_merge($errors, $errors_html);
 	if (empty($all_errors)) {
 		$data_maters = mysqli_real_escape_string($conn, $_POST["data_maters"]);
-		$query = "INSERT INTO `meters` (`id`, `id_user`, `meters`, `date`, `price`, `source`) VALUES (NULL, '$id', '$new_meter', '$data_maters', NULL, NULL);";
+		$query = "INSERT INTO `meters` (`id`, `id_user`, `meters`, `date`, `date_update`, `operator_update`) VALUES (NULL, '$id', '$new_meter', '$data_maters', NULL, NULL);";
 		mysqli_query($conn, $query);
 
 		// header("Location: room.php");

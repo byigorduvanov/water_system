@@ -22,12 +22,28 @@ if (!isset($_SESSION["operator_name"])) {
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>operator</title>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+	<link rel="stylesheet" href="../css/all.css">
+	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/main.css">
 </head>
 
 <body>
 	<h1>сторінка оператора</h1>
+	<a href="../index.php">головна</a>
+
 	<a href="../vendor/logout.php" class="btn btn-primary my_btn btn_room">Вихід </a>
 
+
+
+
+	<footer>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		<script src="../js/bootstrap.bundle.min.js"></script>
+	</footer>
 </body>
 
 </html>
