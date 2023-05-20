@@ -54,7 +54,7 @@ if (isset($_POST["do_meters"])) {
 	$all_errors = array_merge($errors, $errors_html);
 	if (empty($all_errors)) {
 		$data_maters = mysqli_real_escape_string($conn, $_POST["data_maters"]);
-		$query = "INSERT INTO `meters` (`id`, `id_user`, `meters`, `date`, `date_update`, `operator_update`) VALUES (NULL, '$id', '$new_meter', '$data_maters', NULL, NULL);";
+		$query = "INSERT INTO `meters` (`id`, `id_user`, `meters`, `date`, `date_update`, `id_operator`) VALUES (NULL, '$id', '$new_meter', '$data_maters', NULL, NULL);";
 		mysqli_query($conn, $query);
 
 		// header("Location: room.php");
@@ -114,12 +114,12 @@ function meters_price()
 		$id_meters = $result->fetch_assoc();
 		$value4 = $id_meters["id"];
 
-		// Встановлення статусу попередніх несплачених нарахувань як "overdue"
-		$sql_overdue = "UPDATE months SET payment_status='overdue' WHERE id_user = $id AND payment_status='unpaid'";
+		// Встановлення статусу попередніх несплачених нарахувань як "прострочений"
+		$sql_overdue = "UPDATE months SET payment_status='прострочений' WHERE id_user = $id AND payment_status='не сплачено'";
 		$conn->query($sql_overdue);
 
 		// Додавання нового запису з нарахуваннями
-		$sql = "INSERT INTO months (price_for_month, id_meters, id_user,payment_status) VALUES ($difference, $value4, $id, 'unpaid')";
+		$sql = "INSERT INTO months (price_for_month, id_meters, id_user,payment_status) VALUES ($difference, $value4, $id, 'не сплачено')";
 		$conn->query($sql);
 	}
 }
@@ -141,14 +141,14 @@ function get_latest_charges_and_status()
 }
 $latest_charges_data = get_latest_charges_and_status();
 $latest_charges = isset($latest_charges_data['price_for_month']) ? $latest_charges_data['price_for_month'] : 0;
-$payment_status = isset($latest_charges_data['payment_status']) ? $latest_charges_data['payment_status'] : 'unpaid';
+$payment_status = isset($latest_charges_data['payment_status']) ? $latest_charges_data['payment_status'] : 'не сплачено';
 $date_of_indicator = isset($latest_charges_data['date']) ? $latest_charges_data['date'] : '';
 
 function pay_latest_charge()
 {
 	global $conn;
 	$id = $_SESSION["id"];
-	$sql = "UPDATE months SET payment_status = 'paid' WHERE id_user = $id AND payment_status = 'unpaid' ORDER BY id_meters DESC LIMIT 1";
+	$sql = "UPDATE months SET payment_status = 'сплачено' WHERE id_user = $id AND payment_status = 'не сплачено' ORDER BY id_meters DESC LIMIT 1";
 	$result = mysqli_query($conn, $sql);
 	if ($result === false) {
 		// Handle error - the query failed
@@ -162,8 +162,8 @@ if (isset($_POST['pay_latest_charge'])) {
 	exit();
 }
 
-// Include 'generate_receipt.php' only if payment_status is 'unpaid' and latest_charges is not null
-if ($payment_status === 'unpaid' && $latest_charges !== null && $latest_charges > 0) {
+// Include 'generate_receipt.php' only if payment_status is 'не сплачено' and latest_charges is not null
+if ($payment_status === 'не сплачено' && $latest_charges !== null && $latest_charges > 0) {
 	require_once('vendor/generate_receipt.php');
 }
 
@@ -342,12 +342,12 @@ if ($payment_status === 'unpaid' && $latest_charges !== null && $latest_charges 
 												<div class="about__pay bg-style d-flex">
 													<div class="about__info">
 														<p class="caption__about">станом
-															<?php if ($payment_status == 'unpaid') { ?>
+															<?php if ($payment_status == 'не сплачено') { ?>
 																<?= $date_of_indicator ?>
 															<?php } ?>
 														</p>
-														<!-- Only display the link to generate receipt if payment_status is 'unpaid' -->
-														<?php if ($payment_status === 'unpaid'): ?>
+														<!-- Only display the link to generate receipt if payment_status is 'не сплачено' -->
+														<?php if ($payment_status === 'не сплачено'): ?>
 															<a class="caption__about btn btn-primary my_btn btn_room mt-4"
 																href="?generate_receipt=1" target="_blank">
 																Сформувати квитанцію
@@ -356,7 +356,7 @@ if ($payment_status === 'unpaid' && $latest_charges !== null && $latest_charges 
 													</div>
 													<div class="about__price ml-auto">
 														<p class="about__price__info pb-1" id="charges-info">
-															<?php if ($payment_status == 'unpaid') { ?>
+															<?php if ($payment_status == 'не сплачено') { ?>
 																<?= $latest_charges ?> грн
 															<?php } ?>
 														</p>
