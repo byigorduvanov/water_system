@@ -12,27 +12,58 @@ if (!isset($_SESSION["operator_name"])) {
 	$row = $result->fetch_assoc();
 }
 
-// Create new user
 if (isset($_POST['create_user'])) {
+	$role = 'user'; // Setting role as 'user' by default
+	$password = md5($_POST['password']); // Encrypt password
 	$stmt = $conn->prepare("INSERT INTO users (first_name, last_name, middle_name, mobile_phone, home_phone, email, password, role, personal_account, address, counter) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-	$stmt->bind_param("sssssssssss", $_POST['first_name'], $_POST['last_name'], $_POST['middle_name'], $_POST['mobile_phone'], $_POST['home_phone'], $_POST['email'], $_POST['password'], $_POST['role'], $_POST['personal_account'], $_POST['address'], $_POST['counter']);
+	$stmt->bind_param("sssssssssss", $_POST['first_name'], $_POST['last_name'], $_POST['middle_name'], $_POST['mobile_phone'], $_POST['home_phone'], $_POST['email'], $password, $role, $_POST['personal_account'], $_POST['address'], $_POST['counter']);
 	$stmt->execute();
 }
+
 
 // Search for user
 $user_search_result = [];
 if (isset($_POST['search_user'])) {
-	$stmt = $conn->prepare("SELECT * FROM users WHERE first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR personal_account LIKE ?");
-	$like_term = '%' . $_POST['search_term'] . '%';
-	$stmt->bind_param("ssss", $like_term, $like_term, $like_term, $like_term);
-	$stmt->execute();
-	$user_search_result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+	$query_parts = [];
+	$params = [];
+	$types = "";
+
+	if (!empty($_POST['search_term1'])) {
+		$query_parts[] = "first_name LIKE ?";
+		$params[] = '%' . $_POST['search_term1'] . '%';
+		$types .= "s";
+	}
+
+	if (!empty($_POST['search_term2'])) {
+		$query_parts[] = "last_name LIKE ?";
+		$params[] = '%' . $_POST['search_term2'] . '%';
+		$types .= "s";
+	}
+
+	if (!empty($_POST['search_term3'])) {
+		$query_parts[] = "email LIKE ?";
+		$params[] = '%' . $_POST['search_term3'] . '%';
+		$types .= "s";
+	}
+
+	if (!empty($_POST['search_term4'])) {
+		$query_parts[] = "personal_account LIKE ?";
+		$params[] = '%' . $_POST['search_term4'] . '%';
+		$types .= "s";
+	}
+
+	if (!empty($query_parts)) {
+		$stmt = $conn->prepare("SELECT * FROM users WHERE " . implode(" OR ", $query_parts));
+		$stmt->bind_param($types, ...$params);
+		$stmt->execute();
+		$user_search_result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+	}
 }
 
-// Update user
 if (isset($_POST['update_user'])) {
+	$password = md5($_POST['password']); // Encrypt password
 	$stmt = $conn->prepare("UPDATE users SET first_name=?, last_name=?, middle_name=?, mobile_phone=?, home_phone=?, email=?, password=?, role=?, personal_account=?, address=?, counter=? WHERE id=?");
-	$stmt->bind_param("sssssssssssi", $_POST['first_name'], $_POST['last_name'], $_POST['middle_name'], $_POST['mobile_phone'], $_POST['home_phone'], $_POST['email'], $_POST['password'], $_POST['role'], $_POST['personal_account'], $_POST['address'], $_POST['counter'], $_POST['user_id']);
+	$stmt->bind_param("sssssssssssi", $_POST['first_name'], $_POST['last_name'], $_POST['middle_name'], $_POST['mobile_phone'], $_POST['home_phone'], $_POST['email'], $password, $_POST['role'], $_POST['personal_account'], $_POST['address'], $_POST['counter'], $_POST['user_id']);
 	$stmt->execute();
 }
 
@@ -80,7 +111,6 @@ if (isset($_POST['update_meter'])) {
 					<input type="text" name="home_phone" placeholder="Home Phone">
 					<input type="text" name="email" placeholder="Email">
 					<input type="text" name="password" placeholder="Password">
-					<input type="text" name="role" placeholder="Role">
 					<input type="text" name="personal_account" placeholder="Personal Account">
 					<input type="text" name="address" placeholder="Address">
 					<input type="text" name="counter" placeholder="Counter">
@@ -96,12 +126,15 @@ if (isset($_POST['update_meter'])) {
 			</div>
 			<div class="card-body">
 				<form method="post">
-					<h2>Search User</h2>
-					<input type="text" name="search_term" placeholder="Search Term">
+					<input type="text" name="search_term1" placeholder="First Name">
+					<input type="text" name="search_term2" placeholder="Last Name">
+					<input type="text" name="search_term3" placeholder="Email">
+					<input type="text" name="search_term4" placeholder="Personal Account">
 					<input type="submit" name="search_user" value="Search User" class="btn btn-primary">
 				</form>
 			</div>
 		</div>
+
 
 		<!-- Search results -->
 		<?php if (!empty($user_search_result)): ?>
