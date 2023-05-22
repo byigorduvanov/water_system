@@ -58,6 +58,11 @@ if (isset($_POST['search_user'])) {
 		$params[] = '%' . $_POST['search_term4'] . '%';
 		$types .= "s";
 	}
+	if (!empty($_POST['search_term5'])) {
+		$query_parts[] = "counter LIKE ?";
+		$params[] = '%' . $_POST['search_term5'] . '%';
+		$types .= "s";
+	}
 
 	if (!empty($query_parts)) {
 		$stmt = $conn->prepare("SELECT * FROM users WHERE " . implode(" OR ", $query_parts));
@@ -70,10 +75,12 @@ if (isset($_POST['search_user'])) {
 
 if (isset($_POST['update_user'])) {
 	$password = md5($_POST['password']); // Пароль шифрування
+	$role = 'user';
 	$stmt = $conn->prepare("UPDATE users SET first_name=?, last_name=?, middle_name=?, mobile_phone=?, home_phone=?, email=?, password=?, role=?, personal_account=?, address=?, counter=? WHERE id=?");
-	$stmt->bind_param("sssssssssssi", $_POST['first_name'], $_POST['last_name'], $_POST['middle_name'], $_POST['mobile_phone'], $_POST['home_phone'], $_POST['email'], $password, $_POST['role'], $_POST['personal_account'], $_POST['address'], $_POST['counter'], $_POST['user_id']);
+	$stmt->bind_param("sssssssssssi", $_POST['first_name'], $_POST['last_name'], $_POST['middle_name'], $_POST['mobile_phone'], $_POST['home_phone'], $_POST['email'], $password, $role, $_POST['personal_account'], $_POST['address'], $_POST['counter'], $_POST['user_id']);
 	$stmt->execute();
 }
+
 
 $meters_for_user = [];
 if (!empty($user_search_result)) {
@@ -160,6 +167,7 @@ if (isset($_POST['update_meter_amount'])) {
 					<input type="text" name="search_term2" placeholder="Прізвище">
 					<input type="text" name="search_term3" placeholder="Електронна пошта">
 					<input type="text" name="search_term4" placeholder="Особистий рахунок">
+					<input type="text" name="search_term5" placeholder="Лічильник">
 					<input type="submit" name="search_user" value="Пошук користувача" class="btn btn-primary">
 				</form>
 			</div>
@@ -243,7 +251,6 @@ if (isset($_POST['update_meter_amount'])) {
 								value="<?php echo $user['home_phone']; ?>">
 							<input type="text" name="email" placeholder="Електронна пошта" value="<?php echo $user['email']; ?>">
 							<input type="text" name="password" placeholder="Пароль" value="<?php echo $user['password']; ?>">
-							<input type="text" name="role" placeholder="Роль" value="<?php echo $user['role']; ?>">
 							<input type="text" name="personal_account" placeholder="Особистий рахунок"
 								value="<?php echo $user['personal_account']; ?>">
 							<input type="text" name="address" placeholder="Адреса" value="<?php echo $user['address']; ?>">
@@ -251,6 +258,7 @@ if (isset($_POST['update_meter_amount'])) {
 							<input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
 							<input type="submit" name="update_user" value="Оновити користувача" class="btn btn-warning">
 						</form>
+
 					<?php endforeach; ?>
 				</div>
 			</div>
