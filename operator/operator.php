@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once '../vendor/connect.php';
 if (!isset($_SESSION["operator_name"])) {
 	header("Location: ../autorization.php");
@@ -6,6 +9,9 @@ if (!isset($_SESSION["operator_name"])) {
 } else {
 	$id = $_SESSION["id"];
 	$stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
+	if ($stmt === false) {
+		die($conn->error);
+	}
 	$stmt->bind_param("i", $id);
 	$stmt->execute();
 	$result = $stmt->get_result();
@@ -23,6 +29,7 @@ if (isset($_POST['create_user'])) {
 
 // Search for user
 $user_search_result = [];
+$user = [];
 if (isset($_POST['search_user'])) {
 	$query_parts = [];
 	$params = [];
@@ -52,11 +59,50 @@ if (isset($_POST['search_user'])) {
 		$types .= "s";
 	}
 
+	if (!empty($_POST['search_term5'])) {
+		$query_parts[] = "counter LIKE ?";
+		$params[] = '%' . $_POST['search_term5'] . '%';
+		$types .= "s";
+	}
+
 	if (!empty($query_parts)) {
 		$stmt = $conn->prepare("SELECT * FROM users WHERE " . implode(" OR ", $query_parts));
 		$stmt->bind_param($types, ...$params);
 		$stmt->execute();
 		$user_search_result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+	}
+	$meters_for_user = [];
+	if (!empty($user_search_result)) {
+		foreach ($user_search_result as $user) {
+			$stmt = $conn->prepare("SELECT m.id as meter_id, m.meters, m.date, mo.price_for_month FROM meters m JOIN months mo ON m.id=mo.id_meters WHERE m.id_user = ? ORDER BY m.date DESC");
+			$stmt->bind_param("i", $user['id']);
+			$stmt->execute();
+			$meters_for_user[$user['id']] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+		}
+	}
+
+	if (isset($_POST['update_meter'])) {
+		date_default_timezone_set('Europe/Kiev');
+		$current_date = date("Y-m-d H:i:s");
+		$stmt = $conn->prepare("UPDATE meters SET meters=?, date_update=?, id_operator=? WHERE id=?");
+		$stmt->bind_param("ssii", $_POST['meters'], $current_date, $id, $_POST['meter_id']);
+		if (!$stmt->execute()) {
+			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+		} else {
+			echo $stmt->affected_rows; // Will print out the number of affected rows
+		}
+
+
+
+	}
+
+	if (isset($_POST['update_meter_amount'])) {
+		$stmt = $conn->prepare("UPDATE months SET price_for_month=? WHERE id_meters=?");
+		$stmt->bind_param("si", $_POST['price_for_month'], $_POST['meter_id']);
+		if (!$stmt->execute()) {
+			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+		}
+
 	}
 }
 
@@ -67,12 +113,7 @@ if (isset($_POST['update_user'])) {
 	$stmt->execute();
 }
 
-// Update meter
-if (isset($_POST['update_meter'])) {
-	$stmt = $conn->prepare("UPDATE meters SET meters=?, date_update=?, operator_update=? WHERE id=?");
-	$stmt->bind_param("ssii", $_POST['meters'], $_POST['date_update'], $id, $_POST['meter_id']);
-	$stmt->execute();
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="uk">
@@ -130,12 +171,62 @@ if (isset($_POST['update_meter'])) {
 					<input type="text" name="search_term2" placeholder="Last Name">
 					<input type="text" name="search_term3" placeholder="Email">
 					<input type="text" name="search_term4" placeholder="Personal Account">
+					<input type="text" name="search_term5" placeholder="Counter">
 					<input type="submit" name="search_user" value="Search User" class="btn btn-primary">
 				</form>
 			</div>
 		</div>
 
+		<div class="card my-3">
+			<div class="card-header">
+				<?php if (isset($user['first_name']) && isset($user['last_name'])): ?>
+					<h2>Meters for
+						<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
+					</h2>
+				<?php else: ?>
+					<h2>Meters for User</h2>
+				<?php endif; ?>
 
+			</div>
+			<div class="card-body">
+				<?php if (isset($user['id']) && isset($meters_for_user[$user['id']])): ?>
+					<table>
+						<tr>
+							<th>Meter</th>
+							<th>Amount</th>
+							<th>Edit Meter</th>
+							<th>Edit Amount</th>
+						</tr>
+						<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
+							<tr>
+								<td>
+									<?php echo $meter['meters']; ?>
+								</td>
+								<td>
+									<?php echo $meter['price_for_month']; ?>
+								</td>
+								<td>
+									<form method="post">
+										<input type="text" name="meters" placeholder="Meters">
+										<input type="hidden" name="meter_id" value="<?php echo $meter['meter_id']; ?>">
+										<input type="submit" name="update_meter" value="Update Meter">
+									</form>
+								</td>
+								<td>
+									<form method="post">
+										<input type="text" name="price_for_month" placeholder="Amount">
+										<input type="hidden" name="meter_id" value="<?php echo $meter['meter_id']; ?>">
+										<input type="submit" name="update_meter_amount" value="Update Amount">
+									</form>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</table>
+				<?php else: ?>
+					<p>No meters found for this user.</p>
+				<?php endif; ?>
+			</div>
+		</div>
 		<!-- Search results -->
 		<?php if (!empty($user_search_result)): ?>
 			<div class="card my-3">
@@ -176,21 +267,7 @@ if (isset($_POST['update_meter'])) {
 			</div>
 		<?php endif; ?>
 
-		<!-- Update meter form -->
-		<div class="card my-3">
-			<div class="card-header">
-				<h2>Update Meter</h2>
-			</div>
-			<div class="card-body">
-				<form method="post">
-					<h2>Update Meter</h2>
-					<input type="text" name="meters" placeholder="Meters">
-					<input type="text" name="date_update" placeholder="Date Update">
-					<input type="hidden" name="meter_id" placeholder="Meter ID">
-					<input type="submit" name="update_meter" value="Update Meter" class="btn btn-warning">
-				</form>
-			</div>
-		</div>
+
 	</div>
 
 	<footer>
