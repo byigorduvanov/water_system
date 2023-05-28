@@ -92,24 +92,25 @@ if (!empty($user_search_result)) {
 	}
 }
 
-if (isset($_POST['update_meter'])) {
+if (isset($_POST['submit_all'])) {
 	date_default_timezone_set('Europe/Kiev');
 	$current_date = date("Y-m-d H:i:s");
-	$stmt = $conn->prepare("UPDATE meters SET meters=?, date_update=?, id_operator=? WHERE id=?");
-	$stmt->bind_param("ssii", $_POST['meters'], $current_date, $id, $_POST['meter_id']);
-	if (!$stmt->execute()) {
-		echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+	foreach ($_POST['meters'] as $meter_id => $meter_value) {
+		$stmt = $conn->prepare("UPDATE meters SET meters=?, date_update=?, id_operator=? WHERE id=?");
+		$stmt->bind_param("ssii", $meter_value, $current_date, $id, $meter_id);
+		if (!$stmt->execute()) {
+			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+		}
+	}
+	foreach ($_POST['price_for_month'] as $meter_id => $price_value) {
+		$stmt = $conn->prepare("UPDATE months SET price_for_month=? WHERE id_meters=?");
+		$stmt->bind_param("si", $price_value, $meter_id);
+		if (!$stmt->execute()) {
+			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+		}
 	}
 }
 
-if (isset($_POST['update_meter_amount'])) {
-	$stmt = $conn->prepare("UPDATE months SET price_for_month=? WHERE id_meters=?");
-	$stmt->bind_param("si", $_POST['price_for_month'], $_POST['meter_id']);
-	if (!$stmt->execute()) {
-		echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-	}
-
-}
 ?>
 <!DOCTYPE html>
 <html lang="uk">
@@ -186,93 +187,90 @@ if (isset($_POST['update_meter_amount'])) {
 			</div>
 			<div class="card-body">
 				<?php if (isset($user['id']) && isset($meters_for_user[$user['id']])): ?>
-					<table>
-						<tr>
-							<th>Показники</th>
-							<th>Сума</th>
-							<th>Лічильник редагування</th>
-							<th>Редагувати суму</th>
-						</tr>
-						<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
+					<form method="post">
+						<table>
 							<tr>
-								<td>
-									<?php echo $meter['meters']; ?>
-								</td>
-								<td>
-									<?php echo $meter['price_for_month']; ?>
-								</td>
-								<td>
-									<form method="post">
-										<input type="text" name="meters" placeholder="Показники">
-										<input type="hidden" name="meter_id" value="<?php echo $meter['meter_id']; ?>">
-										<input type="submit" name="update_meter" value="Оновіть показник">
-									</form>
-								</td>
-								<td>
-									<form method="post">
-										<input type="text" name="price_for_month" placeholder="Сума">
-										<input type="hidden" name="meter_id" value="<?php echo $meter['meter_id']; ?>">
-										<input type="submit" name="update_meter_amount" value="Оновіть суму">
-									</form>
-								</td>
+								<th>Показники</th>
+								<th>Сума</th>
+								<th>Редагування Показників</th>
+								<th>Редагувати суму</th>
 							</tr>
-						<?php endforeach; ?>
-					</table>
+							<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
+								<tr>
+									<td>
+										<?php echo $meter['meters']; ?>
+									</td>
+									<td>
+										<?php echo $meter['price_for_month']; ?>
+									</td>
+									<td>
+										<input type="text" name="meters[<?php echo $meter['meter_id']; ?>]"
+											value="<?php echo $meter['meters']; ?>">
+									</td>
+									<td>
+										<input type="text" name="price_for_month[<?php echo $meter['meter_id']; ?>]"
+											value="<?php echo $meter['price_for_month']; ?>">
+									</td>
+								</tr>
+							<?php endforeach; ?>
+						</table>
+						<input type="submit" name="submit_all" value="Оновити">
+					</form>
 				<?php else: ?>
 					<p>Для цього користувача не знайдено лічильників.</p>
 				<?php endif; ?>
 			</div>
+
+			<!-- Search results -->
+			<?php if (!empty($user_search_result)): ?>
+				<div class="card my-3">
+					<div class="card-header">
+						<h2>Результати пошуку</h2>
+					</div>
+					<div class="card-body">
+						<?php foreach ($user_search_result as $user): ?>
+							<div>
+								<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
+								<button
+									onclick="document.getElementById('update_user_form_<?php echo $user['id']; ?>').style.display='block'">
+									Редагувати користувача
+								</button>
+							</div>
+							<!-- Update user form -->
+							<form method="post" id="update_user_form_<?php echo $user['id']; ?>" style="display: none;" class="my-3">
+								<h2>Редагувати користувача</h2>
+								<input type="text" name="first_name" placeholder="Ім'я" value="<?php echo $user['first_name']; ?>">
+								<input type="text" name="last_name" placeholder="Прізвище" value="<?php echo $user['last_name']; ?>">
+								<input type="text" name="middle_name" placeholder="Ім'я по батькові"
+									value="<?php echo $user['middle_name']; ?>">
+								<input type="text" name="mobile_phone" placeholder="Мобільний телефон"
+									value="<?php echo $user['mobile_phone']; ?>">
+								<input type="text" name="home_phone" placeholder="Домашній телефон"
+									value="<?php echo $user['home_phone']; ?>">
+								<input type="text" name="email" placeholder="Електронна пошта" value="<?php echo $user['email']; ?>">
+								<input type="text" name="password" placeholder="Пароль" value="<?php echo $user['password']; ?>">
+								<input type="text" name="personal_account" placeholder="Особистий рахунок"
+									value="<?php echo $user['personal_account']; ?>">
+								<input type="text" name="address" placeholder="Адреса" value="<?php echo $user['address']; ?>">
+								<input type="text" name="counter" placeholder="Лічильник" value="<?php echo $user['counter']; ?>">
+								<input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+								<input type="submit" name="update_user" value="Оновити користувача" class="btn btn-warning">
+							</form>
+
+						<?php endforeach; ?>
+					</div>
+				</div>
+			<?php endif; ?>
+
+			<!-- Update meter form -->
+
 		</div>
-		<!-- Search results -->
-		<?php if (!empty($user_search_result)): ?>
-			<div class="card my-3">
-				<div class="card-header">
-					<h2>Результати пошуку</h2>
-				</div>
-				<div class="card-body">
-					<?php foreach ($user_search_result as $user): ?>
-						<div>
-							<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
-							<button
-								onclick="document.getElementById('update_user_form_<?php echo $user['id']; ?>').style.display='block'">
-								Редагувати користувача
-							</button>
-						</div>
-						<!-- Update user form -->
-						<form method="post" id="update_user_form_<?php echo $user['id']; ?>" style="display: none;" class="my-3">
-							<h2>Редагувати користувача</h2>
-							<input type="text" name="first_name" placeholder="Ім'я" value="<?php echo $user['first_name']; ?>">
-							<input type="text" name="last_name" placeholder="Прізвище" value="<?php echo $user['last_name']; ?>">
-							<input type="text" name="middle_name" placeholder="Ім'я по батькові"
-								value="<?php echo $user['middle_name']; ?>">
-							<input type="text" name="mobile_phone" placeholder="Мобільний телефон"
-								value="<?php echo $user['mobile_phone']; ?>">
-							<input type="text" name="home_phone" placeholder="Домашній телефон"
-								value="<?php echo $user['home_phone']; ?>">
-							<input type="text" name="email" placeholder="Електронна пошта" value="<?php echo $user['email']; ?>">
-							<input type="text" name="password" placeholder="Пароль" value="<?php echo $user['password']; ?>">
-							<input type="text" name="personal_account" placeholder="Особистий рахунок"
-								value="<?php echo $user['personal_account']; ?>">
-							<input type="text" name="address" placeholder="Адреса" value="<?php echo $user['address']; ?>">
-							<input type="text" name="counter" placeholder="Лічильник" value="<?php echo $user['counter']; ?>">
-							<input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-							<input type="submit" name="update_user" value="Оновити користувача" class="btn btn-warning">
-						</form>
 
-					<?php endforeach; ?>
-				</div>
-			</div>
-		<?php endif; ?>
-
-		<!-- Update meter form -->
-
-	</div>
-
-	<footer>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-		<script src="../js/bootstrap.min.js"></script>
-		<script src="../js/bootstrap.bundle.min.js"></script>
-	</footer>
+		<footer>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+			<script src="../js/bootstrap.min.js"></script>
+			<script src="../js/bootstrap.bundle.min.js"></script>
+		</footer>
 </body>
 
 </html>
