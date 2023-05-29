@@ -12,6 +12,67 @@ if (!isset($_SESSION["admin_name"])) {
 	$result = $stmt->get_result();
 	$row = $result->fetch_assoc();
 }
+
+//створення користувача
+if (isset($_POST['create_user'])) {
+
+	$password = md5($_POST['password']);
+	$stmt = $conn->prepare("INSERT INTO users (first_name, last_name, middle_name, mobile_phone, home_phone, email, password, role, personal_account, address, counter) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	$stmt->bind_param("sssssssssss", $_POST['first_name'], $_POST['last_name'], $_POST['middle_name'], $_POST['mobile_phone'], $_POST['home_phone'], $_POST['email'], $password, $_POST['role'], $_POST['personal_account'], $_POST['address'], $_POST['counter']);
+	$stmt->execute();
+}
+// Пошук користувача
+$user_search_result = [];
+$user = [];
+if (isset($_POST['search_user'])) {
+	$query_parts = [];
+	$params = [];
+	$types = "";
+
+	if (!empty($_POST['search_term1'])) {
+		$query_parts[] = "first_name LIKE ?";
+		$params[] = '%' . $_POST['search_term1'] . '%';
+		$types .= "s";
+	}
+
+	if (!empty($_POST['search_term2'])) {
+		$query_parts[] = "last_name LIKE ?";
+		$params[] = '%' . $_POST['search_term2'] . '%';
+		$types .= "s";
+	}
+
+	if (!empty($_POST['search_term3'])) {
+		$query_parts[] = "email LIKE ?";
+		$params[] = '%' . $_POST['search_term3'] . '%';
+		$types .= "s";
+	}
+
+	if (!empty($_POST['search_term4'])) {
+		$query_parts[] = "personal_account LIKE ?";
+		$params[] = '%' . $_POST['search_term4'] . '%';
+		$types .= "s";
+	}
+	if (!empty($_POST['search_term5'])) {
+		$query_parts[] = "counter LIKE ?";
+		$params[] = '%' . $_POST['search_term5'] . '%';
+		$types .= "s";
+	}
+
+	if (!empty($query_parts)) {
+		$stmt = $conn->prepare("SELECT * FROM users WHERE " . implode(" OR ", $query_parts));
+		$stmt->bind_param($types, ...$params);
+		$stmt->execute();
+		$user_search_result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+	}
+}
+
+//редагування користувача
+if (isset($_POST['update_user'])) {
+	$password = md5($_POST['password']); // Пароль шифрування
+	$stmt = $conn->prepare("UPDATE users SET first_name=?, last_name=?, middle_name=?, mobile_phone=?, home_phone=?, email=?, password=?, role=?, personal_account=?, address=?, counter=? WHERE id=?");
+	$stmt->bind_param("sssssssssssi", $_POST['first_name'], $_POST['last_name'], $_POST['middle_name'], $_POST['mobile_phone'], $_POST['home_phone'], $_POST['email'], $password, $_POST['role'], $_POST['personal_account'], $_POST['address'], $_POST['counter'], $_POST['user_id']);
+	$stmt->execute();
+}
 ?>
 <!DOCTYPE html>
 <html lang="uk">
@@ -26,21 +87,102 @@ if (!isset($_SESSION["admin_name"])) {
 	<link rel="stylesheet" href="../css/all.css">
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
 	<link rel="stylesheet" href="../css/main.css">
+	<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-	<h1>сторінка адміна</h1>
-	<a href="../index.php">головна</a>
-	<a href="../vendor/logout.php" class="btn btn-primary my_btn btn_room">Вихід </a>
+	<div class="container mt-5">
+		<h1 class="text-center">Сторінка оператора</h1>
+		<a href="../index.php" class="btn btn-secondary my-3">Головна</a>
 
+		<a href="../vendor/logout.php" class="btn btn-primary my-3">Вихід</a>
 
+		<!-- Створення користувача -->
+		<div class="card my-3">
+			<div class="card-header">
+				<h2>Створити користувача</h2>
+			</div>
+			<div class="card-body">
+				<form method="post">
+					<input type="text" name="first_name" placeholder="Ім'я">
+					<input type="text" name="last_name" placeholder="Прізвище">
+					<input type="text" name="middle_name" placeholder="Ім'я по батькові">
+					<input type="text" name="mobile_phone" placeholder="Мобільний телефон">
+					<input type="text" name="home_phone" placeholder="Домашній телефон">
+					<input type="text" name="email" placeholder="Електронна пошта">
+					<input type="text" name="password" placeholder="Пароль">
+					<input type="text" name="personal_account" placeholder="Особистий рахунок">
+					<input type="text" name="address" placeholder="Адреса">
+					<input type="text" name="counter" placeholder="Лічильник">
+					<input type="text" name="role" placeholder="Роль">
+					<input type="submit" name="create_user" value="Створити користувача">
+				</form>
+			</div>
+		</div>
+		<!-- Форма пошуку -->
+		<div class="card my-3">
+			<div class="card-header">
+				<h2>Пошук користувача</h2>
+			</div>
+			<div class="card-body">
+				<form method="post">
+					<input type="text" name="search_term1" placeholder="Ім'я">
+					<input type="text" name="search_term2" placeholder="Прізвище">
+					<input type="text" name="search_term3" placeholder="Електронна пошта">
+					<input type="text" name="search_term4" placeholder="Особистий рахунок">
+					<input type="text" name="search_term5" placeholder="Лічильник">
+					<input type="submit" name="search_user" value="Пошук користувача" class="btn btn-primary">
+				</form>
+			</div>
+		</div>
 
+		<!-- Search results -->
+		<?php if (!empty($user_search_result)): ?>
+			<div class="card my-3">
+				<div class="card-header">
+					<h2>Результати пошуку</h2>
+				</div>
+				<div class="card-body">
+					<?php foreach ($user_search_result as $user): ?>
+						<div>
+							<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
+							<button
+								onclick="document.getElementById('update_user_form_<?php echo $user['id']; ?>').style.display='block'">
+								Редагувати користувача
+							</button>
+						</div>
+						<!-- Update user form -->
+						<form method="post" id="update_user_form_<?php echo $user['id']; ?>" style="display: none;" class="my-3">
+							<h2>Редагувати користувача</h2>
+							<input type="text" name="first_name" placeholder="Ім'я" value="<?php echo $user['first_name']; ?>">
+							<input type="text" name="last_name" placeholder="Прізвище" value="<?php echo $user['last_name']; ?>">
+							<input type="text" name="middle_name" placeholder="Ім'я по батькові"
+								value="<?php echo $user['middle_name']; ?>">
+							<input type="text" name="mobile_phone" placeholder="Мобільний телефон"
+								value="<?php echo $user['mobile_phone']; ?>">
+							<input type="text" name="home_phone" placeholder="Домашній телефон"
+								value="<?php echo $user['home_phone']; ?>">
+							<input type="text" name="email" placeholder="Електронна пошта" value="<?php echo $user['email']; ?>">
+							<input type="text" name="password" placeholder="Пароль" value="<?php echo $user['password']; ?>">
+							<input type="text" name="personal_account" placeholder="Особистий рахунок"
+								value="<?php echo $user['personal_account']; ?>">
+							<input type="text" name="address" placeholder="Адреса" value="<?php echo $user['address']; ?>">
+							<input type="text" name="counter" placeholder="Лічильник" value="<?php echo $user['counter']; ?>">
+							<input type="text" name="role" placeholder="Роль" value="<?php echo $user['role']; ?>">
+							<input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+							<input type="submit" name="update_user" value="Оновити користувача" class="btn btn-warning">
+						</form>
 
-	<footer>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-		<script src="../js/bootstrap.min.js"></script>
-		<script src="../js/bootstrap.bundle.min.js"></script>
-	</footer>
+					<?php endforeach; ?>
+				</div>
+			</div>
+		<?php endif; ?>
+
+		<footer>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+			<script src="../js/bootstrap.min.js"></script>
+			<script src="../js/bootstrap.bundle.min.js"></script>
+		</footer>
 </body>
 
 </html>

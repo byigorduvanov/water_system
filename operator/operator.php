@@ -70,7 +70,6 @@ if (isset($_POST['search_user'])) {
 		$stmt->execute();
 		$user_search_result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 	}
-
 }
 
 if (isset($_POST['update_user'])) {
@@ -293,8 +292,7 @@ if (isset($_POST['submit_all'])) {
 				</div>
 			<?php endif; ?>
 
-			<!-- Update meter form -->
-
+		
 		</div>
 
 		<footer>
