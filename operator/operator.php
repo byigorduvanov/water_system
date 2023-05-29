@@ -83,12 +83,15 @@ if (isset($_POST['update_user'])) {
 
 
 $meters_for_user = [];
+$payment_status_for_user = []; // new variable to hold payment status
 if (!empty($user_search_result)) {
 	foreach ($user_search_result as $user) {
-		$stmt = $conn->prepare("SELECT m.id as meter_id, m.meters, m.date, mo.price_for_month FROM meters m JOIN months mo ON m.id=mo.id_meters WHERE m.id_user = ? ORDER BY m.date DESC");
+		$stmt = $conn->prepare("SELECT m.id as meter_id, m.meters, m.date, mo.price_for_month, mo.payment_status FROM meters m JOIN months mo ON m.id=mo.id_meters WHERE m.id_user = ? ORDER BY m.date DESC");
 		$stmt->bind_param("i", $user['id']);
 		$stmt->execute();
-		$meters_for_user[$user['id']] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+		$result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+		$meters_for_user[$user['id']] = $result;
+		$payment_status_for_user[$user['id']] = $result;
 	}
 }
 
@@ -105,6 +108,13 @@ if (isset($_POST['submit_all'])) {
 	foreach ($_POST['price_for_month'] as $meter_id => $price_value) {
 		$stmt = $conn->prepare("UPDATE months SET price_for_month=? WHERE id_meters=?");
 		$stmt->bind_param("si", $price_value, $meter_id);
+		if (!$stmt->execute()) {
+			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+		}
+	}
+	foreach ($_POST['payment_status'] as $meter_id => $status_value) {
+		$stmt = $conn->prepare("UPDATE months SET payment_status=? WHERE id_meters=?");
+		$stmt->bind_param("si", $status_value, $meter_id);
 		if (!$stmt->execute()) {
 			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
 		}
@@ -192,8 +202,10 @@ if (isset($_POST['submit_all'])) {
 							<tr>
 								<th>Показники</th>
 								<th>Сума</th>
+								<th>Статус оплати</th>
 								<th>Редагування Показників</th>
 								<th>Редагувати суму</th>
+								<th>Дата</th>
 							</tr>
 							<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
 								<tr>
@@ -203,6 +215,10 @@ if (isset($_POST['submit_all'])) {
 									<td>
 										<?php echo $meter['price_for_month']; ?>
 									</td>
+
+									<td>
+										<?php echo $meter['payment_status']; ?>
+									</td>
 									<td>
 										<input type="text" name="meters[<?php echo $meter['meter_id']; ?>]"
 											value="<?php echo $meter['meters']; ?>">
@@ -210,6 +226,21 @@ if (isset($_POST['submit_all'])) {
 									<td>
 										<input type="text" name="price_for_month[<?php echo $meter['meter_id']; ?>]"
 											value="<?php echo $meter['price_for_month']; ?>">
+									</td>
+									<td>
+										<select name="payment_status[<?php echo $meter['meter_id']; ?>]">
+											<option value="не сплачено" <?php echo ($meter['payment_status'] == 'не сплачено') ? 'selected' : ''; ?>>не сплачено</option>
+											<option value="сплачено" <?php echo ($meter['payment_status'] == 'сплачено') ? 'selected' : ''; ?>>сплачено</option>
+											<option value="в очікуванні" <?php echo ($meter['payment_status'] == 'в очікуванні') ? 'selected' : ''; ?>>в очікуванні</option>
+											<option value="прострочений" <?php echo ($meter['payment_status'] == 'прострочений') ? 'selected' : ''; ?>>прострочений</option>
+											<option value="часткова оплата" <?php echo ($meter['payment_status'] == 'часткова оплата') ? 'selected' : ''; ?>>часткова оплата</option>
+											<option value="скасовано" <?php echo ($meter['payment_status'] == 'скасовано') ? 'selected' : ''; ?>>скасовано</option>
+											<option value="відшкодовано" <?php echo ($meter['payment_status'] == 'відшкодовано') ? 'selected' : ''; ?>>відшкодовано</option>
+											<option value="невдалий" <?php echo ($meter['payment_status'] == 'невдалий') ? 'selected' : ''; ?>>невдалий</option>
+										</select>
+									</td>
+									<td>
+										<?php echo $meter['date']; ?>
 									</td>
 								</tr>
 							<?php endforeach; ?>
