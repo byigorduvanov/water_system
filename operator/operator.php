@@ -82,7 +82,7 @@ if (isset($_POST['update_user'])) {
 
 
 $meters_for_user = [];
-$payment_status_for_user = []; // new variable to hold payment status
+$payment_status_for_user = []; 
 if (!empty($user_search_result)) {
 	foreach ($user_search_result as $user) {
 		$stmt = $conn->prepare("SELECT m.id as meter_id, m.meters, m.date, mo.price_for_month, mo.payment_status FROM meters m JOIN months mo ON m.id=mo.id_meters WHERE m.id_user = ? ORDER BY m.date DESC");
