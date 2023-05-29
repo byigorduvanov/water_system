@@ -77,14 +77,18 @@ if (isset($_POST['update_user'])) {
 // таблиця 
 $meters_for_user = [];
 $payment_status_for_user = [];
+$date_update_for_user = [];
+$id_operator_for_user = [];
 if (!empty($user_search_result)) {
 	foreach ($user_search_result as $user) {
-		$stmt = $conn->prepare("SELECT m.id as meter_id, m.meters, m.date, mo.price_for_month, mo.payment_status FROM meters m JOIN months mo ON m.id=mo.id_meters WHERE m.id_user = ? ORDER BY m.date DESC");
+		$stmt = $conn->prepare("SELECT m.id as meter_id, m.meters, m.date, m.date_update, m.id_operator, mo.price_for_month, mo.payment_status FROM meters m JOIN months mo ON m.id=mo.id_meters WHERE m.id_user = ? ORDER BY m.date DESC");
 		$stmt->bind_param("i", $user['id']);
 		$stmt->execute();
 		$result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 		$meters_for_user[$user['id']] = $result;
 		$payment_status_for_user[$user['id']] = $result;
+		$date_update_for_user[$user['id']] = $result;
+		$id_operator_for_user[$user['id']] = $result;
 	}
 }
 
@@ -198,6 +202,8 @@ if (isset($_POST['submit_all'])) {
 								<th>Редагування Показників</th>
 								<th>Редагувати суму</th>
 								<th>Дата</th>
+								<th>Дата оновлення</th>
+								<th>Оператор</th>
 							</tr>
 							<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
 								<tr>
@@ -233,6 +239,19 @@ if (isset($_POST['submit_all'])) {
 									</td>
 									<td>
 										<?php echo $meter['date']; ?>
+									</td>
+									<td>
+										<?php echo $meter['date_update']; ?>
+									</td>
+									<td>
+										<?php
+										$stmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE id = ?");
+										$stmt->bind_param("i", $meter['id_operator']);
+										$stmt->execute();
+										$operator_result = $stmt->get_result();
+										$operator = $operator_result->fetch_assoc();
+										echo $operator['first_name'] . ' ' . $operator['last_name'];
+										?>
 									</td>
 								</tr>
 							<?php endforeach; ?>
