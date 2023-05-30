@@ -96,11 +96,12 @@ if (isset($_POST['submit_all'])) {
 	date_default_timezone_set('Europe/Kiev');
 	$current_date = date("Y-m-d H:i:s");
 	foreach ($_POST['meters'] as $meter_id => $meter_value) {
-		$stmt = $conn->prepare("UPDATE meters SET meters=?, date_update=?, id_operator=? WHERE id=?");
-		$stmt->bind_param("ssii", $meter_value, $current_date, $id, $meter_id);
+		$stmt = $conn->prepare("UPDATE meters SET meters=?, date_update=?, id_operator=? WHERE id=? AND meters<>?");
+		$stmt->bind_param("ssiii", $meter_value, $current_date, $id, $meter_id, $meter_value);
 		if (!$stmt->execute()) {
 			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
 		}
+		$stmt->close();
 	}
 	foreach ($_POST['price_for_month'] as $meter_id => $price_value) {
 		$stmt = $conn->prepare("UPDATE months SET price_for_month=? WHERE id_meters=?");
@@ -117,6 +118,7 @@ if (isset($_POST['submit_all'])) {
 		}
 	}
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="uk">
@@ -201,6 +203,7 @@ if (isset($_POST['submit_all'])) {
 								<th>Статус оплати</th>
 								<th>Редагування Показників</th>
 								<th>Редагувати суму</th>
+								<th>Редагувати статус</th>
 								<th>Дата</th>
 								<th>Дата оновлення</th>
 								<th>Оператор</th>
