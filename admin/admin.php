@@ -68,11 +68,17 @@ if (isset($_POST['search_user'])) {
 
 //редагування користувача
 if (isset($_POST['update_user'])) {
-	$password = md5($_POST['password']); // Пароль шифрування
+	$stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
+	$stmt->bind_param("i", $_POST['user_id']);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$row = $result->fetch_assoc();
+	$password = !empty($_POST['password']) ? md5($_POST['password']) : $row['password'];
 	$stmt = $conn->prepare("UPDATE users SET first_name=?, last_name=?, middle_name=?, mobile_phone=?, home_phone=?, email=?, password=?, role=?, personal_account=?, address=?, counter=? WHERE id=?");
 	$stmt->bind_param("sssssssssssi", $_POST['first_name'], $_POST['last_name'], $_POST['middle_name'], $_POST['mobile_phone'], $_POST['home_phone'], $_POST['email'], $password, $_POST['role'], $_POST['personal_account'], $_POST['address'], $_POST['counter'], $_POST['user_id']);
 	$stmt->execute();
 }
+
 
 // таблиця 
 $meters_for_user = [];
