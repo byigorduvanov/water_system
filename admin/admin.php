@@ -95,26 +95,78 @@ if (!empty($user_search_result)) {
 if (isset($_POST['submit_all'])) {
 	date_default_timezone_set('Europe/Kiev');
 	$current_date = date("Y-m-d H:i:s");
+
 	foreach ($_POST['meters'] as $meter_id => $meter_value) {
-		$stmt = $conn->prepare("UPDATE meters SET meters=?, date_update=?, id_operator=? WHERE id=? AND meters<>?");
-		$stmt->bind_param("ssiii", $meter_value, $current_date, $id, $meter_id, $meter_value);
-		if (!$stmt->execute()) {
-			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-		}
+		// Отримання поточного показника 
+		$stmt = $conn->prepare("SELECT meters FROM meters WHERE id = ?");
+		$stmt->bind_param("i", $meter_id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$row = $result->fetch_assoc();
+		$current_meter = $row['meters'];
 		$stmt->close();
-	}
-	foreach ($_POST['price_for_month'] as $meter_id => $price_value) {
-		$stmt = $conn->prepare("UPDATE months SET price_for_month=? WHERE id_meters=?");
-		$stmt->bind_param("si", $price_value, $meter_id);
-		if (!$stmt->execute()) {
-			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+
+		if ($current_meter != $meter_value) {
+			$stmt = $conn->prepare("UPDATE meters SET meters=?, date_update=?, id_operator=? WHERE id=?");
+			$stmt->bind_param("ssii", $meter_value, $current_date, $id, $meter_id);
+			if (!$stmt->execute()) {
+				echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+			}
+			$stmt->close();
 		}
 	}
+
+	foreach ($_POST['price_for_month'] as $meter_id => $price_value) {
+		// Отримання поточного price_for_month
+		$stmt = $conn->prepare("SELECT price_for_month FROM months WHERE id_meters = ?");
+		$stmt->bind_param("i", $meter_id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$row = $result->fetch_assoc();
+		$current_price = $row['price_for_month'];
+		$stmt->close();
+
+		if ($current_price != $price_value) {
+			$stmt = $conn->prepare("UPDATE months SET price_for_month=? WHERE id_meters=?");
+			$stmt->bind_param("si", $price_value, $meter_id);
+			if (!$stmt->execute()) {
+				echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+			}
+			$stmt->close();
+
+			$stmt2 = $conn->prepare("UPDATE meters SET date_update=?, id_operator=? WHERE id=?");
+			$stmt2->bind_param("sii", $current_date, $id, $meter_id);
+			if (!$stmt2->execute()) {
+				echo "Execute failed for second query: (" . $stmt2->errno . ") " . $stmt2->error;
+			}
+			$stmt2->close();
+		}
+	}
+
 	foreach ($_POST['payment_status'] as $meter_id => $status_value) {
-		$stmt = $conn->prepare("UPDATE months SET payment_status=? WHERE id_meters=?");
-		$stmt->bind_param("si", $status_value, $meter_id);
-		if (!$stmt->execute()) {
-			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+		// Отримання поточного статусу
+		$stmt = $conn->prepare("SELECT payment_status FROM months WHERE id_meters = ?");
+		$stmt->bind_param("i", $meter_id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$row = $result->fetch_assoc();
+		$current_status = $row['payment_status'];
+		$stmt->close();
+
+		if ($current_status != $status_value) {
+			$stmt = $conn->prepare("UPDATE months SET payment_status=? WHERE id_meters=?");
+			$stmt->bind_param("si", $status_value, $meter_id);
+			if (!$stmt->execute()) {
+				echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+			}
+			$stmt->close();
+
+			$stmt2 = $conn->prepare("UPDATE meters SET date_update=?, id_operator=? WHERE id=?");
+			$stmt2->bind_param("sii", $current_date, $id, $meter_id);
+			if (!$stmt2->execute()) {
+				echo "Execute failed for second query: (" . $stmt2->errno . ") " . $stmt2->error;
+			}
+			$stmt2->close();
 		}
 	}
 }
