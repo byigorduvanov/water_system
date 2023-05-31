@@ -261,6 +261,7 @@ if (isset($_POST['submit_all'])) {
 								<th>Статус оплати</th>
 								<th>Редагування Показників</th>
 								<th>Редагувати суму</th>
+								<th>Редагувати Статус</th>
 								<th>Дата</th>
 							</tr>
 							<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
