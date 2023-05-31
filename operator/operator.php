@@ -176,6 +176,56 @@ if (isset($_POST['submit_all'])) {
 		}
 	}
 }
+//новини
+// Створити новини
+if (isset($_POST['create_news'])) {
+	$stmt = $conn->prepare("INSERT INTO news (tittle, content, image, publish_date, author) VALUES (?, ?, ?, ?, ?)");
+	$stmt->bind_param("ssssi", $_POST['tittle'], $_POST['content'], $_POST['image'], $_POST['publish_date'], $id);
+	$stmt->execute();
+}
+//ФОТО
+if (isset($_FILES['image'])) {
+	$file_name = $_FILES['image']['name'];
+	$file_tmp = $_FILES['image']['tmp_name'];
+	$exploded = explode('.', $_FILES['image']['name']);
+	$file_ext = strtolower(end($exploded));
+
+	// Generate a unique name for the image
+	$unique_name = uniqid() . '.' . $file_ext;
+
+	// Specify your img directory
+	$directory = '../img/news/';
+
+	if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
+		// Now you can insert $unique_name in your database record for the image field
+		$stmt = $conn->prepare("UPDATE news SET image=? WHERE tittle=?");
+		$stmt->bind_param("ss", $unique_name, $_POST['tittle']);
+		$stmt->execute();
+	}
+
+}
+
+
+
+//ВИВЕДЕННЯ
+$news_result = [];
+$stmt = $conn->prepare("SELECT * FROM news ORDER BY publish_date DESC");
+$stmt->execute();
+$news_result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// оновлення News
+if (isset($_POST['update_news'])) {
+	$stmt = $conn->prepare("UPDATE news SET tittle=?, content=?, image=?, publish_date=?, author=? WHERE id=?");
+	$stmt->bind_param("ssssii", $_POST['tittle'], $_POST['content'], $_POST['image'], $_POST['publish_date'], $_POST['author'], $_POST['news_id']);
+	$stmt->execute();
+}
+
+// видалення News
+if (isset($_POST['delete_news'])) {
+	$stmt = $conn->prepare("DELETE FROM news WHERE id=?");
+	$stmt->bind_param("i", $_POST['news_id']);
+	$stmt->execute();
+}
 
 ?>
 <!DOCTYPE html>
@@ -350,9 +400,84 @@ if (isset($_POST['submit_all'])) {
 				</div>
 			<?php endif; ?>
 
+			<!-- Створити новини -->
+			<div class="card my-3">
+				<div class="card-header">
+					<h2>Створити новини</h2>
+				</div>
+				<div class="card-body">
+					<form method="POST" enctype="multipart/form-data">
+						<div class="form-group">
+							<label for="tittle">Заголовок:</label>
+							<input type="text" id="tittle" name="tittle" class="form-control" required>
+						</div>
+						<div class="form-group">
+							<label for="content">Контент:</label>
+							<textarea id="content" name="content" class="form-control" required></textarea>
+						</div>
+						<div class="form-group">
+							<label for="image">Завантаження фото:</label>
+							<input type="file" id="image" name="image" class="form-control">
+						</div>
+
+						<div class="form-group">
+							<label for="publish_date">Дата публікації:</label>
+							<input type="date" id="publish_date" name="publish_date" class="form-control" required>
+						</div>
+						<button type="submit" name="create_news" class="btn btn-primary">Створити новину</button>
+					</form>
+				</div>
+			</div>
+
+			<!-- Редагування новини -->
+			<div class="card my-3">
+				<div class="card-header">
+					<h2>Редагування новини</h2>
+				</div>
+				<div class="card-body">
+					<form method="POST">
+						<div class="form-group">
+							<label for="news_id_update">News ID:</label>
+							<input type="number" id="news_id_update" name="news_id" class="form-control" required>
+						</div>
+						<!-- Include the rest of the fields like in the create form -->
+						<button type="submit" name="update_news" class="btn btn-warning">Редагування новини</button>
+					</form>
+				</div>
+			</div>
+
+			<!-- видалення новини -->
+			<div class="card my-3">
+				<div class="card-header">
+					<h2>видалення новини </h2>
+				</div>
+				<div class="card-body">
+					<form method="POST">
+						<div class="form-group">
+							<label for="news_id_delete">News ID:</label>
+							<input type="number" id="news_id_delete" name="news_id" class="form-control" required>
+						</div>
+						<button type="submit" name="delete_news" class="btn btn-danger">видалення новини</button>
+					</form>
+				</div>
+			</div>
+
+
+			<!-- Всі новини -->
+			<h2>Всі новини</h2>
+			<?php
+			foreach ($news_result as $news) {
+				echo "<div>";
+				echo "<h3>" . $news['tittle'] . "</h3>";
+				echo "<p>" . $news['content'] . "</p>";
+				echo "<img src='../img/news/" . $news['image'] . "' alt='" . $news['tittle'] . "'>";
+				echo "<p>Published on: " . $news['publish_date'] . "</p>";
+				echo "<p>Author ID: " . $news['author'] . "</p>";
+				echo "</div>";
+			}
+			?>
 
 		</div>
-
 		<footer>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 			<script src="../js/bootstrap.min.js"></script>
