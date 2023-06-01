@@ -200,176 +200,203 @@ if (isset($_POST['submit_all'])) {
 		<a href="../index.php" class="btn btn-secondary my-3">Головна</a>
 
 		<a href="../vendor/logout.php" class="btn btn-primary my-3">Вихід</a>
+		<!-- Tabs -->
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" id="create-user-tab" data-toggle="tab" href="#createUser" role="tab"
+					aria-controls="createUser" aria-selected="true">Створити користувача</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="search-edit-tab" data-toggle="tab" href="#searchEdit" role="tab"
+					aria-controls="searchEdit" aria-selected="false">Пошук та Редагування</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="news-tab" data-toggle="tab" href="#news" role="tab" aria-controls="news"
+					aria-selected="false">Новини</a>
+			</li>
 
-		<!-- Створення користувача -->
-		<div class="card my-3">
-			<div class="card-header">
-				<h2>Створити користувача</h2>
-			</div>
-			<div class="card-body">
-				<form method="post">
-					<input type="text" name="first_name" placeholder="Ім'я">
-					<input type="text" name="last_name" placeholder="Прізвище">
-					<input type="text" name="middle_name" placeholder="Ім'я по батькові">
-					<input type="text" name="mobile_phone" placeholder="Мобільний телефон">
-					<input type="text" name="home_phone" placeholder="Домашній телефон">
-					<input type="text" name="email" placeholder="Електронна пошта">
-					<input type="text" name="password" placeholder="Пароль">
-					<input type="text" name="personal_account" placeholder="Особистий рахунок">
-					<input type="text" name="address" placeholder="Адреса">
-					<input type="text" name="counter" placeholder="Лічильник">
-					<input type="text" name="role" placeholder="Роль">
-					<input type="submit" name="create_user" value="Створити користувача">
-				</form>
-			</div>
-		</div>
-		<!-- Форма пошуку -->
-		<div class="card my-3">
-			<div class="card-header">
-				<h2>Пошук користувача</h2>
-			</div>
-			<div class="card-body">
-				<form method="post">
-					<input type="text" name="search_term1" placeholder="Ім'я">
-					<input type="text" name="search_term2" placeholder="Прізвище">
-					<input type="text" name="search_term3" placeholder="Електронна пошта">
-					<input type="text" name="search_term4" placeholder="Особистий рахунок">
-					<input type="text" name="search_term5" placeholder="Лічильник">
-					<input type="submit" name="search_user" value="Пошук користувача" class="btn btn-primary">
-				</form>
-			</div>
-		</div>
-
-		<div class="card my-3">
-			<div class="card-header">
-				<?php if (isset($user['first_name']) && isset($user['last_name'])): ?>
-					<h2>Показники для
-						<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
-					</h2>
-				<?php else: ?>
-					<h2>Показники для користувача</h2>
-				<?php endif; ?>
-
-			</div>
-			<div class="card-body">
-				<?php if (isset($user['id']) && isset($meters_for_user[$user['id']])): ?>
-					<form method="post">
-						<table>
-							<tr>
-								<th>Показники</th>
-								<th>Сума</th>
-								<th>Статус оплати</th>
-								<th>Редагування Показників</th>
-								<th>Редагувати суму</th>
-								<th>Редагувати статус</th>
-								<th>Дата</th>
-								<th>Дата оновлення</th>
-								<th>Оператор</th>
-							</tr>
-							<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
-								<tr>
-									<td>
-										<?php echo $meter['meters']; ?>
-									</td>
-									<td>
-										<?php echo $meter['price_for_month']; ?>
-									</td>
-
-									<td>
-										<?php echo $meter['payment_status']; ?>
-									</td>
-									<td>
-										<input type="text" name="meters[<?php echo $meter['meter_id']; ?>]"
-											value="<?php echo $meter['meters']; ?>">
-									</td>
-									<td>
-										<input type="text" name="price_for_month[<?php echo $meter['meter_id']; ?>]"
-											value="<?php echo $meter['price_for_month']; ?>">
-									</td>
-									<td>
-										<select name="payment_status[<?php echo $meter['meter_id']; ?>]">
-											<option value="не сплачено" <?php echo ($meter['payment_status'] == 'не сплачено') ? 'selected' : ''; ?>>не сплачено</option>
-											<option value="сплачено" <?php echo ($meter['payment_status'] == 'сплачено') ? 'selected' : ''; ?>>сплачено</option>
-											<option value="в очікуванні" <?php echo ($meter['payment_status'] == 'в очікуванні') ? 'selected' : ''; ?>>в очікуванні</option>
-											<option value="прострочений" <?php echo ($meter['payment_status'] == 'прострочений') ? 'selected' : ''; ?>>прострочений</option>
-											<option value="часткова оплата" <?php echo ($meter['payment_status'] == 'часткова оплата') ? 'selected' : ''; ?>>часткова оплата</option>
-											<option value="скасовано" <?php echo ($meter['payment_status'] == 'скасовано') ? 'selected' : ''; ?>>скасовано</option>
-											<option value="відшкодовано" <?php echo ($meter['payment_status'] == 'відшкодовано') ? 'selected' : ''; ?>>відшкодовано</option>
-											<option value="невдалий" <?php echo ($meter['payment_status'] == 'невдалий') ? 'selected' : ''; ?>>невдалий</option>
-										</select>
-									</td>
-									<td>
-										<?php echo $meter['date']; ?>
-									</td>
-									<td>
-										<?php echo $meter['date_update']; ?>
-									</td>
-									<td>
-										<?php
-										$stmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE id = ?");
-										$stmt->bind_param("i", $meter['id_operator']);
-										$stmt->execute();
-										$operator_result = $stmt->get_result();
-										$operator = $operator_result->fetch_assoc();
-										echo $operator['first_name'] . ' ' . $operator['last_name'];
-										?>
-									</td>
-								</tr>
-							<?php endforeach; ?>
-						</table>
-						<input type="submit" name="submit_all" value="Оновити">
-					</form>
-				<?php else: ?>
-					<p>Для цього користувача не знайдено лічильників.</p>
-				<?php endif; ?>
-			</div>
-
-			<!-- Search results -->
-			<?php if (!empty($user_search_result)): ?>
-				<div class="card my-3">
-					<div class="card-header">
-						<h2>Результати пошуку</h2>
-					</div>
-					<div class="card-body">
-						<?php foreach ($user_search_result as $user): ?>
-							<div>
-								<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
-								<button
-									onclick="document.getElementById('update_user_form_<?php echo $user['id']; ?>').style.display='block'">
-									Редагувати користувача
-								</button>
-							</div>
-							<!-- Update user form -->
-							<form method="post" id="update_user_form_<?php echo $user['id']; ?>" style="display: none;" class="my-3">
-								<h2>Редагувати користувача</h2>
-								<input type="text" name="first_name" placeholder="Ім'я" value="<?php echo $user['first_name']; ?>">
-								<input type="text" name="last_name" placeholder="Прізвище" value="<?php echo $user['last_name']; ?>">
-								<input type="text" name="middle_name" placeholder="Ім'я по батькові"
-									value="<?php echo $user['middle_name']; ?>">
-								<input type="text" name="mobile_phone" placeholder="Мобільний телефон"
-									value="<?php echo $user['mobile_phone']; ?>">
-								<input type="text" name="home_phone" placeholder="Домашній телефон"
-									value="<?php echo $user['home_phone']; ?>">
-								<input type="text" name="email" placeholder="Електронна пошта" value="<?php echo $user['email']; ?>">
-								<input type="text" name="password" placeholder="Пароль" value="<?php echo $user['password']; ?>">
-								<input type="text" name="personal_account" placeholder="Особистий рахунок"
-									value="<?php echo $user['personal_account']; ?>">
-								<input type="text" name="address" placeholder="Адреса" value="<?php echo $user['address']; ?>">
-								<input type="text" name="counter" placeholder="Лічильник" value="<?php echo $user['counter']; ?>">
-								<input type="text" name="role" placeholder="Роль" value="<?php echo $user['role']; ?>">
-								<input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-								<input type="submit" name="update_user" value="Оновити користувача" class="btn btn-warning">
+			<div class="tab-content" id="myTabContent">
+				<div class="tab-pane fade show active" id="createUser" role="tabpanel">
+					<!-- Створення користувача -->
+					<div class="card my-3">
+						<div class="card-header">
+							<h2>Створити користувача</h2>
+						</div>
+						<div class="card-body">
+							<form method="post">
+								<input type="text" name="first_name" placeholder="Ім'я">
+								<input type="text" name="last_name" placeholder="Прізвище">
+								<input type="text" name="middle_name" placeholder="Ім'я по батькові">
+								<input type="text" name="mobile_phone" placeholder="Мобільний телефон">
+								<input type="text" name="home_phone" placeholder="Домашній телефон">
+								<input type="text" name="email" placeholder="Електронна пошта">
+								<input type="text" name="password" placeholder="Пароль">
+								<input type="text" name="personal_account" placeholder="Особистий рахунок">
+								<input type="text" name="address" placeholder="Адреса">
+								<input type="text" name="counter" placeholder="Лічильник">
+								<input type="text" name="role" placeholder="Роль">
+								<input type="submit" name="create_user" value="Створити користувача">
 							</form>
-
-						<?php endforeach; ?>
+						</div>
 					</div>
 				</div>
-			<?php endif; ?>
+				<div class="tab-pane fade" id="searchEdit" role="tabpanel">
+					<!-- Форма пошуку -->
+					<div class="card my-3">
+						<div class="card-header">
+							<h2>Пошук користувача</h2>
+						</div>
+						<div class="card-body">
+							<form method="post">
+								<input type="text" name="search_term1" placeholder="Ім'я">
+								<input type="text" name="search_term2" placeholder="Прізвище">
+								<input type="text" name="search_term3" placeholder="Електронна пошта">
+								<input type="text" name="search_term4" placeholder="Особистий рахунок">
+								<input type="text" name="search_term5" placeholder="Лічильник">
+								<input type="submit" name="search_user" value="Пошук користувача" class="btn btn-primary">
+							</form>
+						</div>
+					</div>
+					<!-- Search results -->
+					<?php if (!empty($user_search_result)): ?>
+						<div class="card my-3">
+							<div class="card-header">
+								<h2>Результати пошуку</h2>
+							</div>
+							<div class="card-body">
+								<?php foreach ($user_search_result as $user): ?>
+									<div>
+										<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
+										<button
+											onclick="document.getElementById('update_user_form_<?php echo $user['id']; ?>').style.display='block'">
+											Редагувати користувача
+										</button>
+									</div>
+									<!-- Update user form -->
+									<form method="post" id="update_user_form_<?php echo $user['id']; ?>" style="display: none;"
+										class="my-3">
+										<h2>Редагувати користувача</h2>
+										<input type="text" name="first_name" placeholder="Ім'я"
+											value="<?php echo $user['first_name']; ?>">
+										<input type="text" name="last_name" placeholder="Прізвище"
+											value="<?php echo $user['last_name']; ?>">
+										<input type="text" name="middle_name" placeholder="Ім'я по батькові"
+											value="<?php echo $user['middle_name']; ?>">
+										<input type="text" name="mobile_phone" placeholder="Мобільний телефон"
+											value="<?php echo $user['mobile_phone']; ?>">
+										<input type="text" name="home_phone" placeholder="Домашній телефон"
+											value="<?php echo $user['home_phone']; ?>">
+										<input type="text" name="email" placeholder="Електронна пошта"
+											value="<?php echo $user['email']; ?>">
+										<input type="text" name="password" placeholder="Пароль"
+											value="<?php echo $user['password']; ?>">
+										<input type="text" name="personal_account" placeholder="Особистий рахунок"
+											value="<?php echo $user['personal_account']; ?>">
+										<input type="text" name="address" placeholder="Адреса" value="<?php echo $user['address']; ?>">
+										<input type="text" name="counter" placeholder="Лічильник"
+											value="<?php echo $user['counter']; ?>">
+										<input type="text" name="role" placeholder="Роль" value="<?php echo $user['role']; ?>">
+										<input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+										<input type="submit" name="update_user" value="Оновити користувача" class="btn btn-warning">
+									</form>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					<?php endif; ?>
+					<div class="card my-3">
+						<div class="card-header">
+							<?php if (isset($user['first_name']) && isset($user['last_name'])): ?>
+								<h2>Показники для
+									<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
+								</h2>
+							<?php else: ?>
+								<h2>Показники для користувача</h2>
+							<?php endif; ?>
+						</div>
+						<div class="card-body">
+							<?php if (isset($user['id']) && isset($meters_for_user[$user['id']])): ?>
+								<form method="post">
+									<table>
+										<tr>
+											<th>Показники</th>
+											<th>Сума</th>
+											<th>Статус оплати</th>
+											<th>Редагування Показників</th>
+											<th>Редагувати суму</th>
+											<th>Редагувати статус</th>
+											<th>Дата</th>
+											<th>Дата оновлення</th>
+											<th>Оператор</th>
+										</tr>
+										<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
+											<tr>
+												<td>
+													<?php echo $meter['meters']; ?>
+												</td>
+												<td>
+													<?php echo $meter['price_for_month']; ?>
+												</td>
 
+												<td>
+													<?php echo $meter['payment_status']; ?>
+												</td>
+												<td>
+													<input type="text" name="meters[<?php echo $meter['meter_id']; ?>]"
+														value="<?php echo $meter['meters']; ?>">
+												</td>
+												<td>
+													<input type="text" name="price_for_month[<?php echo $meter['meter_id']; ?>]"
+														value="<?php echo $meter['price_for_month']; ?>">
+												</td>
+												<td>
+													<select name="payment_status[<?php echo $meter['meter_id']; ?>]">
+														<option value="не сплачено" <?php echo ($meter['payment_status'] == 'не сплачено') ? 'selected' : ''; ?>>не сплачено</option>
+														<option value="сплачено" <?php echo ($meter['payment_status'] == 'сплачено') ? 'selected' : ''; ?>>сплачено</option>
+														<option value="в очікуванні" <?php echo ($meter['payment_status'] == 'в очікуванні') ? 'selected' : ''; ?>>в очікуванні</option>
+														<option value="прострочений" <?php echo ($meter['payment_status'] == 'прострочений') ? 'selected' : ''; ?>>прострочений</option>
+														<option value="часткова оплата" <?php echo ($meter['payment_status'] == 'часткова оплата') ? 'selected' : ''; ?>>часткова оплата</option>
+														<option value="скасовано" <?php echo ($meter['payment_status'] == 'скасовано') ? 'selected' : ''; ?>>скасовано</option>
+														<option value="відшкодовано" <?php echo ($meter['payment_status'] == 'відшкодовано') ? 'selected' : ''; ?>>відшкодовано</option>
+														<option value="невдалий" <?php echo ($meter['payment_status'] == 'невдалий') ? 'selected' : ''; ?>>невдалий</option>
+													</select>
+												</td>
+												<td>
+													<?php echo $meter['date']; ?>
+												</td>
+												<td>
+													<?php echo $meter['date_update']; ?>
+												</td>
+												<td>
+													<?php
+													$stmt = $conn->prepare("SELECT first_name, last_name FROM users WHERE id = ?");
+													$stmt->bind_param("i", $meter['id_operator']);
+													$stmt->execute();
+													$operator_result = $stmt->get_result();
+													$operator = $operator_result->fetch_assoc();
+													echo $operator['first_name'] . ' ' . $operator['last_name'];
+													?>
+												</td>
+											</tr>
+										<?php endforeach; ?>
+									</table>
+									<input type="submit" name="submit_all" value="Оновити">
+								</form>
+							<?php else: ?>
+								<p>Для цього користувача не знайдено лічильників.</p>
+							<?php endif; ?>
+						</div>
+					</div>
+				</div>
+
+				<div class="tab-pane fade" id="news" role="tabpanel">
+					<!-- Create News form and Display News go here -->
+				</div>
+			</div>
 			<footer>
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 				<script src="../js/bootstrap.min.js"></script>
 				<script src="../js/bootstrap.bundle.min.js"></script>
+				<script src="../operator/js/save_tab.js"></script>
 			</footer>
 </body>
 
