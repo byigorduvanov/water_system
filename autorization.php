@@ -54,14 +54,14 @@ if (isset($_POST["submit"])) {
 				ob_start();
 				if ($row['role'] == 'admin') {
 					$_SESSION['admin_name'] = $row['email'];
-					$redirect_url = "admin/admin.php";
+					$redirect_url = "admin/index.php";
 				} elseif ($row['role'] == 'user') {
 					$_SESSION['user_name'] = $row['email'];
 					$redirect_url = "room.php";
 					// header("Location: room.php");
 				} elseif ($row['role'] == 'operator') {
 					$_SESSION['operator_name'] = $row['email'];
-					$redirect_url = "operator/operator.php";
+					$redirect_url = "operator/index.php";
 				}
 			} else {
 				$errors['password'] = "Неправильна пошта або пароль";
