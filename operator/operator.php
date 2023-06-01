@@ -179,8 +179,8 @@ if (isset($_POST['submit_all'])) {
 //новини
 // Створити новини
 if (isset($_POST['create_news'])) {
-	$stmt = $conn->prepare("INSERT INTO news (tittle, content, image, publish_date, author) VALUES (?, ?, ?, ?, ?)");
-	$stmt->bind_param("ssssi", $_POST['tittle'], $_POST['content'], $_POST['image'], $_POST['publish_date'], $id);
+	$stmt = $conn->prepare("INSERT INTO news (title, content, image, publish_date, author) VALUES (?, ?, ?, ?, ?)");
+	$stmt->bind_param("ssssi", $_POST['title'], $_POST['content'], $_POST['image'], $_POST['publish_date'], $id);
 	$stmt->execute();
 }
 //ФОТО
@@ -198,8 +198,8 @@ if (isset($_FILES['image'])) {
 
 	if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
 		// Now you can insert $unique_name in your database record for the image field
-		$stmt = $conn->prepare("UPDATE news SET image=? WHERE tittle=?");
-		$stmt->bind_param("ss", $unique_name, $_POST['tittle']);
+		$stmt = $conn->prepare("UPDATE news SET image=? WHERE title=?");
+		$stmt->bind_param("ss", $unique_name, $_POST['title']);
 		$stmt->execute();
 	}
 
@@ -215,8 +215,8 @@ $news_result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 // оновлення News
 if (isset($_POST['update_news'])) {
-	$stmt = $conn->prepare("UPDATE news SET tittle=?, content=?, image=?, publish_date=?, author=? WHERE id=?");
-	$stmt->bind_param("ssssii", $_POST['tittle'], $_POST['content'], $_POST['image'], $_POST['publish_date'], $_POST['author'], $_POST['news_id']);
+	$stmt = $conn->prepare("UPDATE news SET title=?, content=?, image=?, publish_date=?, author=? WHERE id=?");
+	$stmt->bind_param("ssssii", $_POST['title'], $_POST['content'], $_POST['image'], $_POST['publish_date'], $_POST['author'], $_POST['news_id']);
 	$stmt->execute();
 }
 
@@ -408,8 +408,8 @@ if (isset($_POST['delete_news'])) {
 				<div class="card-body">
 					<form method="POST" enctype="multipart/form-data">
 						<div class="form-group">
-							<label for="tittle">Заголовок:</label>
-							<input type="text" id="tittle" name="tittle" class="form-control" required>
+							<label for="title">Заголовок:</label>
+							<input type="text" id="title" name="title" class="form-control" required>
 						</div>
 						<div class="form-group">
 							<label for="content">Контент:</label>
@@ -428,54 +428,41 @@ if (isset($_POST['delete_news'])) {
 					</form>
 				</div>
 			</div>
-
-			<!-- Редагування новини -->
-			<div class="card my-3">
-				<div class="card-header">
-					<h2>Редагування новини</h2>
-				</div>
-				<div class="card-body">
-					<form method="POST">
-						<div class="form-group">
-							<label for="news_id_update">News ID:</label>
-							<input type="number" id="news_id_update" name="news_id" class="form-control" required>
-						</div>
-						<!-- Include the rest of the fields like in the create form -->
-						<button type="submit" name="update_news" class="btn btn-warning">Редагування новини</button>
-					</form>
-				</div>
-			</div>
-
-			<!-- видалення новини -->
-			<div class="card my-3">
-				<div class="card-header">
-					<h2>видалення новини </h2>
-				</div>
-				<div class="card-body">
-					<form method="POST">
-						<div class="form-group">
-							<label for="news_id_delete">News ID:</label>
-							<input type="number" id="news_id_delete" name="news_id" class="form-control" required>
-						</div>
-						<button type="submit" name="delete_news" class="btn btn-danger">видалення новини</button>
-					</form>
-				</div>
-			</div>
-
-
 			<!-- Всі новини -->
 			<h2>Всі новини</h2>
-			<?php
-			foreach ($news_result as $news) {
-				echo "<div>";
-				echo "<h3>" . $news['tittle'] . "</h3>";
-				echo "<p>" . $news['content'] . "</p>";
-				echo "<img src='../img/news/" . $news['image'] . "' alt='" . $news['tittle'] . "'>";
-				echo "<p>Published on: " . $news['publish_date'] . "</p>";
-				echo "<p>Author ID: " . $news['author'] . "</p>";
-				echo "</div>";
-			}
-			?>
+
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">Заголовок</th>
+						<th scope="col">Дата публікації</th>
+						<th scope="col">Контент</th>
+						<th scope="col">Автор</th>
+						<th scope="col">Дії</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					foreach ($news_result as $news) {
+						echo "<tr>";
+						echo "<td>" . $news['title'] . "</td>";
+						echo "<td>" . $news['publish_date'] . "</td>";
+						echo "<td>" . $news['content'] . "</td>";
+						echo "<td>" . $news['author'] . "</td>";
+						echo "<td>";
+						echo "<form method='POST'>";
+						echo "<input type='hidden' name='news_id' value='" . $news['id'] . "'/>";
+						echo "<button type='submit' name='update_news' class='btn btn-warning btn-sm'>Редагувати</button>";
+						echo "<button type='submit' name='delete_news' class='btn btn-danger btn-sm'>Видалити</button>";
+						echo "</form>";
+						echo "</td>";
+						echo "</tr>";
+					}
+					?>
+				</tbody>
+			</table>
+
+
 
 		</div>
 		<footer>
