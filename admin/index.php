@@ -176,7 +176,132 @@ if (isset($_POST['submit_all'])) {
 		}
 	}
 }
+//новини
+// Створити новини
+if (isset($_POST['create_news'])) {
+	$stmt = $conn->prepare("INSERT INTO news (title, content, image, publish_date, author) VALUES (?, ?, ?, ?, ?)");
+	$stmt->bind_param("ssssi", $_POST['title'], $_POST['content'], $_POST['image'], $_POST['publish_date'], $id);
+	$stmt->execute();
+	//ФОТО
+	if (isset($_FILES['image'])) {
+		$file_name = $_FILES['image']['name'];
+		$file_tmp = $_FILES['image']['tmp_name'];
+		$exploded = explode('.', $_FILES['image']['name']);
+		$file_ext = strtolower(end($exploded));
 
+		// Перевірити, чи файл є зображенням
+		$allowed_mime_types = ['image/jpeg', 'image/png', 'image/gif'];
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		$mime = finfo_file($finfo, $file_tmp);
+
+		if (!in_array($mime, $allowed_mime_types)) {
+			// The file is not a valid image
+			echo "Invalid image file.";
+			return;
+		}
+		// Унікальне імя
+		$unique_name = uniqid() . '.' . $file_ext;
+
+		// каталог
+		$directory = '../img/news/';
+
+		if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
+			$stmt = $conn->prepare("UPDATE news SET image=? WHERE title=?");
+			$stmt->bind_param("ss", $unique_name, $_POST['title']);
+			$stmt->execute();
+		}
+	}
+}
+
+//ВИВЕДЕННЯ
+$news_result = [];
+$stmt = $conn->prepare("SELECT news.id, news.title, news.content, news.image, news.publish_date, CONCAT(users.first_name, ' ', users.last_name) AS author FROM news INNER JOIN users ON news.author = users.id ORDER BY news.publish_date DESC");
+$stmt->execute();
+$news_result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+// редагування 
+if (isset($_POST['edit_news'])) {
+	$id = $_POST['news_id'];
+	$title = filter_var($_POST['title'], FILTER_SANITIZE_STRING);
+	$content = filter_var($_POST['content'], FILTER_SANITIZE_STRING);
+	$publish_date = $_POST['publish_date'];
+
+	// Якщо завантажено новий файл, оновить поле зображення
+	if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
+		$file_name = $_FILES['image']['name'];
+		$file_tmp = $_FILES['image']['tmp_name'];
+		$exploded = explode('.', $_FILES['image']['name']);
+		$file_ext = strtolower(end($exploded));
+		// Перевірити, чи файл є зображенням
+		$allowed_mime_types = ['image/jpeg', 'image/png', 'image/gif'];
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		$mime = finfo_file($finfo, $file_tmp);
+
+		if (!in_array($mime, $allowed_mime_types)) {
+			// The file is not a valid image
+			echo "Invalid image file.";
+			return;
+		}
+		$unique_name = uniqid() . '.' . $file_ext;
+		$directory = '../img/news/';
+
+		// Отримати ім'я поточного файлу зображення з бази даних
+		$stmt = $conn->prepare("SELECT image FROM news WHERE id = ?");
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$row = $result->fetch_assoc();
+		$current_image = $row['image'];
+
+		// Видалення старого файлу зображення з сервера
+		if (file_exists($directory . $current_image)) {
+			unlink($directory . $current_image);
+		}
+
+		// Завантаження нового файлу зображення на сервер
+		if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
+			$stmt = $conn->prepare("UPDATE news SET image = ? WHERE id = ?");
+			$stmt->bind_param("si", $unique_name, $id);
+			if (!$stmt->execute()) {
+				echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+			}
+		}
+	}
+	// оновлення текстових полів
+	$stmt = $conn->prepare("UPDATE news SET title = ?, content = ?, publish_date = ?, author = ? WHERE id = ?");
+	$stmt->bind_param("ssssi", $title, $content, $publish_date, $_SESSION['id'], $id);
+	if (!$stmt->execute()) {
+		echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+	}
+
+	header("Location: index.php");
+	exit();
+}
+
+// Видалення новини
+if (isset($_POST['delete_news'])) {
+	$id = $_POST['news_id'];
+
+	// Отримати поточну назву зображення з бази даних
+	$stmt = $conn->prepare("SELECT image FROM news WHERE id = ?");
+	$stmt->bind_param("i", $id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$row = $result->fetch_assoc();
+	$current_image = $row['image'];
+
+	// Видалення з папки
+	$directory = '../img/news/';
+	if (file_exists($directory . $current_image)) {
+		unlink($directory . $current_image);
+	}
+
+	// Видалення
+	$stmt = $conn->prepare("DELETE FROM news WHERE id = ?");
+	$stmt->bind_param("i", $id);
+	$stmt->execute();
+
+	header("Location: index.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="uk">
@@ -288,8 +413,7 @@ if (isset($_POST['submit_all'])) {
 											value="<?php echo $user['home_phone']; ?>">
 										<input type="text" name="email" placeholder="Електронна пошта"
 											value="<?php echo $user['email']; ?>">
-										<input type="text" name="password" placeholder="Пароль"
-											value="<?php echo $user['password']; ?>">
+										<input type="password" name="password" placeholder="Пароль">
 										<input type="text" name="personal_account" placeholder="Особистий рахунок"
 											value="<?php echo $user['personal_account']; ?>">
 										<input type="text" name="address" placeholder="Адреса" value="<?php echo $user['address']; ?>">
@@ -388,8 +512,106 @@ if (isset($_POST['submit_all'])) {
 					</div>
 				</div>
 
-				<div class="tab-pane fade" id="news" role="tabpanel">
-					<!-- Create News form and Display News go here -->
+				<div class="tab-pane fade" id="news" role="tabpanel" aria-labelledby="news-tab">
+					<!-- Створити новини -->
+					<div class="card my-3">
+						<div class="card-header">
+							<h2>Створити новини</h2>
+						</div>
+						<div class="card-body">
+							<form method="POST" enctype="multipart/form-data">
+								<div class="form-group">
+									<label for="title">Заголовок:</label>
+									<input type="text" id="title" name="title" class="form-control" required>
+								</div>
+								<div class="form-group">
+									<label for="content">Контент:</label>
+									<textarea id="content" name="content" class="form-control" required></textarea>
+								</div>
+								<div class="form-group">
+									<label for="image">Завантаження фото:</label>
+									<input type="file" id="image" name="image" class="form-control">
+								</div>
+
+								<div class="form-group">
+									<label for="publish_date">Дата публікації:</label>
+									<input type="date" id="publish_date" name="publish_date" class="form-control" required>
+								</div>
+								<button type="submit" name="create_news" class="btn btn-primary">Створити новину</button>
+							</form>
+						</div>
+					</div>
+					<!-- редагування новин -->
+					<div class="card my-3" id="edit_news_card" style="display: none;">
+						<div class="card-header">
+							<h2>Редагування новин</h2>
+						</div>
+						<div class="card-body">
+							<form method="POST" id="edit_news_form" enctype="multipart/form-data">
+								<input type="hidden" id="edit_id" name="news_id">
+								<div class="form-group">
+									<label for="edit_title">Заголовок</label>
+									<input type="text" class="form-control" id="edit_title" name="title" required>
+								</div>
+								<div class="form-group">
+									<label for="edit_content">Зміст</label>
+									<textarea class="form-control" id="edit_content" name="content" required></textarea>
+								</div>
+								<div class="form-group">
+									<img id="current_image" src="" alt="Current Image">
+									<label for="edit_image">Фото</label>
+									<input type="file" class="form-control" id="edit_image" name="image">
+								</div>
+								<div class="form-group">
+									<label for="edit_publish_date">Дата публікації</label>
+									<input type="date" class="form-control" id="edit_publish_date" name="publish_date" required>
+								</div>
+								<button type="submit" name="edit_news" class="btn btn-primary">Зберегти зміни</button>
+							</form>
+						</div>
+					</div>
+					<!-- Всі новини -->
+					<h2>Всі новини</h2>
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Заголовок</th>
+								<th scope="col">Дата публікації</th>
+								<th scope="col">Контент</th>
+								<th scope="col">Автор</th>
+								<th scope="col">Дії</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ($news_result as $news): ?>
+								<tr>
+									<td>
+										<?php echo htmlspecialchars($news['title'], ENT_QUOTES, 'UTF-8'); ?>
+									</td>
+									<td>
+										<?php echo htmlspecialchars($news['publish_date'], ENT_QUOTES, 'UTF-8'); ?>
+									</td>
+									<td>
+										<?= htmlspecialchars(mb_substr($news['content'], 0, 450, 'UTF-8') . '...', ENT_QUOTES, 'UTF-8'); ?>
+									</td>
+									<td>
+										<?php echo htmlspecialchars($news['author'], ENT_QUOTES, 'UTF-8'); ?>
+									</td>
+									<td>
+										<button
+											onclick="openEditForm(<?php echo $news['id']; ?>, '<?php echo $news['title']; ?>', '<?php echo addslashes(htmlspecialchars($news['content'])); ?>', '<?php echo $news['publish_date']; ?>', '<?php echo $news['image']; ?>')"
+											class='btn btn-warning btn-sm'>
+											Редагувати новину
+										</button>
+										<form method='POST'>
+											<input type='hidden' name='news_id' value='<?php echo $news['id']; ?>' />
+											<button type='submit' name='delete_news' class='btn btn-danger btn-sm'>Видалити</button>
+										</form>
+									</td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
 				</div>
 			</div>
 			<footer>
@@ -397,6 +619,7 @@ if (isset($_POST['submit_all'])) {
 				<script src="../js/bootstrap.min.js"></script>
 				<script src="../js/bootstrap.bundle.min.js"></script>
 				<script src="../operator/js/save_tab.js"></script>
+				<script src="../operator/js/modal.js"></script>
 			</footer>
 </body>
 
