@@ -1,6 +1,8 @@
 <?php
-error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 
 require_once '../vendor/connect.php';
 if (!isset($_SESSION["operator_name"])) {
@@ -190,14 +192,13 @@ if (isset($_FILES['image'])) {
 	$exploded = explode('.', $_FILES['image']['name']);
 	$file_ext = strtolower(end($exploded));
 
-	// Generate a unique name for the image
+	// Унікальне імя
 	$unique_name = uniqid() . '.' . $file_ext;
 
-	// Specify your img directory
+	// каталог
 	$directory = '../img/news/';
 
 	if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
-		// Now you can insert $unique_name in your database record for the image field
 		$stmt = $conn->prepare("UPDATE news SET image=? WHERE title=?");
 		$stmt->bind_param("ss", $unique_name, $_POST['title']);
 		$stmt->execute();
@@ -209,35 +210,45 @@ $stmt = $conn->prepare("SELECT * FROM news ORDER BY publish_date DESC");
 $stmt->execute();
 $news_result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 // Edit News
+// Edit News
 if (isset($_POST['edit_news'])) {
-	if (isset($_POST['news_id'])) {
-		$id = $_POST['news_id'];
-		$title = $_POST['title'];
-		$content = $_POST['content'];
-		$publish_date = $_POST['publish_date'];
+	$id = $_POST['news_id'];
+	$title = $_POST['title'];
+	$content = $_POST['content'];
+	$publish_date = $_POST['publish_date'];
 
-		if (isset($_FILES['image'])) {
-			$file_name = $_FILES['image']['name'];
-			$file_tmp = $_FILES['image']['tmp_name'];
-			$exploded = explode('.', $_FILES['image']['name']);
-			$file_ext = strtolower(end($exploded));
+	if (isset($_FILES['image'])) {
+		$file_name = $_FILES['image']['name'];
+		$file_tmp = $_FILES['image']['tmp_name'];
+		$exploded = explode('.', $_FILES['image']['name']);
+		$file_ext = strtolower(end($exploded));
 
-			$unique_name = uniqid() . '.' . $file_ext;
-			$directory = '../img/news/';
+		$unique_name = uniqid() . '.' . $file_ext;
+		$directory = '../img/news/';
 
-			if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
-				$stmt = $conn->prepare("UPDATE news SET title = ?, content = ?, publish_date = ?, image = ? WHERE id = ?");
-				$stmt->bind_param("ssssi", $title, $content, $publish_date, $unique_name, $id);
-				$stmt->execute();
+		if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
+			$stmt = $conn->prepare("UPDATE news SET title = ?, content = ?, publish_date = ?, image = ? WHERE id = ?");
+			$stmt->bind_param("ssssi", $title, $content, $publish_date, $unique_name, $id);
+			if (!$stmt->execute()) {
+				echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+			} else {
+				// Redirect after successfully updating the news
+				header("Location: index.php");
+				exit();
 			}
+		}
+	} else {
+		$stmt = $conn->prepare("UPDATE news SET title = ?, content = ?, publish_date = ? WHERE id = ?");
+		$stmt->bind_param("sssi", $title, $content, $publish_date, $id);
+		if (!$stmt->execute()) {
+			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
 		} else {
-			$stmt = $conn->prepare("UPDATE news SET title = ?, content = ?, publish_date = ? WHERE id = ?");
-			$stmt->bind_param("sssi", $title, $content, $publish_date, $id);
-			$stmt->execute();
+			// Redirect after successfully updating the news
+			header("Location: index.php");
+			exit();
 		}
 	}
 }
-
 
 // Delete News
 if (isset($_POST['delete_news'])) {
@@ -247,7 +258,8 @@ if (isset($_POST['delete_news'])) {
 	$stmt->execute();
 }
 
-?>
+var_dump($_POST)
+	?>
 <!DOCTYPE html>
 <html lang="uk">
 
@@ -482,63 +494,47 @@ if (isset($_POST['delete_news'])) {
 						</tr>
 					</thead>
 					<tbody>
-						<?php
-						foreach ($news_result as $news) {
-							echo "<tr>";
-							echo "<td>" . $news['title'] . "</td>";
-							echo "<td>" . $news['publish_date'] . "</td>";
-							echo "<td>" . $news['content'] . "</td>";
-							echo "<td>" . $news['author'] . "</td>";
-							echo "<td>";
-							echo "<form method='POST'>";
-							echo "<input type='hidden' name='news_id' value='" . $news['id'] . "'/>";
-							echo "<button onclick=\"showEditModal('{$news['id']}', '{$news['title']}', '{$news['content']}', '{$news['publish_date']}', '{$news['image']}')\" type='button' class='btn btn-warning btn-sm'>Редагувати</button>";
-							echo "<button type='submit' name='delete_news' class='btn btn-danger btn-sm'>Видалити</button>";
-							echo "</form>";
-							echo "</td>";
-							echo "</tr>";
-						}
-						?>
+						<?php foreach ($news_result as $news): ?>
+							<tr>
+								<td>
+									<?php echo $news['title']; ?>
+								</td>
+								<td>
+									<?php echo $news['publish_date']; ?>
+								</td>
+								<td>
+									<?php echo $news['content']; ?>
+								</td>
+								<td>
+									<?php echo $news['author']; ?>
+								</td>
+								<td>
+									<!-- Edit button -->
+									<button
+										onclick="document.getElementById('edit_news_form_<?php echo $news['id']; ?>').style.display='block'"
+										class='btn btn-warning btn-sm'>
+										Edit News
+									</button>
+									<!-- Edit News Form -->
+									<form method="post" id="edit_news_form_<?php echo $news['id']; ?>" style="display: none;">
+										<h2>Edit News</h2>
+										<input type="text" name="title" placeholder="Title" value="<?php echo $news['title']; ?>">
+										<textarea name="content" placeholder="Content"><?php echo $news['content']; ?></textarea>
+										<input type="file" name="image">
+										<input type="date" name="publish_date" value="<?php echo $news['publish_date']; ?>">
+										<input type="hidden" name="news_id" value="<?php echo $news['id']; ?>">
+										<input type="submit" name="edit_news" value="Update News" class="btn btn-warning">
+									</form>
+									<!-- Delete button -->
+									<form method='POST'>
+										<input type='hidden' name='news_id' value='<?php echo $news['id']; ?>' />
+										<button type='submit' name='delete_news' class='btn btn-danger btn-sm'>Delete</button>
+									</form>
+								</td>
+							</tr>
+						<?php endforeach; ?>
 					</tbody>
 				</table>
-				<!-- Edit News Modal -->
-				<div class="modal" id="editNewsModal">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title">Edit News</h5>
-								<button type="button" class="close" data-dismiss="modal">&times;</button>
-							</div>
-							<form method="POST" enctype="multipart/form-data">
-								<div class="modal-body">
-									<input type="hidden" id="edit_id" name="id">
-									<div class="form-group">
-										<label for="edit_title">Title</label>
-										<input type="text" class="form-control" id="edit_title" name="title" required>
-									</div>
-									<div class="form-group">
-										<label for="edit_content">Content</label>
-										<textarea class="form-control" id="edit_content" name="content" required></textarea>
-									</div>
-									<div class="form-group">
-										<img id="current_image" src="" alt="Current Image">
-										<label for="edit_image">Image</label>
-										<input type="file" class="form-control" id="edit_image" name="image">
-									</div>
-									<div class="form-group">
-										<label for="edit_publish_date">Publish Date</label>
-										<input type="date" class="form-control" id="edit_publish_date" name="publish_date"
-											required>
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="submit" name="edit_news" class="btn btn-primary">Save Changes</button>
-									<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -548,7 +544,7 @@ if (isset($_POST['delete_news'])) {
 		<script src="../js/bootstrap.min.js"></script>
 		<script src="../js/bootstrap.bundle.min.js"></script>
 		<script src="js/save_tab.js"></script>
-		<script src="js/modal.js"></script>
+		<!-- <script src="js/modal.js"></script> -->
 	</footer>
 </body>
 
