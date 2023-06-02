@@ -232,7 +232,6 @@ if (isset($_POST['edit_news'])) {
 			if (!$stmt->execute()) {
 				echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
 			} else {
-				// Redirect after successfully updating the news
 				header("Location: index.php");
 				exit();
 			}
@@ -243,7 +242,6 @@ if (isset($_POST['edit_news'])) {
 		if (!$stmt->execute()) {
 			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
 		} else {
-			// Redirect after successfully updating the news
 			header("Location: index.php");
 			exit();
 		}
@@ -481,6 +479,35 @@ var_dump($_POST)
 						</form>
 					</div>
 				</div>
+				<!-- редагування новин -->
+				<div class="card my-3" id="edit_news_card" style="display: none;">
+					<div class="card-header">
+						<h2>Edit News</h2>
+					</div>
+					<div class="card-body">
+						<form method="POST" id="edit_news_form">
+							<input type="hidden" id="edit_id" name="news_id">
+							<div class="form-group">
+								<label for="edit_title">Title</label>
+								<input type="text" class="form-control" id="edit_title" name="title" required>
+							</div>
+							<div class="form-group">
+								<label for="edit_content">Content</label>
+								<textarea class="form-control" id="edit_content" name="content" required></textarea>
+							</div>
+							<div class="form-group">
+								<img id="current_image" src="" alt="Current Image">
+								<label for="edit_image">Image</label>
+								<input type="file" class="form-control" id="edit_image" name="image">
+							</div>
+							<div class="form-group">
+								<label for="edit_publish_date">Publish Date</label>
+								<input type="date" class="form-control" id="edit_publish_date" name="publish_date" required>
+							</div>
+							<button type="submit" name="edit_news" class="btn btn-primary">Save Changes</button>
+						</form>
+					</div>
+				</div>
 				<!-- Всі новини -->
 				<h2>Всі новини</h2>
 				<table class="table">
@@ -509,23 +536,11 @@ var_dump($_POST)
 									<?php echo $news['author']; ?>
 								</td>
 								<td>
-									<!-- Edit button -->
 									<button
-										onclick="document.getElementById('edit_news_form_<?php echo $news['id']; ?>').style.display='block'"
+										onclick="openEditForm(<?php echo $news['id']; ?>, '<?php echo $news['title']; ?>', '<?php echo htmlspecialchars($news['content']); ?>', '<?php echo $news['publish_date']; ?>', '<?php echo $news['image']; ?>')"
 										class='btn btn-warning btn-sm'>
 										Edit News
 									</button>
-									<!-- Edit News Form -->
-									<form method="post" id="edit_news_form_<?php echo $news['id']; ?>" style="display: none;">
-										<h2>Edit News</h2>
-										<input type="text" name="title" placeholder="Title" value="<?php echo $news['title']; ?>">
-										<textarea name="content" placeholder="Content"><?php echo $news['content']; ?></textarea>
-										<input type="file" name="image">
-										<input type="date" name="publish_date" value="<?php echo $news['publish_date']; ?>">
-										<input type="hidden" name="news_id" value="<?php echo $news['id']; ?>">
-										<input type="submit" name="edit_news" value="Update News" class="btn btn-warning">
-									</form>
-									<!-- Delete button -->
 									<form method='POST'>
 										<input type='hidden' name='news_id' value='<?php echo $news['id']; ?>' />
 										<button type='submit' name='delete_news' class='btn btn-danger btn-sm'>Delete</button>
@@ -544,7 +559,7 @@ var_dump($_POST)
 		<script src="../js/bootstrap.min.js"></script>
 		<script src="../js/bootstrap.bundle.min.js"></script>
 		<script src="js/save_tab.js"></script>
-		<!-- <script src="js/modal.js"></script> -->
+		<script src="js/modal.js"></script>
 	</footer>
 </body>
 
