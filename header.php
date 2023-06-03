@@ -5,11 +5,9 @@
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description"
 		content="Система автоматизованої подачі показників води в Гусятині. Здійснюйте легку подачу показників, ведіть облік та сплачуйте за послуги з особистого кабінету.">
-	<meta name="keywords"
-		content="Гусятин, водоканал, подача показників води, облік показників, автоматизована система">
+	<meta name="keywords" content="Гусятин, водоканал, подача показників води, облік показників, автоматизована система">
 	<title>Система обліку та подачі показників води</title>
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png">
 	<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -36,8 +34,7 @@
 							</a>
 							<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
 								aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-								<span
-									class="navbar-toggler-icon <?php echo isset($burger_black) ? $burger_black : ''; ?> ">
+								<span class="navbar-toggler-icon <?php echo isset($burger_black) ? $burger_black : ''; ?> ">
 								</span>
 							</button>
 							<div class="collapse navbar-collapse" id="navbarNav">
@@ -61,11 +58,9 @@
 										<a class="nav-link " href="registr.php">Зареєструватися</a>
 									</li>
 								</ul>
-								<a href="autorization.php" class="btn btn-primary my_btn btn_room hidde"
-									role="button">Мій
+								<a href="autorization.php" class="btn btn-primary my_btn btn_room hidde" role="button">Мій
 									кабінет</a>
-								<a href="registr.php"
-									class=" btn btn-primary my_btn btn_register hidde">Зареєструватися</a>
+								<a href="registr.php" class=" btn btn-primary my_btn btn_register hidde">Зареєструватися</a>
 							</div>
 						</nav>
 

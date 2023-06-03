@@ -1,5 +1,10 @@
 <?php
+require_once 'vendor/connect.php';
 $header_class = 'about__offer';
+//ВИВЕДЕННЯ новин
+$stmt = $conn->prepare("SELECT news.id, news.title, news.content, news.image, news.publish_date, CONCAT(users.first_name, ' ', users.last_name) AS author FROM news INNER JOIN users ON news.author = users.id ORDER BY news.publish_date DESC LIMIT 3");
+$stmt->execute();
+$news_result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 include('header.php');
 ?>
 <section class="about__offer">
@@ -87,7 +92,38 @@ include('header.php');
 
 	</div>
 </section>
-<section class="registration" data-aos="zoom-in-up">
+<section class="news__section" data-aos="zoom-in-down">
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<h2 class="register-head">Новини</h2>
+			</div>
+		</div>
+		<div class="row">
+			<?php foreach ($news_result as $news): ?>
+				<div class="col-lg-4 col-md-6 col-sm-12">
+					<div class="card col-lg-11 col-sm-9 mx-auto">
+						<a href="news_details.php?id=<?php echo $news['id']; ?>">
+							<img src="img/news/<?php echo htmlspecialchars($news['image'], ENT_QUOTES, 'UTF-8'); ?>"
+								class="mx-auto d-block news__img" alt="News Image">
+						</a>
+						<div class="card-body p-0">
+							<a href="news_details.php?id=<?php echo $news['id']; ?>">
+								<h5 class="card-title register-title text-left mt-3">
+									<?php echo htmlspecialchars($news['title'], ENT_QUOTES, 'UTF-8'); ?>
+								</h5>
+							</a>
+							<p class="card-text register-text text-left mt-5">
+								<?php echo htmlspecialchars($news['publish_date'], ENT_QUOTES, 'UTF-8'); ?>
+							</p>
+						</div>
+					</div>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+</section>
+<section class="registration" data-aos="zoom-in-down">
 	<div class="container">
 		<div class="row">
 			<div class="col">

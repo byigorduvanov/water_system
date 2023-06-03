@@ -8,6 +8,10 @@ water_system/
 │   ├── js/
 │   ├── index.php
 │   ├── css/
-│   room.php
+│	 room.php
 │   auth.php
-
+│   index.php
+├── news/
+│   ├── news_details.php
+├── css/
+├── js/

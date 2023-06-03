@@ -176,7 +176,7 @@ if (isset($_POST['submit_all'])) {
 		}
 	}
 }
-// Add new indicator
+// Додавання нового показника
 if (isset($_POST['add_indicator'])) {
 	date_default_timezone_set('Europe/Kiev');
 	$date_now = date('Y-m-d H:i:s');
