@@ -176,6 +176,21 @@ if (isset($_POST['submit_all'])) {
 		}
 	}
 }
+// Add new indicator
+if (isset($_POST['add_indicator'])) {
+	date_default_timezone_set('Europe/Kiev');
+	$date_now = date('Y-m-d H:i:s');
+	$stmt = $conn->prepare("INSERT INTO meters (id_user, meters, date, date_update, id_operator) VALUES (?, ?, ?, ?, ?)");
+	$stmt->bind_param("issis", $_POST['user_id'], $_POST['meters'], $date_now, $date_now, $_POST['id_operator']);
+	$stmt->execute();
+
+	$new_meter_id = $stmt->insert_id;
+
+	$stmt = $conn->prepare("INSERT INTO months (price_for_month, id_meters, id_user, payment_status) VALUES (?, ?, ?, ?)");
+	$stmt->bind_param("diss", $_POST['price_for_month'], $new_meter_id, $_POST['user_id'], $_POST['payment_status']);
+	$stmt->execute();
+
+}
 //новини
 // Створити новини
 if (isset($_POST['create_news'])) {
@@ -324,7 +339,7 @@ if (isset($_POST['delete_news'])) {
 		<h1 class="text-center">Сторінка Адміна</h1>
 		<a href="../index.php" class="btn btn-secondary my-3">Головна</a>
 
-		<a href="../vendor/logout.php" class="btn btn-primary my-3">Вихід</a>
+		<a href="../vendor/logout.php" class="btn btn-warning my-3">Вихід</a>
 		<!-- Tabs -->
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
 			<li class="nav-item">
@@ -360,7 +375,7 @@ if (isset($_POST['delete_news'])) {
 								<input type="text" name="address" placeholder="Адреса">
 								<input type="text" name="counter" placeholder="Лічильник">
 								<input type="text" name="role" placeholder="Роль">
-								<input type="submit" name="create_user" value="Створити користувача">
+								<input type="submit" name="create_user" value="Створити користувача" class=" btn btn-warning">
 							</form>
 						</div>
 					</div>
@@ -378,7 +393,7 @@ if (isset($_POST['delete_news'])) {
 								<input type="text" name="search_term3" placeholder="Електронна пошта">
 								<input type="text" name="search_term4" placeholder="Особистий рахунок">
 								<input type="text" name="search_term5" placeholder="Лічильник">
-								<input type="submit" name="search_user" value="Пошук користувача" class="btn btn-primary">
+								<input type="submit" name="search_user" value="Пошук користувача" class="btn btn-warning">
 							</form>
 						</div>
 					</div>
@@ -391,8 +406,25 @@ if (isset($_POST['delete_news'])) {
 							<div class="card-body">
 								<?php foreach ($user_search_result as $user): ?>
 									<div>
+										<!-- Add Indicator -->
+										<form method="post">
+											<h2>Додати новий показник</h2>
+											<input type="hidden" name="user_id" value="<?php if (isset($user['id']))
+												echo $user['id']; ?>">
+											<input type="hidden" name="id_operator" value="<?php echo $id; ?>">
+											<input type="text" name="meters" placeholder="Показник">
+											<input type="text" name="price_for_month" placeholder="Сума до сплати">
+											<select name="payment_status">
+												<option value="не сплачено">не сплачено</option>
+												<option value="сплачено">сплачено</option>
+												<option value="в очікуванні">в очікуванні</option>
+												<option value="прострочений">прострочений</option>
+											</select>
+											<input type="submit" name="add_indicator" value="Додати новий показник"
+												class="btn btn-warning mb-5">
+										</form>
 										<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
-										<button
+										<button class=" btn btn-warning"
 											onclick="document.getElementById('update_user_form_<?php echo $user['id']; ?>').style.display='block'">
 											Редагувати користувача
 										</button>
@@ -503,10 +535,10 @@ if (isset($_POST['delete_news'])) {
 											</tr>
 										<?php endforeach; ?>
 									</table>
-									<input type="submit" name="submit_all" value="Оновити">
+									<input type="submit" name="submit_all" value="Оновити" class=" btn btn-warning">
 								</form>
 							<?php else: ?>
-								<p>Для цього користувача не знайдено лічильників.</p>
+								<p>Для цього користувача не знайдено показників.</p>
 							<?php endif; ?>
 						</div>
 					</div>
@@ -537,7 +569,7 @@ if (isset($_POST['delete_news'])) {
 									<label for="publish_date">Дата публікації:</label>
 									<input type="date" id="publish_date" name="publish_date" class="form-control" required>
 								</div>
-								<button type="submit" name="create_news" class="btn btn-primary">Створити новину</button>
+								<button type="submit" name="create_news" class="btn btn-warning">Створити новину</button>
 							</form>
 						</div>
 					</div>
@@ -566,7 +598,7 @@ if (isset($_POST['delete_news'])) {
 									<label for="edit_publish_date">Дата публікації</label>
 									<input type="date" class="form-control" id="edit_publish_date" name="publish_date" required>
 								</div>
-								<button type="submit" name="edit_news" class="btn btn-primary">Зберегти зміни</button>
+								<button type="submit" name="edit_news" class="btn btn-warning">Зберегти зміни</button>
 							</form>
 						</div>
 					</div>
