@@ -167,13 +167,6 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 	require_once('vendor/generate_receipt.php');
 }
 
-
-
-
-
-
-
-
 ?>
 <!doctype html>
 <html lang="uk">
@@ -348,7 +341,7 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 														</p>
 														<!-- Only display the link to generate receipt if payment_status is 'не сплачено' -->
 														<?php if ($payment_status === 'не сплачено'): ?>
-															<a class="caption__about btn btn-primary my_btn btn_room mt-4"
+															<a class="caption__about generate__receipt  btn btn-primary my_btn btn_room mt-4"
 																href="?generate_receipt=1" target="_blank">
 																<i class="fas fa-print pr-2"></i>Сформувати квитанцію
 															</a>
@@ -391,7 +384,7 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 														<p class="date__user__text">
 															<?= $row['middle_name']; ?>
 														</p>
-														<p>
+														<p style="line-height: 23px;">
 															<?= $row['address']; ?>
 														</p>
 													</div>
@@ -513,6 +506,8 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 									<a class="caption__about btn btn-primary my_btn btn_room mt-4" href="?generate_receipt=1">
 										Сформувати квитанцію
 									</a>
+									<a target="_blank"
+										href="https://www.privat24.ua/rd/send_qr/liqpay_static_qr/payment_2323263991.d1e7751ece1f19ab177e4223858261a7ea602be28e678e3cb7936ab832301a08">оплата</a>
 								</div>
 							</div>
 						</div>
