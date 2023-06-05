@@ -497,18 +497,23 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 									</div>
 								</div>
 								<!--                            <div class="tab-pane fade" id="pay" role="tabpanel" aria-labelledby="pay-tab">-->
-								<div id="tab4" class="tabcontent">
-									4 панель
-									<form action="#" method="POST">
-										<button class="btn btn-primary my_btn" type="submit" name="pay_latest_charge">Оплатити
-											останній рахунок</button>
-									</form>
-									<a class="caption__about btn btn-primary my_btn btn_room mt-4" href="?generate_receipt=1">
-										Сформувати квитанцію
+								<div id="tab4" class="tabcontent p-3">
+									<h2 class="text-center title__date">Виберіть спосіб оплати Нарахування</h2>
+									<p class="mt-3">Оплата за допомогою квитинації</p>
+									<a class="caption__about generate__receipt btn btn-primary my_btn btn_room mt-4 d-block ml-0"
+										href="?generate_receipt=1" target="_blank">
+										<i class="fas fa-print pr-2"></i>Сформувати квитанцію
 									</a>
-									<a target="_blank"
-										href="https://www.privat24.ua/rd/send_qr/liqpay_static_qr/payment_2323263991.d1e7751ece1f19ab177e4223858261a7ea602be28e678e3cb7936ab832301a08">оплата</a>
+									<p class="mt-5">Онлайн оплата</p>
+									<a class="d-block mt-2 generate__receipt btn btn-primary my_btn " target="_blank"
+										href="https://www.privat24.ua/rd/send_qr/liqpay_static_qr/payment_2323275452.dc8331f859cfb244c5ee136d630831409ff4c8ae28d42775a70c7858a1d61fe6">Оплата</a>
+									<p class="mt-5">Тестова Оплата(В розробці)</p>
+									<form action="#" method="POST">
+										<button class="btn btn-warning my_btn mt-2 mb-5" type="submit"
+											name="pay_latest_charge">Оплатити останній рахунок</button>
+									</form>
 								</div>
+
 							</div>
 						</div>
 					</div>
