@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1
--- Час створення: Чрв 01 2023 р., 13:42
+-- Час створення: Чрв 05 2023 р., 12:45
 -- Версія сервера: 10.4.27-MariaDB
 -- Версія PHP: 8.2.0
 
@@ -100,7 +100,7 @@ CREATE TABLE `news` (
   `id` int(11) NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `content` text DEFAULT NULL,
-  `image` varchar(255) DEFAULT NULL,
+  `image` text DEFAULT NULL,
   `publish_date` date DEFAULT NULL,
   `author` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -110,9 +110,9 @@ CREATE TABLE `news` (
 --
 
 INSERT INTO `news` (`id`, `title`, `content`, `image`, `publish_date`, `author`) VALUES
-(8, 'тест ', 'тест', '64778af6cd283.png', '2023-06-11', 27),
-(14, 'Заголовок', 'яуічквсеамнпигртшощьлбдюжхбдзьлщотшригпмнасевчквапролдчквсеамнпигртшоьщлбзд', '647855bb53dc9.png', '2023-06-30', 27),
-(15, 'test 234234', '123456789poiuytredfghj', '6478592882790.png', '2023-06-02', 27);
+(8, 'тест ', 'тест', 'img/news/647db3b87a8bc.png', '2023-06-11', 27),
+(14, 'Заголовок', 'яуічквсеамнпигртшощьлбдюжхбдзьлщотшригпмнасевчквапролдчквсеамнпигртшоьщлбзд', 'img/news/647db853cbb56.png', '2023-06-30', 25),
+(15, 'test 234234', '123456789poiuytredfghj', 'img/news/647db3e6bdd10.png', '2023-06-02', 27);
 
 -- --------------------------------------------------------
 
@@ -205,7 +205,7 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT для таблиці `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- Обмеження зовнішнього ключа збережених таблиць
