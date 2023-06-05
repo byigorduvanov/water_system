@@ -5,7 +5,7 @@ function openEditForm(id, title, content, publish_date, image) {
 	document.getElementById('edit_title').value = title;
 	document.getElementById('edit_content').value = content;
 	document.getElementById('edit_publish_date').value = publish_date;
-	document.getElementById('current_image').src = '../img/news/' + image; 
+	document.getElementById('current_image').src = '../' + image;
 
 	// Show the form
 	document.getElementById('edit_news_card').style.display = 'block';

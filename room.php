@@ -310,7 +310,7 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 														<i class="fas fa-user-circle"></i>
 													</div>
 													<div class="user-name">
-														<h3>
+														<h3 class="pb-2">
 															<?= $row['last_name']; ?>
 															<?= $row['first_name']; ?>
 														</h3>
@@ -350,7 +350,7 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 														<?php if ($payment_status === 'не сплачено'): ?>
 															<a class="caption__about btn btn-primary my_btn btn_room mt-4"
 																href="?generate_receipt=1" target="_blank">
-																Сформувати квитанцію
+																<i class="fas fa-print pr-2"></i>Сформувати квитанцію
 															</a>
 														<?php endif; ?>
 													</div>

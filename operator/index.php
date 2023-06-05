@@ -220,10 +220,11 @@ if (isset($_POST['create_news'])) {
 
 		// каталог
 		$directory = '../img/news/';
-
+		// img/news 
 		if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
+			$path_to_store = 'img/news/' . $unique_name;
 			$stmt = $conn->prepare("UPDATE news SET image=? WHERE title=?");
-			$stmt->bind_param("ss", $unique_name, $_POST['title']);
+			$stmt->bind_param("ss", $path_to_store, $_POST['title']);
 			$stmt->execute();
 		}
 	}
@@ -275,8 +276,9 @@ if (isset($_POST['edit_news'])) {
 
 		// Завантаження нового файлу зображення на сервер
 		if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
+			$path_to_store = 'img/news/' . $unique_name;
 			$stmt = $conn->prepare("UPDATE news SET image = ? WHERE id = ?");
-			$stmt->bind_param("si", $unique_name, $id);
+			$stmt->bind_param("si", $path_to_store, $id);
 			if (!$stmt->execute()) {
 				echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
 			}
@@ -618,7 +620,7 @@ if (isset($_POST['delete_news'])) {
 								<td>
 									<button
 										onclick="openEditForm(<?php echo $news['id']; ?>, '<?php echo $news['title']; ?>', '<?php echo addslashes(htmlspecialchars($news['content'])); ?>', '<?php echo $news['publish_date']; ?>', '<?php echo $news['image']; ?>')"
-										class='btn btn-warning btn-sm'>
+										class='btn btn-warning btn-sm mb-2'>
 										Редагувати новину
 									</button>
 									<form method='POST'>

@@ -649,6 +649,26 @@ button[name="do_meters"],
 	width: 170px;
 }
 
+.caption__about i {
+	color: #000;
+}
+
+.caption__about i:hover {
+	color: #fff;
+}
+
+.caption__about:focus i {
+	color: #fff;
+}
+
+.caption__about:active i {
+	color: #fff;
+}
+
+.caption__about:hover i {
+	color: #fff;
+}
+
 .about__price__info {
 	color: #F65353;
 	font-weight: bold;

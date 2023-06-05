@@ -176,6 +176,12 @@ if (isset($_POST['submit_all'])) {
 		}
 	}
 }
+// Delete user
+if (isset($_POST['delete_user'])) {
+	$stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+	$stmt->bind_param("i", $_POST['user_id']);
+	$stmt->execute();
+}
 // Додавання нового показника
 if (isset($_POST['add_indicator'])) {
 	date_default_timezone_set('Europe/Kiev');
@@ -221,8 +227,9 @@ if (isset($_POST['create_news'])) {
 		$directory = '../img/news/';
 
 		if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
+			$path_to_store = 'img/news/' . $unique_name;
 			$stmt = $conn->prepare("UPDATE news SET image=? WHERE title=?");
-			$stmt->bind_param("ss", $unique_name, $_POST['title']);
+			$stmt->bind_param("ss", $path_to_store, $_POST['title']);
 			$stmt->execute();
 		}
 	}
@@ -274,8 +281,9 @@ if (isset($_POST['edit_news'])) {
 
 		// Завантаження нового файлу зображення на сервер
 		if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
+			$path_to_store = 'img/news/' . $unique_name;
 			$stmt = $conn->prepare("UPDATE news SET image = ? WHERE id = ?");
-			$stmt->bind_param("si", $unique_name, $id);
+			$stmt->bind_param("si", $path_to_store, $id);
 			if (!$stmt->execute()) {
 				echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
 			}
@@ -541,6 +549,25 @@ if (isset($_POST['delete_news'])) {
 								<p>Для цього користувача не знайдено показників.</p>
 							<?php endif; ?>
 						</div>
+					</div>
+					<?php if (isset($user['id'])): ?>
+						<button class="btn btn-danger"
+							onclick="document.getElementById('delete_user_form_<?php echo $user['id']; ?>').style.display='block'">
+							Видалення користувача
+						</button>
+					<?php endif; ?>
+					<!-- форма для видалення користувача -->
+					<div id='delete_user_form_<?php echo $user['id']; ?>' style="display:none;">
+						<form method="post">
+							<h2>Ви впевнені, що хочете видалити цього користувача?</h2>
+							<input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+							<input type="submit" name="delete_user" value="Так, видалити цього користувача"
+								class="btn btn-danger">
+							<button type="button" class="btn btn-secondary"
+								onclick="document.getElementById('delete_user_form_<?php echo $user['id']; ?>').style.display='none'">
+								Ні, скасувати
+							</button>
+						</form>
 					</div>
 				</div>
 

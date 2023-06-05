@@ -104,7 +104,7 @@ include('header.php');
 				<div class="col-lg-4 col-md-6 col-sm-12">
 					<div class="card col-lg-11 col-sm-9 mx-auto">
 						<a href="news_details.php?id=<?php echo $news['id']; ?>">
-							<img src="img/news/<?php echo htmlspecialchars($news['image'], ENT_QUOTES, 'UTF-8'); ?>"
+							<img src="<?php echo htmlspecialchars($news['image'], ENT_QUOTES, 'UTF-8'); ?>"
 								class="mx-auto d-block news__img" alt="News Image">
 						</a>
 						<div class="card-body p-0">
