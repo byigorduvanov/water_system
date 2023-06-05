@@ -273,7 +273,7 @@ const fetchMetersTableData = async (page, year = new Date().getFullYear()) => {
 		tr.appendChild(metersCell);
 
 		const sourceCell = document.createElement('td');
-		sourceCell.textContent = row.source;
+		sourceCell.textContent = "Сайт";
 		tr.appendChild(sourceCell);
 
 		tableRow.appendChild(tr);
