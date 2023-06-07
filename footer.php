@@ -15,7 +15,7 @@
 							+380(99)-747-1990</a>
 					</li>
 					<li class="our-contacts">
-						<a href="https://goo.gl/maps/aFjy6i3E2pu5WcLs6" class="text-light ">
+						<a href="https://goo.gl/maps/aFjy6i3E2pu5WcLs6" class="text-light " target="_blank">
 							<i class="fas fa-map-marker-alt"></i>
 							Гусятин, вулиця Шевченка,3</a>
 					</li>
@@ -29,16 +29,17 @@
 
 				<ul class="list-unstyled d-flex ">
 					<li>
-						<a href="https://www.instagram.com/igor_lst/"><i class="fab fa-instagram fut-icon"></i></a>
+						<a href="https://www.instagram.com/igor_lst/" target="_blank"><i
+								class="fab fa-instagram fut-icon"></i></a>
 					</li>
 					<li>
-						<a href="https://t.me/duvanovigor"><i class="fab fa-telegram-plane fut-icon"></i></a>
+						<a href="https://t.me/duvanovigor" target="_blank"><i class="fab fa-telegram-plane fut-icon"></i></a>
 					</li>
 					<li>
-						<a href="mailto:duvanovigor79@gmail.com"><i class="fas fa-envelope fut-icon"></i></a>
+						<a href="mailto:duvanovigor79@gmail.com" target="_blank"><i class="fas fa-envelope fut-icon"></i></a>
 					</li>
 					<li>
-						<a href="https://www.linkedin.com/in/igor-duvanov-524924235"><i
+						<a href="https://www.linkedin.com/in/igor-duvanov-524924235" target="_blank"><i
 								class="fab fa-linkedin fut-icon"></i></a>
 					</li>
 				</ul>

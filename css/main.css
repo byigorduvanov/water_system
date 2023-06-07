@@ -634,6 +634,7 @@ button[name="do_meters"],
 .about__pay {
 	padding: 29px 43px 30px 28px;
 	margin-bottom: 30px;
+	height: 139px;
 }
 
 .title__about {
@@ -779,6 +780,10 @@ button[name="do_meters"],
 	padding-bottom: 20px;
 }
 
+/*================ таби оплата===================*/
+.table__tbody__pay>tr>:last-child {
+	max-width: 143px;
+}
 
 /* таби */
 .tab {

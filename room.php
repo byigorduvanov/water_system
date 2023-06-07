@@ -151,18 +151,18 @@ function pay_latest_charge()
 	$sql = "UPDATE months SET payment_status = 'сплачено' WHERE id_user = $id AND payment_status = 'не сплачено' ORDER BY id_meters DESC LIMIT 1";
 	$result = mysqli_query($conn, $sql);
 	if ($result === false) {
-		// Handle error - the query failed
+
 	}
 }
 
 if (isset($_POST['pay_latest_charge'])) {
 	pay_latest_charge();
-	// Refresh the page to update the payment status
+	// Оновіть сторінку, щоб оновити статус оплати
 	header("Location: " . $_SERVER['REQUEST_URI']);
 	exit();
 }
 
-// Include 'generate_receipt.php' only if payment_status is 'не сплачено' and latest_charges is not null
+// Включайте 'generate_receipt.php' тільки якщо payment_status дорівнює 'не сплачено', а latest_charges не дорівнює null
 if ($payment_status === 'не сплачено' && $latest_charges !== null && $latest_charges > 0) {
 	require_once('vendor/generate_receipt.php');
 }
@@ -192,6 +192,7 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 		<?php
 		include 'fetch_data.php';
 		include 'fetch_profit.php';
+		include 'fetch_pay.php';
 		?>
 	</div>
 	<!--    /*scroll to top*/-->
@@ -335,11 +336,9 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 												<div class="about__pay bg-style d-flex">
 													<div class="about__info">
 														<p class="caption__about">станом
-															<?php if ($payment_status == 'не сплачено') { ?>
-																<?= $date_of_indicator ?>
-															<?php } ?>
+															<?= ($payment_status == 'не сплачено') ? $date_of_indicator : date('Y-m-d') ?>
 														</p>
-														<!-- Only display the link to generate receipt if payment_status is 'не сплачено' -->
+														<!-- Відображати посилання для генерації квитанції, тільки якщо payment_status дорівнює 'не сплачено' -->
 														<?php if ($payment_status === 'не сплачено'): ?>
 															<a class="caption__about generate__receipt  btn btn-primary my_btn btn_room mt-4"
 																href="?generate_receipt=1" target="_blank">
@@ -349,9 +348,7 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 													</div>
 													<div class="about__price ml-auto">
 														<p class="about__price__info pb-1" id="charges-info">
-															<?php if ($payment_status == 'не сплачено') { ?>
-																<?= $latest_charges ?> грн
-															<?php } ?>
+															<?= ($payment_status == 'не сплачено') ? $latest_charges . ' грн' : '0 грн' ?>
 														</p>
 													</div>
 
@@ -496,17 +493,30 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 										<canvas id="profitChart" class="diagram"></canvas>
 									</div>
 								</div>
-								<!--                            <div class="tab-pane fade" id="pay" role="tabpanel" aria-labelledby="pay-tab">-->
-								<div id="tab4" class="tabcontent p-3">
-									<h2 class="text-center title__date">Виберіть спосіб оплати Нарахування</h2>
-									<p class="mt-3">Оплата за допомогою квитинації</p>
-									<a class="caption__about generate__receipt btn btn-primary my_btn btn_room mt-4 d-block ml-0"
-										href="?generate_receipt=1" target="_blank">
-										<i class="fas fa-print pr-2"></i>Сформувати квитанцію
-									</a>
-									<p class="mt-5">Онлайн оплата</p>
-									<a class="d-block mt-2 generate__receipt btn btn-primary my_btn " target="_blank"
-										href="https://www.privat24.ua/rd/send_qr/liqpay_static_qr/payment_2323275452.dc8331f859cfb244c5ee136d630831409ff4c8ae28d42775a70c7858a1d61fe6">Оплата</a>
+								<div id="tab4" class="tabcontent">
+									<div class="room-meters__top">
+										<p class="table__top">Виберіть спосіб оплати </p>
+									</div>
+									<select id="year-select_pay" name="year_pay" class="select__meters profit">
+										<?php
+										$years = mysqli_query($conn, "SELECT DISTINCT YEAR(date) as year FROM meters WHERE id_user=$id ORDER BY year DESC");
+										while ($year_select = mysqli_fetch_assoc($years)) {
+											echo '<option value="' . $year_select['year'] . '">' . $year_select['year'] . '</option>';
+										}
+										?>
+									</select>
+									<table class="table table-bordered table-room">
+										<thead class="table-room__top">
+											<tr>
+												<th scope="col">Період</th>
+												<th scope="col">Нараховано</th>
+												<th scope="col">Статус оплати</th>
+											</tr>
+										</thead>
+										<tbody class="table-row table__tbody__pay">
+
+										</tbody>
+									</table>
 									<p class="mt-5">Тестова Оплата(В розробці)</p>
 									<form action="#" method="POST">
 										<button class="btn btn-warning my_btn mt-2 mb-5" type="submit"
@@ -614,6 +624,7 @@ if ($payment_status === 'не сплачено' && $latest_charges !== null && $
 		<script src="js/scroll_top.js"></script>
 		<script src="js/main.js"></script>
 		<script src="js/fetch_profit.js"></script>
+		<script src="js/fetch_pay.js"></script>
 		<?php
 		include('footer.php')
 			?>
