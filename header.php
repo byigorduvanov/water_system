@@ -42,14 +42,15 @@
 									<li class="nav-item ">
 										<a class="nav-link" href="index.php#permision">Переваги </a>
 									</li>
+
 									<li class="nav-item">
-										<a class="nav-link" href="#">Запитання</a>
+										<a class="nav-link" href="#footer">Запитання</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="#">Документи</a>
+										<a class="nav-link" href="vendor/Умови договору.pdf" target="_blank">Документи</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link " href="#">Допомога</a>
+										<a class="nav-link " href="#footer">Допомога</a>
 									</li>
 									<li class="nav-item own-btn">
 										<a class="nav-link " href="autorization.php">Мій кабінет</a>

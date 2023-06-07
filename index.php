@@ -92,7 +92,7 @@ include('header.php');
 
 	</div>
 </section>
-<section class="news__section" data-aos="zoom-in-down">
+<section class="news__section" data-aos="zoom-in-down" id="news">
 	<div class="container">
 		<div class="row">
 			<div class="col">

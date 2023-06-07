@@ -147,7 +147,7 @@ if (isset($_POST["submit"])) {
 					<input type="checkbox" class="custom-control-input terms__agreement" id="defaultRegisterFormNewsletter"
 						required value="">
 					<label class="custom-control-label p-1" for="defaultRegisterFormNewsletter">
-						Я приймаю умови Договору
+						Я приймаю умови <a href="vendor/Умови договору.pdf" target="_blank">Договору</a>
 					</label>
 				</div>
 

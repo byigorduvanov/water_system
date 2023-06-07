@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="footer-login <?php echo isset($footer_class) ? $footer_class : ''; ?> ">
+<footer class="footer-login <?php echo isset($footer_class) ? $footer_class : ''; ?> " id="footer">
 	<!-- Grid container -->
 	<div class="container ">
 		<!--Grid row-->
