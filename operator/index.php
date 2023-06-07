@@ -209,7 +209,7 @@ if (isset($_POST['add_indicator'])) {
 if (isset($_POST['create_news'])) {
 	$stmt = $conn->prepare("INSERT INTO news (title, content, image, publish_date, author) VALUES (?, ?, ?, ?, ?)");
 	$stmt->bind_param("ssssi", $_POST['title'], $_POST['content'], $_POST['image'], $_POST['publish_date'], $id);
-
+	$stmt->execute();
 	//ФОТО
 	if (isset($_FILES['image'])) {
 		$file_name = $_FILES['image']['name'];
@@ -320,10 +320,13 @@ if (isset($_POST['delete_news'])) {
 	$current_image = $row['image'];
 
 	// Видалення з папки
+	$current_image_path = $row['image'];
+	$current_image_name = basename($current_image_path);
 	$directory = '../img/news/';
-	if (file_exists($directory . $current_image)) {
-		unlink($directory . $current_image);
+	if (file_exists($directory . $current_image_name)) {
+		unlink($directory . $current_image_name);
 	}
+
 
 	// Видалення
 	$stmt = $conn->prepare("DELETE FROM news WHERE id = ?");
