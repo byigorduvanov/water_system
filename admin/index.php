@@ -175,7 +175,28 @@ if (isset($_POST['submit_all'])) {
 			$stmt2->close();
 		}
 	}
+	foreach ($_POST['date'] as $meter_id => $date_value) {
+		$date_value = date('Y-m-d H:i:s', strtotime($date_value));
+
+		// Оновлення дати в базі даних
+		$stmt = $conn->prepare("UPDATE meters SET date=?, date_update=?, id_operator=? WHERE id=?");
+		$stmt->bind_param("ssii", $date_value, $current_date, $id, $meter_id);
+		if (!$stmt->execute()) {
+			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+		}
+		$stmt->close();
+	}
 }
+if (isset($_POST['submit_delete'])) {
+	$stmt = $conn->prepare("DELETE FROM meters WHERE id = ?");
+	$stmt->bind_param("i", $_POST['delete_meter']);
+	$stmt->execute();
+
+	$stmt = $conn->prepare("DELETE FROM months WHERE id_meters = ?");
+	$stmt->bind_param("i", $_POST['delete_meter']);
+	$stmt->execute();
+}
+
 // Delete user
 if (isset($_POST['delete_user'])) {
 	$stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
@@ -489,8 +510,10 @@ if (isset($_POST['delete_news'])) {
 											<th>Редагувати суму</th>
 											<th>Редагувати статус</th>
 											<th>Дата</th>
+											<th>Редагувати дату</th>
 											<th>Дата оновлення</th>
 											<th>Оператор</th>
+											<th>Дії</th>
 										</tr>
 										<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
 											<tr>
@@ -528,6 +551,10 @@ if (isset($_POST['delete_news'])) {
 													<?php echo $meter['date']; ?>
 												</td>
 												<td>
+													<input type="date" name="date[<?php echo $meter['meter_id']; ?>]"
+														value="<?php echo date('Y-m-d', strtotime($meter['date'])); ?>">
+												</td>
+												<td>
 													<?php echo $meter['date_update']; ?>
 												</td>
 												<td>
@@ -539,6 +566,13 @@ if (isset($_POST['delete_news'])) {
 													$operator = $operator_result->fetch_assoc();
 													echo $operator['first_name'] . ' ' . $operator['last_name'];
 													?>
+												</td>
+												<td>
+													<form method="POST">
+														<input type="hidden" name="delete_meter" value="<?php echo $meter['meter_id']; ?>">
+														<input type="submit" name="submit_delete" value="Видалити" class="btn btn-danger"
+															onclick="return confirm('Ви дійсно хочете видалити цей запис?');">
+													</form>
 												</td>
 											</tr>
 										<?php endforeach; ?>

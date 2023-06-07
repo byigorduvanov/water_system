@@ -175,6 +175,18 @@ if (isset($_POST['submit_all'])) {
 			$stmt2->close();
 		}
 	}
+	foreach ($_POST['date'] as $meter_id => $date_value) {
+		$date_value = date('Y-m-d H:i:s', strtotime($date_value));
+
+		// Оновлення дати в базі даних
+		$stmt = $conn->prepare("UPDATE meters SET date=?, date_update=?, id_operator=? WHERE id=?");
+		$stmt->bind_param("ssii", $date_value, $current_date, $id, $meter_id);
+		if (!$stmt->execute()) {
+			echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+		}
+		$stmt->close();
+	}
+
 }
 // Додавання нового показника
 if (isset($_POST['add_indicator'])) {
@@ -486,6 +498,7 @@ if (isset($_POST['delete_news'])) {
 										<th>Редагувати суму</th>
 										<th>Редагувати Статус</th>
 										<th>Дата</th>
+										<th>Редагувати дату</th>
 									</tr>
 									<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
 										<tr>
@@ -521,6 +534,11 @@ if (isset($_POST['delete_news'])) {
 											<td>
 												<?php echo $meter['date']; ?>
 											</td>
+											<td>
+												<input type="date" name="date[<?php echo $meter['meter_id']; ?>]"
+													value="<?php echo date('Y-m-d', strtotime($meter['date'])); ?>">
+											</td>
+
 										</tr>
 									<?php endforeach; ?>
 								</table>
