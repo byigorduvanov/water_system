@@ -180,6 +180,12 @@ include('header.php');
 </section>
 <script src="js/scroll_top.js"></script>
 <script>
+	if (navigator.userAgent.match(/samsung/i)) {
+	alert("Ваш браузер (Samsung Internet) може не показувати цей веб -сайт" +
+		". Будь ласка, розгляньте можливість використання браузера, сумісного зі стандартами" +
+		". \n\n" +
+		"Ми рекомендуємо Firefox, Microsoft Edge або Google Chrome.");
+}
 	function saveEmailToStorage() {
 		const quickEmail = document.getElementById("quickEmail");
 		localStorage.setItem("user_email", quickEmail.value);

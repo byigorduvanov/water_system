@@ -282,9 +282,10 @@ if (isset($_POST['edit_news'])) {
 		$current_image = $row['image'];
 
 		// Видалення старого файлу зображення з сервера
-		if (file_exists($directory . $current_image)) {
-			unlink($directory . $current_image);
-		}
+		$current_image_name = basename($current_image);
+		if (file_exists($directory . $current_image_name)) {
+			unlink($directory . $current_image_name);
+		 }
 
 		// Завантаження нового файлу зображення на сервер
 		if (move_uploaded_file($file_tmp, $directory . $unique_name)) {
@@ -310,7 +311,6 @@ if (isset($_POST['edit_news'])) {
 // Видалення новини
 if (isset($_POST['delete_news'])) {
 	$id = $_POST['news_id'];
-
 	// Отримати поточну назву зображення з бази даних
 	$stmt = $conn->prepare("SELECT image FROM news WHERE id = ?");
 	$stmt->bind_param("i", $id);
@@ -318,7 +318,6 @@ if (isset($_POST['delete_news'])) {
 	$result = $stmt->get_result();
 	$row = $result->fetch_assoc();
 	$current_image = $row['image'];
-
 	// Видалення з папки
 	$current_image_path = $row['image'];
 	$current_image_name = basename($current_image_path);
@@ -326,8 +325,6 @@ if (isset($_POST['delete_news'])) {
 	if (file_exists($directory . $current_image_name)) {
 		unlink($directory . $current_image_name);
 	}
-
-
 	// Видалення
 	$stmt = $conn->prepare("DELETE FROM news WHERE id = ?");
 	$stmt->bind_param("i", $id);

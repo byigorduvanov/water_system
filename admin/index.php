@@ -216,7 +216,6 @@ if (isset($_POST['add_indicator'])) {
 	$stmt = $conn->prepare("INSERT INTO months (price_for_month, id_meters, id_user, payment_status) VALUES (?, ?, ?, ?)");
 	$stmt->bind_param("diss", $_POST['price_for_month'], $new_meter_id, $_POST['user_id'], $_POST['payment_status']);
 	$stmt->execute();
-
 }
 //новини
 // Створити новини
@@ -296,8 +295,9 @@ if (isset($_POST['edit_news'])) {
 		$current_image = $row['image'];
 
 		// Видалення старого файлу зображення з сервера
-		if (file_exists($directory . $current_image)) {
-			unlink($directory . $current_image);
+		$current_image_name = basename($current_image);
+		if (file_exists($directory . $current_image_name)) {
+			unlink($directory . $current_image_name);
 		}
 
 		// Завантаження нового файлу зображення на сервер
@@ -374,16 +374,13 @@ if (isset($_POST['delete_news'])) {
 		<!-- Tabs -->
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
 			<li class="nav-item">
-				<a class="nav-link active" id="create-user-tab" data-toggle="tab" href="#createUser" role="tab"
-					aria-controls="createUser" aria-selected="true">Створити користувача</a>
+				<a class="nav-link active" id="create-user-tab" data-toggle="tab" href="#createUser" role="tab" aria-controls="createUser" aria-selected="true">Створити користувача</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" id="search-edit-tab" data-toggle="tab" href="#searchEdit" role="tab"
-					aria-controls="searchEdit" aria-selected="false">Пошук та Редагування</a>
+				<a class="nav-link" id="search-edit-tab" data-toggle="tab" href="#searchEdit" role="tab" aria-controls="searchEdit" aria-selected="false">Пошук та Редагування</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" id="news-tab" data-toggle="tab" href="#news" role="tab" aria-controls="news"
-					aria-selected="false">Новини</a>
+				<a class="nav-link" id="news-tab" data-toggle="tab" href="#news" role="tab" aria-controls="news" aria-selected="false">Новини</a>
 			</li>
 		</ul>
 		<div class="tab-content" id="myTabContent">
@@ -429,19 +426,19 @@ if (isset($_POST['delete_news'])) {
 					</div>
 				</div>
 				<!-- Search results -->
-				<?php if (!empty($user_search_result)): ?>
+				<?php if (!empty($user_search_result)) : ?>
 					<div class="card my-3">
 						<div class="card-header">
 							<h2>Результати пошуку</h2>
 						</div>
 						<div class="card-body">
-							<?php foreach ($user_search_result as $user): ?>
+							<?php foreach ($user_search_result as $user) : ?>
 								<div>
 									<!-- Add Indicator -->
 									<form method="post">
 										<h2>Додати новий показник</h2>
 										<input type="hidden" name="user_id" value="<?php if (isset($user['id']))
-											echo $user['id']; ?>">
+																										echo $user['id']; ?>">
 										<input type="hidden" name="id_operator" value="<?php echo $id; ?>">
 										<input type="text" name="meters" placeholder="Показник">
 										<input type="text" name="price_for_month" placeholder="Сума до сплати">
@@ -451,33 +448,24 @@ if (isset($_POST['delete_news'])) {
 											<option value="в очікуванні">в очікуванні</option>
 											<option value="прострочений">прострочений</option>
 										</select>
-										<input type="submit" name="add_indicator" value="Додати новий показник"
-											class="btn btn-warning mb-5">
+										<input type="submit" name="add_indicator" value="Додати новий показник" class="btn btn-warning mb-5">
 									</form>
 									<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
-									<button class=" btn btn-warning"
-										onclick="document.getElementById('update_user_form_<?php echo $user['id']; ?>').style.display='block'">
+									<button class=" btn btn-warning" onclick="document.getElementById('update_user_form_<?php echo $user['id']; ?>').style.display='block'">
 										Редагувати користувача
 									</button>
 								</div>
 								<!-- Update user form -->
-								<form method="post" id="update_user_form_<?php echo $user['id']; ?>" style="display: none;"
-									class="my-3">
+								<form method="post" id="update_user_form_<?php echo $user['id']; ?>" style="display: none;" class="my-3">
 									<h2>Редагувати користувача</h2>
 									<input type="text" name="first_name" placeholder="Ім'я" value="<?php echo $user['first_name']; ?>">
-									<input type="text" name="last_name" placeholder="Прізвище"
-										value="<?php echo $user['last_name']; ?>">
-									<input type="text" name="middle_name" placeholder="Ім'я по батькові"
-										value="<?php echo $user['middle_name']; ?>">
-									<input type="text" name="mobile_phone" placeholder="Мобільний телефон"
-										value="<?php echo $user['mobile_phone']; ?>">
-									<input type="text" name="home_phone" placeholder="Домашній телефон"
-										value="<?php echo $user['home_phone']; ?>">
-									<input type="text" name="email" placeholder="Електронна пошта"
-										value="<?php echo $user['email']; ?>">
+									<input type="text" name="last_name" placeholder="Прізвище" value="<?php echo $user['last_name']; ?>">
+									<input type="text" name="middle_name" placeholder="Ім'я по батькові" value="<?php echo $user['middle_name']; ?>">
+									<input type="text" name="mobile_phone" placeholder="Мобільний телефон" value="<?php echo $user['mobile_phone']; ?>">
+									<input type="text" name="home_phone" placeholder="Домашній телефон" value="<?php echo $user['home_phone']; ?>">
+									<input type="text" name="email" placeholder="Електронна пошта" value="<?php echo $user['email']; ?>">
 									<input type="password" name="password" placeholder="Пароль">
-									<input type="text" name="personal_account" placeholder="Особистий рахунок"
-										value="<?php echo $user['personal_account']; ?>">
+									<input type="text" name="personal_account" placeholder="Особистий рахунок" value="<?php echo $user['personal_account']; ?>">
 									<input type="text" name="address" placeholder="Адреса" value="<?php echo $user['address']; ?>">
 									<input type="text" name="counter" placeholder="Лічильник" value="<?php echo $user['counter']; ?>">
 									<input type="text" name="role" placeholder="Роль" value="<?php echo $user['role']; ?>">
@@ -490,16 +478,16 @@ if (isset($_POST['delete_news'])) {
 				<?php endif; ?>
 				<div class="card my-3">
 					<div class="card-header">
-						<?php if (isset($user['first_name']) && isset($user['last_name'])): ?>
+						<?php if (isset($user['first_name']) && isset($user['last_name'])) : ?>
 							<h2>Показники для
 								<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
 							</h2>
-						<?php else: ?>
+						<?php else : ?>
 							<h2>Показники для користувача</h2>
 						<?php endif; ?>
 					</div>
 					<div class="card-body">
-						<?php if (isset($user['id']) && isset($meters_for_user[$user['id']])): ?>
+						<?php if (isset($user['id']) && isset($meters_for_user[$user['id']])) : ?>
 							<form method="post">
 								<table>
 									<tr>
@@ -515,7 +503,7 @@ if (isset($_POST['delete_news'])) {
 										<th>Оператор</th>
 										<th>Дії</th>
 									</tr>
-									<?php foreach ($meters_for_user[$user['id']] as $meter): ?>
+									<?php foreach ($meters_for_user[$user['id']] as $meter) : ?>
 										<tr>
 											<td>
 												<?php echo $meter['meters']; ?>
@@ -528,12 +516,10 @@ if (isset($_POST['delete_news'])) {
 												<?php echo $meter['payment_status']; ?>
 											</td>
 											<td>
-												<input type="text" name="meters[<?php echo $meter['meter_id']; ?>]"
-													value="<?php echo $meter['meters']; ?>">
+												<input type="text" name="meters[<?php echo $meter['meter_id']; ?>]" value="<?php echo $meter['meters']; ?>">
 											</td>
 											<td>
-												<input type="text" name="price_for_month[<?php echo $meter['meter_id']; ?>]"
-													value="<?php echo $meter['price_for_month']; ?>">
+												<input type="text" name="price_for_month[<?php echo $meter['meter_id']; ?>]" value="<?php echo $meter['price_for_month']; ?>">
 											</td>
 											<td>
 												<select name="payment_status[<?php echo $meter['meter_id']; ?>]">
@@ -551,11 +537,14 @@ if (isset($_POST['delete_news'])) {
 												<?php echo $meter['date']; ?>
 											</td>
 											<td>
-												<input type="date" name="date[<?php echo $meter['meter_id']; ?>]"
-													value="<?php echo date('Y-m-d', strtotime($meter['date'])); ?>">
+												<input type="date" name="date[<?php echo $meter['meter_id']; ?>]" value="<?php echo date('Y-m-d', strtotime($meter['date'])); ?>">
 											</td>
 											<td>
-												<?php echo $meter['date_update']; ?>
+												<?php
+												if (isset($meter['date_update'])) {
+													echo $meter['date_update'];
+												} 
+												?>
 											</td>
 											<td>
 												<?php
@@ -563,15 +552,16 @@ if (isset($_POST['delete_news'])) {
 												$stmt->bind_param("i", $meter['id_operator']);
 												$stmt->execute();
 												$operator_result = $stmt->get_result();
-												$operator = $operator_result->fetch_assoc();
-												echo $operator['first_name'] . ' ' . $operator['last_name'];
+												if ($operator_result->num_rows > 0) {
+													$operator = $operator_result->fetch_assoc();
+													echo $operator['first_name'] . ' ' . $operator['last_name'];
+												} 
 												?>
 											</td>
 											<td>
 												<form method="POST">
 													<input type="hidden" name="delete_meter" value="<?php echo $meter['meter_id']; ?>">
-													<input type="submit" name="submit_delete" value="Видалити" class="btn btn-danger"
-														onclick="return confirm('Ви дійсно хочете видалити цей запис?');">
+													<input type="submit" name="submit_delete" value="Видалити" class="btn btn-danger" onclick="return confirm('Ви дійсно хочете видалити цей запис?');">
 												</form>
 											</td>
 										</tr>
@@ -579,14 +569,13 @@ if (isset($_POST['delete_news'])) {
 								</table>
 								<input type="submit" name="submit_all" value="Оновити" class=" btn btn-warning">
 							</form>
-						<?php else: ?>
+						<?php else : ?>
 							<p>Для цього користувача не знайдено показників.</p>
 						<?php endif; ?>
 					</div>
 				</div>
-				<?php if (isset($user['id'])): ?>
-					<button class="btn btn-danger"
-						onclick="document.getElementById('delete_user_form_<?php echo $user['id']; ?>').style.display='block'">
+				<?php if (isset($user['id'])) : ?>
+					<button class="btn btn-danger" onclick="document.getElementById('delete_user_form_<?php echo $user['id']; ?>').style.display='block'">
 						Видалення користувача
 					</button>
 				<?php endif; ?>
@@ -595,10 +584,8 @@ if (isset($_POST['delete_news'])) {
 					<form method="post">
 						<h2>Ви впевнені, що хочете видалити цього користувача?</h2>
 						<input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-						<input type="submit" name="delete_user" value="Так, видалити цього користувача"
-							class="btn btn-danger">
-						<button type="button" class="btn btn-secondary"
-							onclick="document.getElementById('delete_user_form_<?php echo $user['id']; ?>').style.display='none'">
+						<input type="submit" name="delete_user" value="Так, видалити цього користувача" class="btn btn-danger">
+						<button type="button" class="btn btn-secondary" onclick="document.getElementById('delete_user_form_<?php echo $user['id']; ?>').style.display='none'">
 							Ні, скасувати
 						</button>
 					</form>
@@ -676,7 +663,7 @@ if (isset($_POST['delete_news'])) {
 						</tr>
 					</thead>
 					<tbody>
-						<?php foreach ($news_result as $news): ?>
+						<?php foreach ($news_result as $news) : ?>
 							<tr>
 								<td>
 									<?php echo htmlspecialchars($news['title'], ENT_QUOTES, 'UTF-8'); ?>
@@ -691,9 +678,7 @@ if (isset($_POST['delete_news'])) {
 									<?php echo htmlspecialchars($news['author'], ENT_QUOTES, 'UTF-8'); ?>
 								</td>
 								<td>
-									<button
-										onclick="openEditForm(<?php echo $news['id']; ?>, '<?php echo $news['title']; ?>', '<?php echo addslashes(htmlspecialchars($news['content'])); ?>', '<?php echo $news['publish_date']; ?>', '<?php echo $news['image']; ?>')"
-										class='btn btn-warning btn-sm'>
+									<button onclick="openEditForm(<?php echo $news['id']; ?>, '<?php echo $news['title']; ?>', '<?php echo addslashes(htmlspecialchars($news['content'])); ?>', '<?php echo $news['publish_date']; ?>', '<?php echo $news['image']; ?>')" class='btn btn-warning btn-sm'>
 										Редагувати новину
 									</button>
 									<form method='POST'>
