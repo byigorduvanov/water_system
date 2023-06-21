@@ -48,7 +48,7 @@ function PayTable(data) {
 			statusCell.appendChild(receiptButton);
 
 			const onlinePaymentButton = document.createElement("a");
-			onlinePaymentButton.href = "https://www.privat24.ua/rd/send_qr/liqpay_static_qr/payment_2323840170.f81b2253adeb1439d4a985d00f8ce2d4806a7e02686c9ac46c6ca9dacd8f2604";
+			onlinePaymentButton.href = "https://www.privat24.ua/rd/send_qr/liqpay_static_qr/payment_2329998421.c47ad9708a4f7ddbcefc7fc18079afe46cec30c54ff051037fdae1f0627ef077";
 			onlinePaymentButton.textContent = "Оплата";
 			onlinePaymentButton.target = "_blank";
 			onlinePaymentButton.classList.add("btn", "btn-primary", "my_btn", "generate__receipt");
